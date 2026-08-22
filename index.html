@@ -22,26 +22,37 @@
 
     <style>
         /* ============================================================
-           ROOT — улучшенная цветовая система
+           ROOT — обновлённая цветовая система
            ============================================================ */
         :root {
-            --bg-deep: #0b0b0e;
-            --bg-surface: #14141a;
-            --bg-panel: rgba(22, 22, 30, 0.88);
-            --bg-panel-solid: #181820;
-            --bg-card: #1c1c26;
-            --bg-hover: rgba(255, 255, 255, 0.04);
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-glow: rgba(232, 168, 56, 0.15);
+            --bg-deep: #0d0d12;
+            --bg-surface: #15151e;
+            --bg-panel: rgba(20, 20, 30, 0.9);
+            --bg-panel-solid: #1a1a24;
+            --bg-card: #1e1e2a;
+            --bg-hover: rgba(255, 255, 255, 0.05);
+            --border-subtle: rgba(255, 255, 255, 0.06);
 
             --text-primary: #eeedea;
             --text-secondary: #a8a6a3;
             --text-muted: #6e6c6a;
 
-            --accent-gold: #e8a838;
-            --accent-orange: #e8843a;
-            --accent-gradient: linear-gradient(135deg, #e8a838, #d47a2e);
-            --accent-glow: 0 4px 24px rgba(232, 168, 56, 0.25);
+            /* Основные акценты — более разнообразная палитра */
+            --accent-1: #c084fc; /* фиолетовый */
+            --accent-2: #60a5fa; /* синий */
+            --accent-3: #34d399; /* изумрудный */
+            --accent-4: #f472b6; /* розовый */
+            --accent-5: #fbbf24; /* золотой */
+            --accent-6: #fb923c; /* оранжевый */
+            --accent-7: #f87171; /* красный */
+            --accent-8: #a78bfa; /* лавандовый */
+
+            /* Текущий акцент (можно переключать) */
+            --accent-primary: var(--accent-5);
+            --accent-secondary: var(--accent-2);
+
+            --accent-gradient: linear-gradient(135deg, var(--accent-5), var(--accent-6));
+            --accent-glow: 0 4px 24px rgba(251, 191, 36, 0.2);
 
             --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'PT Mono', 'Courier New', monospace;
@@ -53,7 +64,6 @@
 
             --shadow-card: 0 6px 28px rgba(0, 0, 0, 0.5);
             --shadow-panel: 0 10px 40px rgba(0, 0, 0, 0.5);
-            --shadow-glow: 0 0 60px rgba(232, 168, 56, 0.04);
 
             --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
             --transition-smooth: 0.32s cubic-bezier(0.4, 0, 0.2, 1);
@@ -85,12 +95,13 @@
             display: flex;
             flex-direction: column;
             background-image:
-                radial-gradient(ellipse at 30% 10%, rgba(232, 168, 56, 0.04) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 90%, rgba(232, 132, 58, 0.03) 0%, transparent 50%);
+                radial-gradient(ellipse at 20% 10%, rgba(192, 132, 252, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 90%, rgba(96, 165, 250, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.02) 0%, transparent 70%);
         }
 
         /* ============================================================
-           SCROLLBARS — минималистичные
+           SCROLLBARS
            ============================================================ */
         ::-webkit-scrollbar {
             width: 4px;
@@ -100,12 +111,12 @@
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-gold);
+            background: var(--accent-primary);
             border-radius: 20px;
             opacity: 0.6;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #d4942e;
+            background: var(--accent-6);
         }
 
         /* ============================================================
@@ -119,7 +130,7 @@
         }
 
         /* ============================================================
-           TOPBAR — изящный, с лёгким свечением
+           TOPBAR
            ============================================================ */
         .topbar {
             display: flex;
@@ -161,7 +172,7 @@
         }
 
         /* ============================================================
-           BUTTONS — утончённые, с минимальным свечением
+           BUTTONS
            ============================================================ */
         .btn {
             display: inline-flex;
@@ -201,10 +212,9 @@
             font-weight: 600;
         }
         .btn-primary:hover {
-            box-shadow: 0 4px 32px rgba(232, 168, 56, 0.35);
+            box-shadow: 0 4px 32px rgba(251, 191, 36, 0.35);
             border-color: transparent;
             transform: translateY(-2px);
-            background: var(--accent-gradient);
         }
 
         .btn-ghost {
@@ -217,13 +227,13 @@
         }
 
         .btn-danger {
-            background: rgba(200, 60, 60, 0.15);
-            color: #f06a6a;
-            border-color: rgba(200, 60, 60, 0.15);
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--accent-7);
+            border-color: rgba(248, 113, 113, 0.12);
         }
         .btn-danger:hover {
-            background: rgba(200, 60, 60, 0.28);
-            border-color: rgba(200, 60, 60, 0.2);
+            background: rgba(248, 113, 113, 0.25);
+            border-color: rgba(248, 113, 113, 0.2);
         }
 
         .btn-sm {
@@ -288,7 +298,7 @@
         }
 
         /* ============================================================
-           PROJECT GRID — карточки с характером
+           PROJECT GRID
            ============================================================ */
         .project-grid {
             display: grid;
@@ -313,8 +323,8 @@
         }
         .project-card:hover {
             transform: translateY(-4px);
-            border-color: var(--accent-gold);
-            box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            border-color: var(--accent-primary);
+            box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5), 0 0 60px rgba(192, 132, 252, 0.04);
         }
 
         .project-card .title {
@@ -326,12 +336,12 @@
         }
         .project-card .genre {
             font-size: 12px;
-            color: var(--accent-gold);
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 14px;
             opacity: 0.8;
+            color: var(--accent-primary);
         }
         .project-card .meta {
             font-size: 12px;
@@ -367,8 +377,8 @@
             opacity: 1;
         }
         .project-card .delete-btn:hover {
-            background: rgba(200, 60, 60, 0.15);
-            color: #f06a6a;
+            background: rgba(248, 113, 113, 0.12);
+            color: var(--accent-7);
         }
 
         /* ============================================================
@@ -442,14 +452,14 @@
         }
         .editor-topbar .left .project-genre {
             font-size: 11px;
-            color: var(--accent-gold);
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.4px;
-            background: rgba(232, 168, 56, 0.10);
             padding: 2px 12px;
             border-radius: 20px;
-            border: 1px solid rgba(232, 168, 56, 0.08);
+            border: 1px solid rgba(192, 132, 252, 0.15);
+            background: rgba(192, 132, 252, 0.08);
+            color: var(--accent-1);
         }
         .editor-topbar .right {
             display: flex;
@@ -497,7 +507,7 @@
             overflow: hidden;
         }
 
-        /* ---- LEFT PANEL (сцены) ---- */
+        /* ---- LEFT PANEL ---- */
         .panel-left {
             width: 220px;
             min-width: 170px;
@@ -556,21 +566,21 @@
         }
         .panel-left .scene-item.active {
             color: var(--text-primary);
-            border-left-color: var(--accent-gold);
-            background: rgba(232, 168, 56, 0.05);
+            border-left-color: var(--accent-primary);
+            background: rgba(192, 132, 252, 0.05);
         }
         .panel-left .scene-item .num {
-            color: var(--accent-gold);
             font-weight: 600;
             margin-right: 8px;
             font-size: 11px;
             opacity: 0.7;
+            color: var(--accent-2);
         }
         .panel-left .scene-item.dragging {
             opacity: 0.3;
         }
 
-        /* ---- CENTER PANEL (редактор) ---- */
+        /* ---- CENTER PANEL ---- */
         .panel-center {
             flex: 1;
             display: flex;
@@ -622,7 +632,7 @@
             scroll-behavior: smooth;
         }
         .panel-center textarea::selection {
-            background: rgba(232, 168, 56, 0.25);
+            background: rgba(192, 132, 252, 0.2);
         }
         .panel-center textarea::placeholder {
             color: var(--text-muted);
@@ -644,8 +654,8 @@
         }
         .panel-center .editor-footer .pages {
             font-weight: 500;
-            color: var(--accent-gold);
             font-size: 12px;
+            color: var(--accent-primary);
         }
         .panel-center .editor-footer .status {
             display: flex;
@@ -657,16 +667,16 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: #4caf50;
+            background: var(--accent-3);
             display: inline-block;
             transition: all var(--transition-fast);
         }
         .panel-center .editor-footer .status .dot.saving {
-            background: var(--accent-gold);
+            background: var(--accent-primary);
             animation: pulse 1s infinite;
         }
 
-        /* ---- RIGHT PANEL (персонажи + заметки) ---- */
+        /* ---- RIGHT PANEL ---- */
         .panel-right {
             width: 270px;
             min-width: 220px;
@@ -709,7 +719,7 @@
         }
         .panel-right .tabs .tab.active {
             color: var(--text-primary);
-            border-bottom-color: var(--accent-gold);
+            border-bottom-color: var(--accent-primary);
         }
         .panel-right .tab-content {
             flex: 1;
@@ -758,7 +768,7 @@
             font-weight: 500;
         }
         .character-item.highlighted {
-            background: rgba(232, 168, 56, 0.12);
+            background: rgba(192, 132, 252, 0.1);
             border-radius: var(--radius-sm);
         }
 
@@ -768,7 +778,7 @@
             border-radius: var(--radius-sm);
             padding: 12px 14px;
             margin-bottom: 10px;
-            border-left: 3px solid var(--accent-gold);
+            border-left: 3px solid var(--accent-primary);
             cursor: pointer;
             transition: all var(--transition-fast);
         }
@@ -801,7 +811,7 @@
             transition: color var(--transition-fast);
         }
         .note-item .delete-note:hover {
-            color: #f06a6a;
+            color: var(--accent-7);
         }
         .add-note-hint {
             font-size: 13px;
@@ -842,7 +852,7 @@
             box-shadow: var(--shadow-card);
         }
         .structure-card:hover {
-            border-color: rgba(232, 168, 56, 0.2);
+            border-color: rgba(192, 132, 252, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
@@ -856,21 +866,21 @@
             font-family: var(--font-mono);
             font-size: 13px;
             font-weight: 600;
-            color: var(--accent-gold);
+            color: var(--accent-primary);
         }
         .structure-card .header .edit-btn {
             font-size: 11px;
             padding: 3px 12px;
             border-radius: var(--radius-sm);
-            background: rgba(232, 168, 56, 0.10);
-            color: var(--accent-gold);
-            border: 1px solid rgba(232, 168, 56, 0.08);
+            background: rgba(192, 132, 252, 0.08);
+            color: var(--accent-1);
+            border: 1px solid rgba(192, 132, 252, 0.08);
             cursor: pointer;
             transition: all var(--transition-fast);
             font-weight: 500;
         }
         .structure-card .header .edit-btn:hover {
-            background: rgba(232, 168, 56, 0.18);
+            background: rgba(192, 132, 252, 0.18);
         }
         .structure-card .preview {
             font-size: 13px;
@@ -886,7 +896,7 @@
         }
 
         /* ============================================================
-           QUIET RHYTHM — режим чтения
+           QUIET RHYTHM
            ============================================================ */
         #quietRhythm {
             position: fixed;
@@ -939,7 +949,7 @@
         }
 
         /* ============================================================
-           MODALS — элегантные, с мягким фоном
+           MODALS
            ============================================================ */
         .modal-overlay {
             position: fixed;
@@ -1009,8 +1019,8 @@
         .modal input:focus,
         .modal select:focus,
         .modal textarea:focus {
-            border-color: var(--accent-gold);
-            box-shadow: 0 0 0 3px rgba(232, 168, 56, 0.08);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.06);
         }
         .modal .actions {
             display: flex;
@@ -1055,13 +1065,13 @@
             min-width: 180px;
         }
         .toast.success {
-            border-left: 3px solid #4caf50;
+            border-left: 3px solid var(--accent-3);
         }
         .toast.error {
-            border-left: 3px solid #f06a6a;
+            border-left: 3px solid var(--accent-7);
         }
         .toast.info {
-            border-left: 3px solid var(--accent-gold);
+            border-left: 3px solid var(--accent-primary);
         }
         .toast .close-toast {
             background: transparent;
@@ -1084,7 +1094,7 @@
             background: rgba(255, 255, 255, 0.02);
             border-radius: var(--radius-sm);
             margin-bottom: 8px;
-            border-left: 2px solid rgba(200, 60, 60, 0.2);
+            border-left: 2px solid rgba(248, 113, 113, 0.2);
         }
         .trash-item .info {
             display: flex;
@@ -1122,8 +1132,11 @@
         .stats-grid .stat-card .value {
             font-size: 28px;
             font-weight: 700;
-            color: var(--accent-gold);
             letter-spacing: -0.5px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         .stats-grid .stat-card .label {
             font-size: 11px;
@@ -1345,12 +1358,6 @@
         .items-center {
             align-items: center;
         }
-        .text-gold {
-            color: var(--accent-gold);
-        }
-        .text-orange {
-            color: var(--accent-orange);
-        }
         .text-muted {
             color: var(--text-secondary);
         }
@@ -1401,7 +1408,7 @@
         }
 
         .char-highlight {
-            background: rgba(232, 168, 56, 0.15);
+            background: rgba(192, 132, 252, 0.12);
             border-radius: 2px;
             padding: 0 2px;
         }
@@ -1414,7 +1421,7 @@
 
         <!-- ===== TOP BAR ===== -->
         <header class="topbar" id="topbar">
-            <div class="brand" id="brandLogo">STORYPHILIUM <span>| CINEPHILIUM FAMILY</span></div>
+            <div class="brand" id="brandLogo">STORYPHILIUM <span>| сценарий</span></div>
             <div class="topbar-actions" id="topbarActions">
                 <!-- динамически заполняется -->
             </div>
@@ -1496,7 +1503,7 @@
                 </aside>
             </div>
 
-            <!-- Structure View (inside editor) -->
+            <!-- Structure View -->
             <div id="structureView">
                 <div class="structure-grid" id="structureGrid"></div>
             </div>
@@ -1588,7 +1595,7 @@
     <input type="file" id="fileInput" accept=".json" style="display:none;">
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT (полностью сохранён, без изменений) ===== -->
+    <!-- ===== JAVASCRIPT (полностью сохранён) ===== -->
     <!-- ============================================================ -->
     <script>
         /* ================================================================
@@ -1598,12 +1605,39 @@
         (function() {
             'use strict';
 
-            // ===== PASTEL COLOR PALETTE (20 colors) =====
+            // ===== РАЗНООБРАЗНАЯ ПАЛИТРА (24 цвета) =====
             const PASTEL_COLORS = [
-                '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF',
-                '#E8BAFF', '#FFB3E6', '#B3FFE0', '#FFD1B3', '#B3D4FF',
-                '#F0B3FF', '#B3FFB3', '#FFB3B3', '#B3D9FF', '#FFC8B3',
-                '#D4B3FF', '#B3FFD9', '#FFB3D9', '#B3ECFF', '#FFF0B3'
+                // Тёплые
+                '#FF6B6B', // ярко-красный
+                '#FF9F43', // мандариновый
+                '#FECA57', // золотистый
+                '#FF9FF3', // розовый
+                '#F368E0', // фуксия
+                '#FF6348', // коралловый
+
+                // Холодные
+                '#54A0FF', // ярко-синий
+                '#5F27CD', // фиолетовый
+                '#1DD1A1', // изумрудный
+                '#00D2D3', // бирюзовый
+                '#0ABDE3', // голубой
+                '#8395A7', // стальной
+
+                // Пастельные
+                '#FFB8B8', // нежно-розовый
+                '#FFD93D', // солнечный
+                '#A8E6CF', // мятный
+                '#DCD3FF', // лавандовый
+                '#FFB3C6', // клубничный
+                '#B8F2E6', // аквамариновый
+
+                // Яркие акценты
+                '#FD79A8', // малиновый
+                '#FDCB6E', // песочный
+                '#6C5CE7', // сиреневый
+                '#00B894', // тёмно-зелёный
+                '#E17055', // терракотовый
+                '#0984E3' // насыщенный синий
             ];
 
             // ===== UTILITY FUNCTIONS =====
@@ -2895,8 +2929,8 @@
                             datasets: [{
                                 label: 'Сохранений',
                                 data: data,
-                                backgroundColor: 'rgba(232, 168, 56, 0.5)',
-                                borderColor: '#e8a838',
+                                backgroundColor: 'rgba(192, 132, 252, 0.5)',
+                                borderColor: '#c084fc',
                                 borderWidth: 2,
                                 borderRadius: 4
                             }]
