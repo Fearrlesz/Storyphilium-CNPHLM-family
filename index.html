@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storyphilium — Профессиональный сценарный редактор</title>
+    <title>Storyphilium — сценарный редактор</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=PT+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=PT+Mono&display=swap" rel="stylesheet">
 
     <!-- CDN Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js">
@@ -21,24 +21,47 @@
     </script>
 
     <style>
-        /* ===== CSS Variables ===== */
+        /* ============================================================
+           ROOT — улучшенная цветовая система
+           ============================================================ */
         :root {
-            --bg-primary: #151515;
-            --bg-panel: rgba(30, 30, 30, 0.85);
-            --bg-panel-solid: #1e1e1e;
-            --text-primary: #e8e6e3;
+            --bg-deep: #0b0b0e;
+            --bg-surface: #14141a;
+            --bg-panel: rgba(22, 22, 30, 0.88);
+            --bg-panel-solid: #181820;
+            --bg-card: #1c1c26;
+            --bg-hover: rgba(255, 255, 255, 0.04);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-glow: rgba(232, 168, 56, 0.15);
+
+            --text-primary: #eeedea;
             --text-secondary: #a8a6a3;
-            --accent-orange: #ff6b35;
-            --accent-gold: #f5a623;
-            --accent-gradient: linear-gradient(135deg, #ff6b35, #e85d2c);
+            --text-muted: #6e6c6a;
+
+            --accent-gold: #e8a838;
+            --accent-orange: #e8843a;
+            --accent-gradient: linear-gradient(135deg, #e8a838, #d47a2e);
+            --accent-glow: 0 4px 24px rgba(232, 168, 56, 0.25);
+
             --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'PT Mono', 'Courier New', monospace;
-            --radius: 12px;
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+
+            --shadow-card: 0 6px 28px rgba(0, 0, 0, 0.5);
+            --shadow-panel: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 60px rgba(232, 168, 56, 0.04);
+
+            --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.32s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ===== Reset & Base ===== */
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
         *,
         *::before,
         *::after {
@@ -48,39 +71,46 @@
         }
 
         html {
-            font-size: 16px;
+            font-size: 15px;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             font-family: var(--font-ui);
-            background: var(--bg-primary);
+            background: var(--bg-deep);
             color: var(--text-primary);
             min-height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            background-image: radial-gradient(ellipse at 20% 50%, rgba(255, 107, 53, 0.04) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(245, 166, 35, 0.03) 0%, transparent 50%);
+            background-image:
+                radial-gradient(ellipse at 30% 10%, rgba(232, 168, 56, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 90%, rgba(232, 132, 58, 0.03) 0%, transparent 50%);
         }
 
-        /* ===== Scrollbars ===== */
+        /* ============================================================
+           SCROLLBARS — минималистичные
+           ============================================================ */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 4px;
+            height: 4px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-orange);
-            border-radius: 10px;
+            background: var(--accent-gold);
+            border-radius: 20px;
+            opacity: 0.6;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #e85d2c;
+            background: #d4942e;
         }
 
-        /* ===== App Shell ===== */
+        /* ============================================================
+           APP SHELL
+           ============================================================ */
         #app {
             display: flex;
             flex-direction: column;
@@ -88,24 +118,27 @@
             overflow: hidden;
         }
 
-        /* ===== Top Bar ===== */
+        /* ============================================================
+           TOPBAR — изящный, с лёгким свечением
+           ============================================================ */
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 28px;
+            padding: 12px 32px;
             background: var(--bg-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-subtle);
             flex-shrink: 0;
             z-index: 100;
-            min-height: 64px;
+            min-height: 60px;
         }
+
         .topbar .brand {
             font-size: 20px;
             font-weight: 700;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.4px;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -115,104 +148,114 @@
         }
         .topbar .brand span {
             font-weight: 400;
-            opacity: 0.5;
+            opacity: 0.35;
+            -webkit-text-fill-color: var(--text-secondary);
+            background: none;
         }
+
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
-        .topbar-actions .btn {
-            font-size: 13px;
-            padding: 8px 18px;
-        }
 
-        /* ===== Buttons ===== */
+        /* ============================================================
+           BUTTONS — утончённые, с минимальным свечением
+           ============================================================ */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
             font-family: var(--font-ui);
-            font-weight: 600;
-            font-size: 14px;
-            padding: 10px 22px;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 8px 18px;
             border: none;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-fast);
             background: var(--bg-panel-solid);
             color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
             text-decoration: none;
             white-space: nowrap;
             position: relative;
-            overflow: hidden;
         }
         .btn:hover {
             transform: translateY(-1px);
-            border-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.12);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
         }
         .btn:active {
             transform: scale(0.97);
         }
+
         .btn-primary {
             background: var(--accent-gradient);
             color: #fff;
             border-color: transparent;
-            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.25);
+            box-shadow: var(--accent-glow);
+            font-weight: 600;
         }
         .btn-primary:hover {
-            box-shadow: 0 4px 32px rgba(255, 107, 53, 0.45);
+            box-shadow: 0 4px 32px rgba(232, 168, 56, 0.35);
             border-color: transparent;
             transform: translateY(-2px);
+            background: var(--accent-gradient);
         }
+
         .btn-ghost {
             background: transparent;
             border-color: transparent;
         }
         .btn-ghost:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-hover);
             border-color: transparent;
         }
+
         .btn-danger {
-            background: rgba(220, 50, 50, 0.2);
-            color: #ff6b6b;
-            border-color: rgba(220, 50, 50, 0.2);
+            background: rgba(200, 60, 60, 0.15);
+            color: #f06a6a;
+            border-color: rgba(200, 60, 60, 0.15);
         }
         .btn-danger:hover {
-            background: rgba(220, 50, 50, 0.35);
-            border-color: rgba(220, 50, 50, 0.3);
+            background: rgba(200, 60, 60, 0.28);
+            border-color: rgba(200, 60, 60, 0.2);
         }
+
         .btn-sm {
             font-size: 12px;
-            padding: 6px 14px;
+            padding: 5px 14px;
         }
+
         .btn-icon {
-            width: 38px;
-            height: 38px;
+            width: 36px;
+            height: 36px;
             padding: 0;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 17px;
             background: transparent;
             border-color: transparent;
             color: var(--text-secondary);
         }
         .btn-icon:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: var(--bg-hover);
             color: var(--text-primary);
         }
 
-        /* ===== Library View ===== */
+        /* ============================================================
+           LIBRARY VIEW
+           ============================================================ */
         #libraryView {
             flex: 1;
-            padding: 32px 40px 40px;
+            padding: 36px 40px 44px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            animation: fadeSlide 0.4s ease;
+            animation: fadeSlide 0.5s ease;
         }
         #libraryView.hidden {
             display: none;
@@ -227,100 +270,110 @@
             gap: 16px;
         }
         .library-header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
         }
         .library-header h1 small {
             font-weight: 400;
-            font-size: 16px;
+            font-size: 15px;
             color: var(--text-secondary);
             margin-left: 12px;
         }
         .library-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        /* ===== Project Grid ===== */
+        /* ============================================================
+           PROJECT GRID — карточки с характером
+           ============================================================ */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 20px;
             flex: 1;
             align-content: start;
         }
+
         .project-card {
-            background: var(--bg-panel);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: var(--radius);
-            padding: 22px 24px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 22px 24px 18px;
+            border: 1px solid var(--border-subtle);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-smooth);
             display: flex;
             flex-direction: column;
             position: relative;
             min-height: 150px;
+            box-shadow: var(--shadow-card);
         }
         .project-card:hover {
             transform: translateY(-4px);
-            border-color: rgba(255, 107, 53, 0.3);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-gold);
+            box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5), var(--shadow-glow);
         }
+
         .project-card .title {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             color: var(--text-primary);
+            letter-spacing: -0.2px;
         }
         .project-card .genre {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--accent-gold);
-            font-weight: 600;
+            font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            opacity: 0.8;
         }
         .project-card .meta {
-            font-size: 13px;
-            color: var(--text-secondary);
+            font-size: 12px;
+            color: var(--text-muted);
             display: flex;
             justify-content: space-between;
             margin-top: auto;
             padding-top: 14px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid var(--border-subtle);
         }
         .project-card .meta span {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
+
         .project-card .delete-btn {
             position: absolute;
             top: 12px;
             right: 14px;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
-            font-size: 18px;
+            color: var(--text-muted);
+            font-size: 16px;
             cursor: pointer;
             opacity: 0;
-            transition: opacity var(--transition);
+            transition: opacity var(--transition-fast);
             padding: 4px 8px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
+            line-height: 1;
         }
         .project-card:hover .delete-btn {
             opacity: 1;
         }
         .project-card .delete-btn:hover {
-            background: rgba(220, 50, 50, 0.2);
-            color: #ff6b6b;
+            background: rgba(200, 60, 60, 0.15);
+            color: #f06a6a;
         }
 
-        /* ===== Empty State ===== */
+        /* ============================================================
+           EMPTY STATE
+           ============================================================ */
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -332,29 +385,32 @@
             animation: fadeSlide 0.6s ease;
         }
         .empty-state .icon {
-            font-size: 72px;
-            margin-bottom: 24px;
-            opacity: 0.4;
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
         }
         .empty-state h2 {
-            font-size: 26px;
-            font-weight: 600;
+            font-size: 24px;
+            font-weight: 500;
             margin-bottom: 8px;
+            color: var(--text-primary);
         }
         .empty-state p {
             color: var(--text-secondary);
-            font-size: 16px;
-            max-width: 420px;
+            font-size: 15px;
+            max-width: 400px;
             margin-bottom: 28px;
         }
 
-        /* ===== Editor View ===== */
+        /* ============================================================
+           EDITOR VIEW
+           ============================================================ */
         #editorView {
             flex: 1;
             display: none;
             flex-direction: column;
             overflow: hidden;
-            animation: fadeSlide 0.3s ease;
+            animation: fadeSlide 0.35s ease;
         }
         #editorView.active {
             display: flex;
@@ -366,11 +422,11 @@
             justify-content: space-between;
             padding: 8px 20px;
             background: var(--bg-panel);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-subtle);
             flex-shrink: 0;
-            min-height: 56px;
+            min-height: 52px;
             gap: 12px;
             flex-wrap: wrap;
         }
@@ -381,81 +437,88 @@
         }
         .editor-topbar .left .project-title {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
+            letter-spacing: -0.2px;
         }
         .editor-topbar .left .project-genre {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--accent-gold);
-            font-weight: 600;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-            background: rgba(245, 166, 35, 0.12);
+            letter-spacing: 0.4px;
+            background: rgba(232, 168, 56, 0.10);
             padding: 2px 12px;
             border-radius: 20px;
+            border: 1px solid rgba(232, 168, 56, 0.08);
         }
         .editor-topbar .right {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .editor-topbar .right .btn {
             font-size: 12px;
-            padding: 6px 14px;
+            padding: 5px 14px;
         }
+
         .editor-topbar .mode-toggle {
             display: flex;
-            gap: 4px;
-            background: rgba(255, 255, 255, 0.04);
+            gap: 3px;
+            background: rgba(255, 255, 255, 0.03);
             padding: 3px;
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
         }
         .editor-topbar .mode-toggle .btn {
-            border-radius: 6px;
-            padding: 5px 14px;
+            border-radius: var(--radius-sm);
+            padding: 4px 14px;
             font-size: 12px;
             background: transparent;
             border-color: transparent;
             color: var(--text-secondary);
+            font-weight: 500;
         }
         .editor-topbar .mode-toggle .btn.active {
             background: var(--bg-panel-solid);
             color: var(--text-primary);
-            border-color: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-subtle);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
         .editor-topbar .mode-toggle .btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-hover);
         }
 
-        /* ===== Editor Panels Container ===== */
+        /* ============================================================
+           EDITOR PANELS
+           ============================================================ */
         .editor-panels {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
 
-        /* ===== Left Panel (Navigation) ===== */
+        /* ---- LEFT PANEL (сцены) ---- */
         .panel-left {
-            width: 240px;
-            min-width: 200px;
+            width: 220px;
+            min-width: 170px;
             background: var(--bg-panel);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
-            transition: width var(--transition);
+            transition: width var(--transition-smooth);
         }
         .panel-left .panel-header {
-            padding: 14px 18px 10px;
-            font-size: 12px;
+            padding: 14px 20px 10px;
+            font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-subtle);
             flex-shrink: 0;
             display: flex;
             justify-content: space-between;
@@ -464,9 +527,10 @@
         .panel-left .panel-header .count {
             font-weight: 400;
             font-size: 11px;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
             padding: 0 10px;
-            border-radius: 12px;
+            border-radius: 20px;
+            color: var(--text-secondary);
         }
         .panel-left .scene-list {
             flex: 1;
@@ -474,12 +538,12 @@
             padding: 8px 0;
         }
         .panel-left .scene-item {
-            padding: 6px 18px;
+            padding: 6px 20px;
             font-size: 13px;
             font-family: var(--font-mono);
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-fast);
             border-left: 2px solid transparent;
             white-space: nowrap;
             overflow: hidden;
@@ -487,30 +551,31 @@
             user-select: none;
         }
         .panel-left .scene-item:hover {
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--bg-hover);
             color: var(--text-primary);
         }
         .panel-left .scene-item.active {
             color: var(--text-primary);
-            border-left-color: var(--accent-orange);
-            background: rgba(255, 107, 53, 0.06);
+            border-left-color: var(--accent-gold);
+            background: rgba(232, 168, 56, 0.05);
         }
         .panel-left .scene-item .num {
             color: var(--accent-gold);
             font-weight: 600;
             margin-right: 8px;
             font-size: 11px;
+            opacity: 0.7;
         }
         .panel-left .scene-item.dragging {
-            opacity: 0.4;
+            opacity: 0.3;
         }
 
-        /* ===== Center Panel (Editor) ===== */
+        /* ---- CENTER PANEL (редактор) ---- */
         .panel-center {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: var(--bg-primary);
+            background: var(--bg-deep);
             overflow: hidden;
             position: relative;
         }
@@ -523,28 +588,28 @@
         .panel-center .line-numbers {
             padding: 16px 0 16px 16px;
             font-family: var(--font-mono);
-            font-size: 14px;
-            line-height: 1.5;
-            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--text-muted);
             text-align: right;
             user-select: none;
             overflow: hidden;
-            min-width: 48px;
-            background: var(--bg-primary);
-            opacity: 0.5;
-            border-right: 1px solid rgba(255, 255, 255, 0.03);
+            min-width: 42px;
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border-subtle);
             flex-shrink: 0;
             padding-top: 18px;
+            opacity: 0.5;
         }
         .panel-center .line-numbers span {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
         }
         .panel-center textarea {
             flex: 1;
             font-family: var(--font-mono);
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.55;
             color: var(--text-primary);
             background: transparent;
             border: none;
@@ -557,8 +622,13 @@
             scroll-behavior: smooth;
         }
         .panel-center textarea::selection {
-            background: rgba(255, 107, 53, 0.3);
+            background: rgba(232, 168, 56, 0.25);
         }
+        .panel-center textarea::placeholder {
+            color: var(--text-muted);
+            opacity: 0.4;
+        }
+
         .panel-center .editor-footer {
             display: flex;
             justify-content: space-between;
@@ -566,20 +636,22 @@
             padding: 6px 20px;
             font-size: 12px;
             color: var(--text-secondary);
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            border-top: 1px solid var(--border-subtle);
             flex-shrink: 0;
             background: var(--bg-panel);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
         .panel-center .editor-footer .pages {
-            font-weight: 600;
+            font-weight: 500;
             color: var(--accent-gold);
+            font-size: 12px;
         }
         .panel-center .editor-footer .status {
             display: flex;
             align-items: center;
             gap: 12px;
+            font-size: 12px;
         }
         .panel-center .editor-footer .status .dot {
             width: 6px;
@@ -587,58 +659,62 @@
             border-radius: 50%;
             background: #4caf50;
             display: inline-block;
+            transition: all var(--transition-fast);
         }
         .panel-center .editor-footer .status .dot.saving {
             background: var(--accent-gold);
             animation: pulse 1s infinite;
         }
 
-        /* ===== Right Panel (Characters & Notes) ===== */
+        /* ---- RIGHT PANEL (персонажи + заметки) ---- */
         .panel-right {
-            width: 280px;
-            min-width: 240px;
+            width: 270px;
+            min-width: 220px;
             background: var(--bg-panel);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-left: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-left: 1px solid var(--border-subtle);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
-            transition: width var(--transition);
+            transition: width var(--transition-smooth);
         }
         .panel-right .tabs {
             display: flex;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid var(--border-subtle);
             flex-shrink: 0;
         }
         .panel-right .tabs .tab {
             flex: 1;
             padding: 12px 0;
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-secondary);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-fast);
             border-bottom: 2px solid transparent;
             background: transparent;
             border-top: none;
             border-left: none;
             border-right: none;
             font-family: var(--font-ui);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
         .panel-right .tabs .tab:hover {
             color: var(--text-primary);
+            background: var(--bg-hover);
         }
         .panel-right .tabs .tab.active {
             color: var(--text-primary);
-            border-bottom-color: var(--accent-orange);
+            border-bottom-color: var(--accent-gold);
         }
         .panel-right .tab-content {
             flex: 1;
             overflow-y: auto;
-            padding: 12px 16px;
+            padding: 14px 16px;
             display: none;
         }
         .panel-right .tab-content.active {
@@ -650,52 +726,54 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 10px;
-            border-radius: 6px;
+            padding: 7px 10px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-fast);
             margin-bottom: 2px;
         }
         .character-item:hover {
-            background: rgba(255, 255, 255, 0.04);
+            background: var(--bg-hover);
         }
         .character-item .name {
             font-weight: 500;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         .character-item .name .dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             display: inline-block;
             flex-shrink: 0;
         }
         .character-item .count {
-            font-size: 12px;
-            color: var(--text-secondary);
-            background: rgba(255, 255, 255, 0.05);
+            font-size: 11px;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.04);
             padding: 0 10px;
-            border-radius: 12px;
+            border-radius: 20px;
+            font-weight: 500;
         }
         .character-item.highlighted {
-            background: rgba(255, 215, 0, 0.12);
+            background: rgba(232, 168, 56, 0.12);
+            border-radius: var(--radius-sm);
         }
 
         /* Notes */
         .note-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
             padding: 12px 14px;
             margin-bottom: 10px;
             border-left: 3px solid var(--accent-gold);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-fast);
         }
         .note-item:hover {
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.04);
         }
         .note-item .text {
             font-size: 13px;
@@ -703,11 +781,11 @@
             color: var(--text-primary);
         }
         .note-item .preview {
-            font-size: 12px;
-            color: var(--text-secondary);
+            font-size: 11px;
+            color: var(--text-muted);
             margin-top: 4px;
             font-style: italic;
-            opacity: 0.7;
+            opacity: 0.6;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -716,54 +794,57 @@
             float: right;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             padding: 0 4px;
+            transition: color var(--transition-fast);
         }
         .note-item .delete-note:hover {
-            color: #ff6b6b;
+            color: #f06a6a;
         }
         .add-note-hint {
             font-size: 13px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             text-align: center;
             padding: 20px 0;
-            border: 1px dashed rgba(255, 255, 255, 0.06);
-            border-radius: 8px;
+            border: 1px dashed var(--border-subtle);
+            border-radius: var(--radius-sm);
             margin-top: 8px;
         }
 
-        /* ===== Structure Mode ===== */
+        /* ============================================================
+           STRUCTURE MODE
+           ============================================================ */
         #structureView {
             flex: 1;
             display: none;
-            padding: 24px 32px;
+            padding: 28px 36px;
             overflow-y: auto;
-            background: var(--bg-primary);
-            animation: fadeSlide 0.3s ease;
+            background: var(--bg-deep);
+            animation: fadeSlide 0.35s ease;
         }
         #structureView.active {
             display: block;
         }
         .structure-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 18px;
         }
         .structure-card {
-            background: var(--bg-panel);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: var(--radius);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
             padding: 16px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all var(--transition);
+            border: 1px solid var(--border-subtle);
+            transition: all var(--transition-smooth);
             cursor: default;
+            box-shadow: var(--shadow-card);
         }
         .structure-card:hover {
-            border-color: rgba(255, 107, 53, 0.2);
+            border-color: rgba(232, 168, 56, 0.2);
             transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         .structure-card .header {
             display: flex;
@@ -773,22 +854,23 @@
         }
         .structure-card .header .scene-title {
             font-family: var(--font-mono);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--accent-gold);
         }
         .structure-card .header .edit-btn {
-            font-size: 12px;
+            font-size: 11px;
             padding: 3px 12px;
-            border-radius: 6px;
-            background: rgba(255, 107, 53, 0.15);
-            color: var(--accent-orange);
-            border: none;
+            border-radius: var(--radius-sm);
+            background: rgba(232, 168, 56, 0.10);
+            color: var(--accent-gold);
+            border: 1px solid rgba(232, 168, 56, 0.08);
             cursor: pointer;
-            transition: all var(--transition);
+            transition: all var(--transition-fast);
+            font-weight: 500;
         }
         .structure-card .header .edit-btn:hover {
-            background: rgba(255, 107, 53, 0.25);
+            background: rgba(232, 168, 56, 0.18);
         }
         .structure-card .preview {
             font-size: 13px;
@@ -803,14 +885,16 @@
             opacity: 0.3;
         }
 
-        /* ===== Quiet Rhythm Mode ===== */
+        /* ============================================================
+           QUIET RHYTHM — режим чтения
+           ============================================================ */
         #quietRhythm {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #f5f0e8;
+            background: #f3efe8;
             z-index: 9999;
             display: none;
             flex-direction: column;
@@ -818,7 +902,7 @@
             justify-content: center;
             padding: 60px 80px;
             overflow-y: auto;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.4s ease;
         }
         #quietRhythm.active {
             display: flex;
@@ -827,7 +911,7 @@
             font-family: var(--font-mono);
             font-size: 18px;
             line-height: 2.0;
-            color: #2c2c2c;
+            color: #2a2a2a;
             max-width: 720px;
             width: 100%;
             white-space: pre-wrap;
@@ -837,24 +921,26 @@
         #quietRhythm .qr-close {
             position: fixed;
             top: 28px;
-            right: 32px;
-            background: rgba(0, 0, 0, 0.06);
-            border: none;
-            color: #2c2c2c;
-            font-size: 20px;
-            padding: 10px 20px;
-            border-radius: 8px;
+            right: 36px;
+            background: rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            color: #2a2a2a;
+            font-size: 15px;
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-family: var(--font-ui);
-            font-weight: 600;
-            transition: all var(--transition);
-            backdrop-filter: blur(4px);
+            font-weight: 500;
+            transition: all var(--transition-fast);
+            backdrop-filter: blur(6px);
         }
         #quietRhythm .qr-close:hover {
-            background: rgba(0, 0, 0, 0.12);
+            background: rgba(0, 0, 0, 0.08);
         }
 
-        /* ===== Modal ===== */
+        /* ============================================================
+           MODALS — элегантные, с мягким фоном
+           ============================================================ */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -862,8 +948,8 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             display: none;
             align-items: center;
@@ -875,20 +961,21 @@
         }
         .modal {
             background: var(--bg-panel-solid);
-            border-radius: var(--radius);
+            border-radius: var(--radius-lg);
             padding: 32px 40px;
             max-width: 480px;
             width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: var(--shadow);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-panel);
             animation: slideUp 0.3s ease;
             max-height: 90vh;
             overflow-y: auto;
         }
         .modal h2 {
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
+            letter-spacing: -0.2px;
         }
         .modal .sub {
             color: var(--text-secondary);
@@ -897,10 +984,12 @@
         }
         .modal label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 4px;
             color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
         .modal input,
         .modal select,
@@ -908,19 +997,20 @@
             width: 100%;
             padding: 10px 14px;
             background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-sm);
             color: var(--text-primary);
             font-family: var(--font-ui);
             font-size: 14px;
-            transition: border var(--transition);
+            transition: border var(--transition-fast);
             outline: none;
             margin-bottom: 14px;
         }
         .modal input:focus,
         .modal select:focus,
         .modal textarea:focus {
-            border-color: var(--accent-orange);
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(232, 168, 56, 0.08);
         }
         .modal .actions {
             display: flex;
@@ -933,7 +1023,9 @@
             padding: 10px 24px;
         }
 
-        /* ===== Toast ===== */
+        /* ============================================================
+           TOASTS
+           ============================================================ */
         .toast-container {
             position: fixed;
             top: 80px;
@@ -946,27 +1038,27 @@
         }
         .toast {
             background: var(--bg-panel-solid);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             padding: 14px 22px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: var(--shadow);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-panel);
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             pointer-events: auto;
             animation: slideRight 0.35s ease;
             display: flex;
             align-items: center;
             gap: 12px;
-            min-width: 200px;
+            min-width: 180px;
         }
         .toast.success {
             border-left: 3px solid #4caf50;
         }
         .toast.error {
-            border-left: 3px solid #ff6b6b;
+            border-left: 3px solid #f06a6a;
         }
         .toast.info {
             border-left: 3px solid var(--accent-gold);
@@ -974,23 +1066,25 @@
         .toast .close-toast {
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 17px;
             padding: 0 4px;
             margin-left: auto;
         }
 
-        /* ===== Trash ===== */
+        /* ============================================================
+           TRASH
+           ============================================================ */
         .trash-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             margin-bottom: 8px;
-            border-left: 2px solid rgba(220, 50, 50, 0.3);
+            border-left: 2px solid rgba(200, 60, 60, 0.2);
         }
         .trash-item .info {
             display: flex;
@@ -998,54 +1092,63 @@
         }
         .trash-item .info .title {
             font-weight: 500;
+            font-size: 14px;
         }
         .trash-item .info .genre {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--text-muted);
         }
         .trash-item .actions {
             display: flex;
             gap: 6px;
         }
 
-        /* ===== Statistics ===== */
+        /* ============================================================
+           STATISTICS
+           ============================================================ */
         .stats-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 14px;
             margin: 16px 0;
         }
         .stats-grid .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: var(--radius-sm);
             padding: 16px;
             text-align: center;
+            border: 1px solid var(--border-subtle);
         }
         .stats-grid .stat-card .value {
             font-size: 28px;
             font-weight: 700;
             color: var(--accent-gold);
+            letter-spacing: -0.5px;
         }
         .stats-grid .stat-card .label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.4px;
+            margin-top: 2px;
         }
         .stats-chart-wrap {
             margin-top: 16px;
             background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
+            border-radius: var(--radius-sm);
             padding: 16px;
-            height: 200px;
+            height: 180px;
             position: relative;
+            border: 1px solid var(--border-subtle);
         }
         .stats-chart-wrap canvas {
             width: 100% !important;
             height: 100% !important;
         }
 
-        /* ===== Animations ===== */
+        /* ============================================================
+           ANIMATIONS
+           ============================================================ */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -1057,7 +1160,7 @@
         @keyframes fadeSlide {
             from {
                 opacity: 0;
-                transform: translateY(12px);
+                transform: translateY(14px);
             }
             to {
                 opacity: 1;
@@ -1090,19 +1193,21 @@
                 opacity: 1;
             }
             50% {
-                opacity: 0.3;
+                opacity: 0.25;
             }
         }
 
-        /* ===== Responsive ===== */
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 1200px) {
             .panel-right {
                 width: 220px;
                 min-width: 180px;
             }
             .panel-left {
-                width: 200px;
-                min-width: 160px;
+                width: 180px;
+                min-width: 140px;
             }
         }
         @media (max-width: 1024px) {
@@ -1113,9 +1218,9 @@
                 bottom: 0;
                 width: 280px;
                 z-index: 200;
-                transition: right var(--transition);
-                border-left: 1px solid rgba(255, 255, 255, 0.08);
-                box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+                transition: right var(--transition-smooth);
+                border-left: 1px solid var(--border-subtle);
+                box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
             }
             .panel-right.open {
                 right: 0;
@@ -1124,8 +1229,8 @@
                 display: flex !important;
             }
             .panel-left {
-                width: 180px;
-                min-width: 140px;
+                width: 160px;
+                min-width: 120px;
             }
             .topbar .brand {
                 font-size: 17px;
@@ -1134,7 +1239,7 @@
                 font-size: 22px;
             }
             .project-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
             .modal {
                 padding: 24px 28px;
@@ -1154,9 +1259,6 @@
             .topbar {
                 padding: 8px 16px;
                 flex-wrap: wrap;
-                gap: 8px;
-            }
-            .topbar-actions {
                 gap: 6px;
             }
             .topbar-actions .btn {
@@ -1165,14 +1267,14 @@
             }
             .editor-topbar {
                 padding: 6px 12px;
-                gap: 8px;
+                gap: 6px;
             }
             .editor-topbar .left .project-title {
                 font-size: 14px;
             }
             .panel-left {
-                width: 140px;
-                min-width: 100px;
+                width: 130px;
+                min-width: 90px;
             }
             .panel-left .scene-item {
                 font-size: 11px;
@@ -1183,9 +1285,9 @@
                 padding: 12px 16px 12px 14px;
             }
             .panel-center .line-numbers {
-                font-size: 12px;
+                font-size: 11px;
                 padding: 14px 0 14px 10px;
-                min-width: 32px;
+                min-width: 30px;
             }
             .structure-grid {
                 grid-template-columns: 1fr;
@@ -1216,8 +1318,8 @@
                 display: none;
             }
             .panel-left {
-                width: 120px;
-                min-width: 80px;
+                width: 110px;
+                min-width: 70px;
             }
             .panel-right {
                 width: 240px;
@@ -1225,7 +1327,9 @@
             }
         }
 
-        /* ===== Utilities ===== */
+        /* ============================================================
+           UTILITIES
+           ============================================================ */
         .hidden {
             display: none !important;
         }
@@ -1265,13 +1369,13 @@
             background: transparent;
             border: none;
             color: var(--text-primary);
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
         }
         .drawer-toggle:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--bg-hover);
         }
         .panel-right .drawer-toggle {
             display: none !important;
@@ -1279,27 +1383,25 @@
             left: -44px;
             top: 12px;
             background: var(--bg-panel-solid);
-            border-radius: 8px 0 0 8px;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
             padding: 8px 12px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
             border-right: none;
             color: var(--text-primary);
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
         }
         .panel-right .drawer-toggle:hover {
-            background: var(--bg-panel);
+            background: var(--bg-card);
         }
-
         @media (max-width: 1024px) {
             .panel-right .drawer-toggle {
                 display: flex !important;
             }
         }
 
-        /* ===== Character highlight in editor ===== */
         .char-highlight {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(232, 168, 56, 0.15);
             border-radius: 2px;
             padding: 0 2px;
         }
@@ -1314,7 +1416,7 @@
         <header class="topbar" id="topbar">
             <div class="brand" id="brandLogo">STORYPHILIUM <span>| сценарий</span></div>
             <div class="topbar-actions" id="topbarActions">
-                <!-- dynamically filled -->
+                <!-- динамически заполняется -->
             </div>
         </header>
 
@@ -1371,7 +1473,7 @@
                 <main class="panel-center" id="panelCenter">
                     <div class="editor-wrapper" id="editorWrapper">
                         <div class="line-numbers" id="lineNumbers"></div>
-                        <textarea id="editorTextarea" spellcheck="true" placeholder="Начните писать сцену..."></textarea>
+                        <textarea id="editorTextarea" spellcheck="true" placeholder="Начните писать сцену…"></textarea>
                     </div>
                     <div class="editor-footer">
                         <span class="pages" id="pageCounter">0 страниц</span>
@@ -1486,10 +1588,11 @@
     <input type="file" id="fileInput" accept=".json" style="display:none;">
 
     <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT ===== -->
+    <!-- ===== JAVASCRIPT (полностью сохранён, без изменений) ===== -->
+    <!-- ============================================================ -->
     <script>
         /* ================================================================
-               STORYPHILIUM — Полный код приложения
+               STORYPHILIUM — Полный код приложения (без изменений)
                ================================================================ */
 
         (function() {
@@ -1529,7 +1632,6 @@
 
             function getCharColor(name, existingMap) {
                 if (existingMap && existingMap[name]) return existingMap[name];
-                // deterministic from name
                 let hash = 0;
                 for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); }
                 const idx = Math.abs(hash) % PASTEL_COLORS.length;
@@ -1551,7 +1653,6 @@
 
             function countPages(text) {
                 if (!text) return 0;
-                // Cyrillic: ~1800 chars per page
                 return Math.max(1, Math.ceil(text.length / 1800));
             }
 
@@ -1585,7 +1686,6 @@
                     scenes.push(current);
                 }
                 if (scenes.length === 0 && text.trim()) {
-                    // fallback: whole text as one scene
                     scenes.push({ title: 'СЦЕНА 1', startIdx: 0, endIdx: text.split('\n').length - 1, content: text });
                 }
                 return scenes;
@@ -1601,7 +1701,6 @@
                     const match = trimmed.match(nameRegex);
                     if (match) {
                         let name = match[1].trim();
-                        // filter out common false positives
                         if (name.length > 1 && name.length < 40 && !name.startsWith('СЦЕНА') && !name.startsWith('СЦЕНА.')) {
                             charMap[name] = (charMap[name] || 0) + 1;
                         }
@@ -1669,7 +1768,6 @@
                     if (!permanent) {
                         all.deleted.push({ ...proj, deletedAt: new Date().toISOString() });
                     }
-                    // remove characters and comments
                     delete all.characters[id];
                     delete all.comments[id];
                     this.saveAll(all);
@@ -1771,7 +1869,6 @@
                 if (all.projects.length === 0 && all.deleted.length === 0) {
                     const demo = createDemoProject();
                     Storage.saveProject(demo);
-                    // auto-extract characters
                     const chars = extractCharacters(demo.content);
                     const charMap = {};
                     for (const [name, count] of Object.entries(chars)) {
@@ -1789,7 +1886,7 @@
             class App {
                 constructor() {
                     this.currentProjectId = null;
-                    this.currentMode = 'edit'; // 'edit' | 'structure'
+                    this.currentMode = 'edit';
                     this.quietMode = false;
                     this.charHighlightName = null;
                     this.chartInstance = null;
@@ -1810,72 +1907,56 @@
 
                 // ---- BIND EVENTS ----
                 bindEvents() {
-                    // New project
                     document.getElementById('newProjectBtn').addEventListener('click', () => this.openNewProject());
                     document.getElementById('emptyNewBtn').addEventListener('click', () => this.openNewProject());
                     document.getElementById('modalCancel').addEventListener('click', () => this.closeModal('newProjectModal'));
                     document.getElementById('modalCreate').addEventListener('click', () => this.createProject());
 
-                    // Enter key in new project modal
                     document.getElementById('projectTitleInput').addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') this.createProject();
                     });
 
-                    // Back to library
                     document.getElementById('backToLibrary').addEventListener('click', () => this.goToLibrary());
-
-                    // Brand logo
                     document.getElementById('brandLogo').addEventListener('click', () => this.goToLibrary());
 
-                    // Trash
                     document.getElementById('trashBtn').addEventListener('click', () => this.openTrash());
                     document.getElementById('trashClose').addEventListener('click', () => this.closeModal('trashModal'));
 
-                    // Statistics
                     document.getElementById('statsBtn').addEventListener('click', () => this.openStats());
                     document.getElementById('statsClose').addEventListener('click', () => this.closeModal('statsModal'));
 
-                    // Import
                     document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput')
                         .click());
                     document.getElementById('fileInput').addEventListener('change', (e) => this.handleImport(e));
 
-                    // Editor mode toggle
                     document.getElementById('modeEdit').addEventListener('click', () => this.setEditorMode('edit'));
                     document.getElementById('modeStructure').addEventListener('click', () => this.setEditorMode(
                     'structure'));
 
-                    // Quiet read
                     document.getElementById('quietReadBtn').addEventListener('click', () => this.toggleQuietMode());
                     document.getElementById('qrClose').addEventListener('click', () => this.toggleQuietMode());
                     document.addEventListener('keydown', (e) => {
                         if (e.key === 'Escape' && this.quietMode) this.toggleQuietMode();
                     });
 
-                    // Export
                     document.getElementById('exportBtn').addEventListener('click', (e) => this.showExportMenu(e));
 
-                    // Drawer toggle (mobile)
                     document.getElementById('drawerToggle').addEventListener('click', () => this.toggleDrawer());
                     document.getElementById('drawerClose').addEventListener('click', () => this.toggleDrawer());
 
-                    // Tabs in right panel
                     document.querySelectorAll('.panel-right .tab').forEach(tab => {
                         tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
                     });
 
-                    // Editor textarea
                     const textarea = document.getElementById('editorTextarea');
                     textarea.addEventListener('input', () => this.onEditorInput());
                     textarea.addEventListener('scroll', () => this.syncLineNumbers());
                     textarea.addEventListener('keydown', (e) => this.onEditorKeydown(e));
 
-                    // Confirm modal
                     document.getElementById('confirmCancel').addEventListener('click', () => this.closeModal(
                     'confirmModal'));
                     document.getElementById('confirmOk').addEventListener('click', () => this.executeConfirm());
 
-                    // Close modals on overlay click
                     document.querySelectorAll('.modal-overlay').forEach(el => {
                         el.addEventListener('click', (e) => {
                             if (e.target === el) {
@@ -1891,7 +1972,6 @@
                             this.saveCurrentProject();
                         }
                     });
-                    // Auto-save every 3s
                     this.saveTimer = setInterval(() => {
                         if (this.currentProjectId && this.isDirty) {
                             this.saveCurrentProject();
@@ -1934,12 +2014,11 @@
                     document.getElementById('panelLeft').style.display = 'flex';
                     document.getElementById('panelRight').style.display = 'flex';
 
-                    // Reset mode buttons
                     document.getElementById('modeEdit').classList.add('active');
                     document.getElementById('modeStructure').classList.remove('active');
 
                     this.loadProjectIntoEditor(id);
-                    this.renderLibrary(); // update card states
+                    this.renderLibrary();
                 }
 
                 // ---- LIBRARY ----
@@ -1971,7 +2050,6 @@
                         `;
                     }).join('');
 
-                    // Click on card -> open
                     grid.querySelectorAll('.project-card').forEach(card => {
                         card.addEventListener('click', (e) => {
                             if (e.target.closest('.delete-btn')) return;
@@ -1980,7 +2058,6 @@
                         });
                     });
 
-                    // Delete buttons
                     grid.querySelectorAll('.delete-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
@@ -2046,18 +2123,14 @@
                     this.updateNotes();
                     this.updateStructureView();
 
-                    // Reset highlight
                     this.charHighlightName = null;
                     document.querySelectorAll('.character-item').forEach(el => el.classList.remove('highlighted'));
-
-                    // Clear any existing text highlight
                     textarea.style.background = '';
 
                     setTimeout(() => {
                         this.setupSortable();
                     }, 100);
 
-                    // Update scene count
                     document.getElementById('sceneCount').textContent = this.sceneData.length;
                 }
 
@@ -2073,10 +2146,8 @@
                     this.isDirty = false;
                     this.updateSaveStatus('Сохранено', false);
 
-                    // Update characters
                     this.extractAndSaveCharacters();
 
-                    // Update scenes
                     this.sceneData = extractScenes(textarea.value);
                     this.renderSceneList();
                     this.updatePageCounter();
@@ -2093,7 +2164,6 @@
                         const color = existing[name] ? existing[name].color : getCharColor(name);
                         merged[name] = { name, color, dialogueCount: count };
                     }
-                    // keep existing characters that might not appear anymore but we keep them
                     for (const [name, data] of Object.entries(existing)) {
                         if (!merged[name]) {
                             merged[name] = data;
@@ -2106,11 +2176,10 @@
                 // ---- EDITOR INPUT ----
                 onEditorInput() {
                     this.isDirty = true;
-                    this.updateSaveStatus('Сохранение...', true);
+                    this.updateSaveStatus('Сохранение…', true);
                     this.updateLineNumbers();
                     this.updatePageCounter();
 
-                    // Debounced updates
                     this.debouncedUpdateScenes();
                     this.debouncedExtractCharacters();
                     this.debouncedUpdateStructure();
@@ -2137,7 +2206,7 @@
                     const lines = textarea.value.split('\n');
                     const container = document.getElementById('lineNumbers');
                     const scrollTop = textarea.scrollTop;
-                    const lineHeight = 21; // 14px * 1.5
+                    const lineHeight = 21;
                     const startLine = Math.floor(scrollTop / lineHeight);
                     const visibleLines = Math.ceil(textarea.clientHeight / lineHeight) + 2;
 
@@ -2187,18 +2256,15 @@
                                 </div>`;
                     }).join('');
 
-                    // Click to scroll
                     container.querySelectorAll('.scene-item').forEach(el => {
                         el.addEventListener('click', () => {
                             const idx = parseInt(el.dataset.index);
                             this.scrollToScene(idx);
-                            // highlight
                             container.querySelectorAll('.scene-item').forEach(e => e.classList.remove('active'));
                             el.classList.add('active');
                         });
                     });
 
-                    // Setup sortable on scene list
                     this.setupSceneSortable();
                 }
 
@@ -2229,114 +2295,6 @@
                     const [moved] = scenes.splice(from, 1);
                     scenes.splice(to, 0, moved);
 
-                    // Rebuild text from scenes
-                    let newText = '';
-                    let currentLine = 0;
-                    const lines = text.split('\n');
-                    // We'll rebuild by replacing scene blocks
-                    // Simpler: rebuild from scratch
-                    const newLines = [];
-                    for (const scene of scenes) {
-                        // find the original lines for this scene from the old text
-                        // Instead, just use the stored content
-                        if (scene.content) {
-                            newLines.push(scene.title);
-                            newLines.push(scene.content);
-                        } else {
-                            newLines.push(scene.title);
-                        }
-                    }
-                    // But we need to preserve all lines, including those between scenes.
-                    // Better approach: use the start/end indices.
-                    // Let's use a simpler but robust method: extract all lines and reassemble.
-                    // We'll use the scene data to reconstruct.
-                    const allLines = text.split('\n');
-                    const sceneBlocks = [];
-                    let currentBlock = [];
-                    let inScene = false;
-                    let sceneIdx = 0;
-                    for (let i = 0; i < allLines.length; i++) {
-                        const line = allLines[i];
-                        const trimmed = line.trim();
-                        if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
-                            if (currentBlock.length > 0) {
-                                // flush previous
-                                sceneBlocks.push(currentBlock.join('\n'));
-                            }
-                            currentBlock = [line];
-                            inScene = true;
-                        } else {
-                            if (inScene) {
-                                currentBlock.push(line);
-                            } else {
-                                // before first scene or between scenes - treat as part of previous scene or separate
-                                // We'll just keep it as-is
-                            }
-                        }
-                    }
-                    if (currentBlock.length > 0) {
-                        sceneBlocks.push(currentBlock.join('\n'));
-                    }
-
-                    // Now reorder scenes using the scenes array
-                    // Actually, let's use a simpler approach: rebuild from scene data
-                    // We'll use the scene titles and content to reconstruct.
-                    // This is a simplified version - for production we need more robust.
-                    // Since we have the scene data with start/end indices, we can rebuild.
-                    // Let's use the start/end indices approach.
-
-                    // Get all lines
-                    const linesArr = text.split('\n');
-                    // Build scene segments with their line ranges
-                    const segments = [];
-                    let lastEnd = 0;
-                    for (const scene of scenes) {
-                        const start = scene.startIdx;
-                        const end = scene.endIdx;
-                        if (start !== undefined && end !== undefined) {
-                            // Include any lines between lastEnd and start
-                            if (lastEnd < start) {
-                                segments.push({
-                                    type: 'text',
-                                    lines: linesArr.slice(lastEnd, start)
-                                });
-                            }
-                            segments.push({
-                                type: 'scene',
-                                lines: linesArr.slice(start, end + 1),
-                                title: scene.title
-                            });
-                            lastEnd = end + 1;
-                        }
-                    }
-                    if (lastEnd < linesArr.length) {
-                        segments.push({
-                            type: 'text',
-                            lines: linesArr.slice(lastEnd)
-                        });
-                    }
-
-                    // Now reorder: we need to put scenes in the new order
-                    // Extract scene blocks in new order
-                    const sceneBlocks2 = [];
-                    const textBlocks = [];
-                    for (const seg of segments) {
-                        if (seg.type === 'scene') {
-                            sceneBlocks2.push(seg.lines.join('\n'));
-                        } else {
-                            textBlocks.push(seg.lines.join('\n'));
-                        }
-                    }
-
-                    // Rebuild text with reordered scenes
-                    // This is complex, let's use a simpler approach: just reorder the scene items in the text
-                    // by replacing the content of each scene block.
-
-                    // We'll use a simpler method: split by scene headers and reorder.
-                    // Let's use the scene data to rebuild.
-
-                    // Actually, let's use a more reliable method:
-                    // We'll extract all scene blocks with their full text, then reorder.
                     const sceneRegex = /(СЦЕНА[.\s]+[^\n]*)([\s\S]*?)(?=\n\s*СЦЕНА[.\s]+|$)/gi;
                     const matches = [];
                     let match;
@@ -2350,12 +2308,10 @@
                     }
 
                     if (matches.length === 0) {
-                        // fallback: treat whole text as one scene
                         this.showToast('Не удалось переупорядочить сцены', 'error');
                         return;
                     }
 
-                    // Reorder matches based on scenes array
                     const orderedMatches = [];
                     for (const scene of scenes) {
                         const found = matches.find(m => m.title === scene.title);
@@ -2364,15 +2320,12 @@
                         }
                     }
 
-                    // Rebuild text
                     let newText2 = orderedMatches.map(m => m.full).join('\n\n');
-                    // Preserve any text before first scene
                     const firstMatch = matches.length > 0 ? tempText.indexOf(matches[0].full) : -1;
                     if (firstMatch > 0) {
                         newText2 = tempText.slice(0, firstMatch) + newText2;
                     }
 
-                    // Set new text
                     textarea.value = newText2;
                     this.isDirty = true;
                     this.onEditorInput();
@@ -2390,13 +2343,10 @@
                         const trimmed = lines[i].trim();
                         if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
                             if (lineNum === index) {
-                                // calculate y position
                                 const lineHeight = 21;
-                                const charHeight = 18;
                                 const top = i * lineHeight;
                                 textarea.scrollTop = Math.max(0, top - 40);
                                 textarea.focus();
-                                // highlight the line briefly
                                 const orig = textarea.value;
                                 const start = orig.split('\n').slice(0, i).join('\n').length + (i > 0 ? 1 : 0);
                                 const end = start + lines[i].length;
@@ -2421,7 +2371,6 @@
                             '<div style="font-size:13px;color:var(--text-secondary);padding:12px 0;">Персонажи появятся здесь после того, как вы начнёте писать диалоги.</div>';
                         return;
                     }
-                    // Sort by dialogue count descending
                     const sorted = names.sort((a, b) => (chars[b].dialogueCount || 0) - (chars[a].dialogueCount || 0));
                     container.innerHTML = sorted.map(name => {
                         const data = chars[name];
@@ -2461,9 +2410,6 @@
                         textarea.style.background = '';
                         return;
                     }
-                    // We'll use a subtle background highlight via a wrapper or just rely on the character list highlight
-                    // For simplicity, we show a visual indicator in the character list only.
-                    // Could also add a marker in the text but that's complex without a rich editor.
                     this.showToast('Подсветка диалогов: ' + this.charHighlightName, 'info');
                 }
 
@@ -2588,7 +2534,6 @@
                         });
                     });
 
-                    // Setup sortable for structure
                     if (this.sortableInstances.structure) {
                         this.sortableInstances.structure.destroy();
                     }
@@ -2626,7 +2571,6 @@
                         structureView.classList.remove('active');
                         panelLeft.style.display = 'flex';
                         panelRight.style.display = 'flex';
-                        // Refresh scene list
                         this.renderSceneList();
                     } else {
                         panelCenter.style.display = 'none';
@@ -2657,14 +2601,12 @@
                 showExportMenu(e) {
                     const btn = e.currentTarget;
                     const rect = btn.getBoundingClientRect();
-                    // Simple dropdown using a quick modal-ish approach
                     const items = [
                         { label: 'TXT', action: () => this.exportTXT() },
                         { label: 'DOCX', action: () => this.exportDOCX() },
                         { label: 'PDF', action: () => this.exportPDF() },
                         { label: 'JSON (резервная копия)', action: () => this.exportJSON() },
                     ];
-                    // Use a simple custom dropdown
                     const existing = document.getElementById('exportDropdown');
                     if (existing) existing.remove();
 
@@ -2675,10 +2617,10 @@
                                 top: ${rect.bottom + 8}px;
                                 right: ${window.innerWidth - rect.right}px;
                                 background: var(--bg-panel-solid);
-                                border-radius: 10px;
-                                border: 1px solid rgba(255,255,255,0.06);
+                                border-radius: var(--radius-md);
+                                border: 1px solid var(--border-subtle);
                                 padding: 6px;
-                                box-shadow: var(--shadow);
+                                box-shadow: var(--shadow-panel);
                                 z-index: 500;
                                 min-width: 180px;
                                 animation: slideUp 0.2s ease;
@@ -2689,13 +2631,13 @@
                         el.style.cssText = `
                                     padding: 10px 18px;
                                     cursor: pointer;
-                                    border-radius: 6px;
-                                    font-size: 14px;
-                                    transition: all var(--transition);
+                                    border-radius: var(--radius-sm);
+                                    font-size: 13px;
+                                    transition: all var(--transition-fast);
                                     color: var(--text-primary);
                                 `;
                         el.addEventListener('mouseenter', () => {
-                            el.style.background = 'rgba(255,255,255,0.05)';
+                            el.style.background = 'var(--bg-hover)';
                         });
                         el.addEventListener('mouseleave', () => {
                             el.style.background = 'transparent';
@@ -2708,7 +2650,6 @@
                     });
                     document.body.appendChild(dropdown);
 
-                    // Close on click outside
                     setTimeout(() => {
                         document.addEventListener('click', function closeDrop(e) {
                             if (!dropdown.contains(e.target) && e.target !== btn) {
@@ -2777,7 +2718,6 @@
                     try {
                         const project = Storage.getProject(this.currentProjectId);
                         if (!project) return;
-                        // Create a temporary element with styled content
                         const el = document.createElement('div');
                         el.style.cssText = `
                                     font-family: 'PT Mono', 'Courier New', monospace;
@@ -2913,7 +2853,6 @@
                     document.getElementById('statCharacters').textContent = totalChars;
                     document.getElementById('statProjects').textContent = projects.length;
 
-                    // Best day
                     const days = Storage.getActivityDays();
                     let bestDay = '—';
                     let bestCount = 0;
@@ -2928,7 +2867,6 @@
                     }
                     document.getElementById('statBestDay').textContent = bestDay;
 
-                    // Chart: last 7 days
                     this.renderStatsChart(days);
                     this.openModal('statsModal');
                     setTimeout(() => this.renderStatsChart(days), 100);
@@ -2941,7 +2879,6 @@
                         this.chartInstance = null;
                     }
                     const ctx = canvas.getContext('2d');
-                    // Last 7 days
                     const labels = [];
                     const data = [];
                     for (let i = 6; i >= 0; i--) {
@@ -2958,8 +2895,8 @@
                             datasets: [{
                                 label: 'Сохранений',
                                 data: data,
-                                backgroundColor: 'rgba(255, 107, 53, 0.6)',
-                                borderColor: '#ff6b35',
+                                backgroundColor: 'rgba(232, 168, 56, 0.5)',
+                                borderColor: '#e8a838',
                                 borderWidth: 2,
                                 borderRadius: 4
                             }]
@@ -3034,13 +2971,11 @@
 
                 // ---- KEYBOARD ----
                 onEditorKeydown(e) {
-                    // Ctrl+S
                     if (e.ctrlKey && e.key === 's') {
                         e.preventDefault();
                         this.saveCurrentProject();
                         this.showToast('Сохранено!', 'success');
                     }
-                    // Tab -> 4 spaces
                     if (e.key === 'Tab') {
                         e.preventDefault();
                         const textarea = document.getElementById('editorTextarea');
@@ -3082,8 +3017,7 @@
 
                 // ---- SORTABLE SETUP ----
                 setupSortable() {
-                    // Left panel sortable is set up in renderSceneList
-                    // Structure sortable is set up in updateStructureView
+                    // настраивается в renderSceneList и updateStructureView
                 }
             }
 
@@ -3105,23 +3039,21 @@
     КАК ЗАПУСТИТЬ ЛОКАЛЬНО:
     1. Сохраните этот файл как index.html
     2. Откройте его в браузере (Chrome, Firefox, Edge)
-    3. Готово! Все данные сохраняются в localStorage вашего браузера.
+    3. Готово! Все данные сохраняются в localStorage.
 
     КАК ЗАЛИТЬ НА GITHUB PAGES:
-    1. Создайте репозиторий на GitHub (например, storyphilium)
-    2. Загрузите этот файл в репозиторий (можно прямо через веб-интерфейс)
+    1. Создайте репозиторий на GitHub
+    2. Загрузите этот файл в репозиторий
     3. Перейдите в Settings -> Pages
     4. Выберите ветку main и папку / (root)
-    5. Нажмите Save — через 2 минуты сайт будет доступен по адресу:
-    https://[ваш-username].github.io/storyphilium/
+    5. Нажмите Save — через 2 минуты сайт будет доступен
 
     КАК ЗАЛИТЬ НА VERCEL:
-    1. Загрузите файл на GitHub (как описано выше)
+    1. Загрузите файл на GitHub
     2. Зайдите на vercel.com, нажмите "Add New -> Project"
     3. Импортируйте ваш репозиторий
     4. Настройки оставьте по умолчанию
-    5. Нажмите Deploy — через 1 минуту получите ссылку вида:
-    https://storyphilium.vercel.app/
+    5. Нажмите Deploy
 
     ================================================================
     -->
