@@ -1,0 +1,3129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storyphilium — Профессиональный сценарный редактор</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=PT+Mono&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- CDN Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.0.0/build/index.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
+    <style>
+        /* ===== CSS Variables ===== */
+        :root {
+            --bg-primary: #151515;
+            --bg-panel: rgba(30, 30, 30, 0.85);
+            --bg-panel-solid: #1e1e1e;
+            --text-primary: #e8e6e3;
+            --text-secondary: #a8a6a3;
+            --accent-orange: #ff6b35;
+            --accent-gold: #f5a623;
+            --accent-gradient: linear-gradient(135deg, #ff6b35, #e85d2c);
+            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'PT Mono', 'Courier New', monospace;
+            --radius: 12px;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== Reset & Base ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(255, 107, 53, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(245, 166, 35, 0.03) 0%, transparent 50%);
+        }
+
+        /* ===== Scrollbars ===== */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e85d2c;
+        }
+
+        /* ===== App Shell ===== */
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== Top Bar ===== */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 28px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+            z-index: 100;
+            min-height: 64px;
+        }
+        .topbar .brand {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            user-select: none;
+        }
+        .topbar .brand span {
+            font-weight: 400;
+            opacity: 0.5;
+        }
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .topbar-actions .btn {
+            font-size: 13px;
+            padding: 8px 18px;
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--transition);
+            background: var(--bg-panel-solid);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            text-decoration: none;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.25);
+        }
+        .btn-primary:hover {
+            box-shadow: 0 4px 32px rgba(255, 107, 53, 0.45);
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+        .btn-ghost {
+            background: transparent;
+            border-color: transparent;
+        }
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: transparent;
+        }
+        .btn-danger {
+            background: rgba(220, 50, 50, 0.2);
+            color: #ff6b6b;
+            border-color: rgba(220, 50, 50, 0.2);
+        }
+        .btn-danger:hover {
+            background: rgba(220, 50, 50, 0.35);
+            border-color: rgba(220, 50, 50, 0.3);
+        }
+        .btn-sm {
+            font-size: 12px;
+            padding: 6px 14px;
+        }
+        .btn-icon {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border-radius: 50%;
+            font-size: 18px;
+            background: transparent;
+            border-color: transparent;
+            color: var(--text-secondary);
+        }
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+        }
+
+        /* ===== Library View ===== */
+        #libraryView {
+            flex: 1;
+            padding: 32px 40px 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            animation: fadeSlide 0.4s ease;
+        }
+        #libraryView.hidden {
+            display: none;
+        }
+
+        .library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .library-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .library-header h1 small {
+            font-weight: 400;
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-left: 12px;
+        }
+        .library-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== Project Grid ===== */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            flex: 1;
+            align-content: start;
+        }
+        .project-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius);
+            padding: 22px 24px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 150px;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        .project-card .title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+        .project-card .genre {
+            font-size: 13px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        .project-card .meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .project-card .meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .project-card .delete-btn {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity var(--transition);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .project-card:hover .delete-btn {
+            opacity: 1;
+        }
+        .project-card .delete-btn:hover {
+            background: rgba(220, 50, 50, 0.2);
+            color: #ff6b6b;
+        }
+
+        /* ===== Empty State ===== */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeSlide 0.6s ease;
+        }
+        .empty-state .icon {
+            font-size: 72px;
+            margin-bottom: 24px;
+            opacity: 0.4;
+        }
+        .empty-state h2 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            max-width: 420px;
+            margin-bottom: 28px;
+        }
+
+        /* ===== Editor View ===== */
+        #editorView {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeSlide 0.3s ease;
+        }
+        #editorView.active {
+            display: flex;
+        }
+
+        .editor-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-shrink: 0;
+            min-height: 56px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .editor-topbar .left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .editor-topbar .left .project-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .editor-topbar .left .project-genre {
+            font-size: 12px;
+            color: var(--accent-gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: rgba(245, 166, 35, 0.12);
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+        .editor-topbar .right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .editor-topbar .right .btn {
+            font-size: 12px;
+            padding: 6px 14px;
+        }
+        .editor-topbar .mode-toggle {
+            display: flex;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 3px;
+            border-radius: 8px;
+        }
+        .editor-topbar .mode-toggle .btn {
+            border-radius: 6px;
+            padding: 5px 14px;
+            font-size: 12px;
+            background: transparent;
+            border-color: transparent;
+            color: var(--text-secondary);
+        }
+        .editor-topbar .mode-toggle .btn.active {
+            background: var(--bg-panel-solid);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .editor-topbar .mode-toggle .btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== Editor Panels Container ===== */
+        .editor-panels {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ===== Left Panel (Navigation) ===== */
+        .panel-left {
+            width: 240px;
+            min-width: 200px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: width var(--transition);
+        }
+        .panel-left .panel-header {
+            padding: 14px 18px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .panel-left .panel-header .count {
+            font-weight: 400;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0 10px;
+            border-radius: 12px;
+        }
+        .panel-left .scene-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        .panel-left .scene-item {
+            padding: 6px 18px;
+            font-size: 13px;
+            font-family: var(--font-mono);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            border-left: 2px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            user-select: none;
+        }
+        .panel-left .scene-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-primary);
+        }
+        .panel-left .scene-item.active {
+            color: var(--text-primary);
+            border-left-color: var(--accent-orange);
+            background: rgba(255, 107, 53, 0.06);
+        }
+        .panel-left .scene-item .num {
+            color: var(--accent-gold);
+            font-weight: 600;
+            margin-right: 8px;
+            font-size: 11px;
+        }
+        .panel-left .scene-item.dragging {
+            opacity: 0.4;
+        }
+
+        /* ===== Center Panel (Editor) ===== */
+        .panel-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            overflow: hidden;
+            position: relative;
+        }
+        .panel-center .editor-wrapper {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+        .panel-center .line-numbers {
+            padding: 16px 0 16px 16px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            text-align: right;
+            user-select: none;
+            overflow: hidden;
+            min-width: 48px;
+            background: var(--bg-primary);
+            opacity: 0.5;
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
+            flex-shrink: 0;
+            padding-top: 18px;
+        }
+        .panel-center .line-numbers span {
+            display: block;
+            font-size: 13px;
+        }
+        .panel-center textarea {
+            flex: 1;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: transparent;
+            border: none;
+            outline: none;
+            resize: none;
+            padding: 16px 24px 16px 20px;
+            tab-size: 4;
+            width: 100%;
+            min-height: 100%;
+            scroll-behavior: smooth;
+        }
+        .panel-center textarea::selection {
+            background: rgba(255, 107, 53, 0.3);
+        }
+        .panel-center .editor-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            flex-shrink: 0;
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .panel-center .editor-footer .pages {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+        .panel-center .editor-footer .status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .panel-center .editor-footer .status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4caf50;
+            display: inline-block;
+        }
+        .panel-center .editor-footer .status .dot.saving {
+            background: var(--accent-gold);
+            animation: pulse 1s infinite;
+        }
+
+        /* ===== Right Panel (Characters & Notes) ===== */
+        .panel-right {
+            width: 280px;
+            min-width: 240px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-left: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: width var(--transition);
+        }
+        .panel-right .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            flex-shrink: 0;
+        }
+        .panel-right .tabs .tab {
+            flex: 1;
+            padding: 12px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: var(--font-ui);
+        }
+        .panel-right .tabs .tab:hover {
+            color: var(--text-primary);
+        }
+        .panel-right .tabs .tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--accent-orange);
+        }
+        .panel-right .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            display: none;
+        }
+        .panel-right .tab-content.active {
+            display: block;
+        }
+
+        /* Characters */
+        .character-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-bottom: 2px;
+        }
+        .character-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .character-item .name {
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .character-item .name .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .character-item .count {
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0 10px;
+            border-radius: 12px;
+        }
+        .character-item.highlighted {
+            background: rgba(255, 215, 0, 0.12);
+        }
+
+        /* Notes */
+        .note-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent-gold);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .note-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        .note-item .text {
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-primary);
+        }
+        .note-item .preview {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+            opacity: 0.7;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .note-item .delete-note {
+            float: right;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+        .note-item .delete-note:hover {
+            color: #ff6b6b;
+        }
+        .add-note-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 20px 0;
+            border: 1px dashed rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            margin-top: 8px;
+        }
+
+        /* ===== Structure Mode ===== */
+        #structureView {
+            flex: 1;
+            display: none;
+            padding: 24px 32px;
+            overflow-y: auto;
+            background: var(--bg-primary);
+            animation: fadeSlide 0.3s ease;
+        }
+        #structureView.active {
+            display: block;
+        }
+        .structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 18px;
+        }
+        .structure-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all var(--transition);
+            cursor: default;
+        }
+        .structure-card:hover {
+            border-color: rgba(255, 107, 53, 0.2);
+            transform: translateY(-2px);
+        }
+        .structure-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .structure-card .header .scene-title {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+        .structure-card .header .edit-btn {
+            font-size: 12px;
+            padding: 3px 12px;
+            border-radius: 6px;
+            background: rgba(255, 107, 53, 0.15);
+            color: var(--accent-orange);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .structure-card .header .edit-btn:hover {
+            background: rgba(255, 107, 53, 0.25);
+        }
+        .structure-card .preview {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .structure-card.dragging {
+            opacity: 0.3;
+        }
+
+        /* ===== Quiet Rhythm Mode ===== */
+        #quietRhythm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f0e8;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 80px;
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease;
+        }
+        #quietRhythm.active {
+            display: flex;
+        }
+        #quietRhythm .qr-text {
+            font-family: var(--font-mono);
+            font-size: 18px;
+            line-height: 2.0;
+            color: #2c2c2c;
+            max-width: 720px;
+            width: 100%;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            padding: 20px 0;
+        }
+        #quietRhythm .qr-close {
+            position: fixed;
+            top: 28px;
+            right: 32px;
+            background: rgba(0, 0, 0, 0.06);
+            border: none;
+            color: #2c2c2c;
+            font-size: 20px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-ui);
+            font-weight: 600;
+            transition: all var(--transition);
+            backdrop-filter: blur(4px);
+        }
+        #quietRhythm .qr-close:hover {
+            background: rgba(0, 0, 0, 0.12);
+        }
+
+        /* ===== Modal ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: var(--bg-panel-solid);
+            border-radius: var(--radius);
+            padding: 32px 40px;
+            max-width: 480px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: var(--shadow);
+            animation: slideUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .modal .sub {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+        .modal input,
+        .modal select,
+        .modal textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: var(--font-ui);
+            font-size: 14px;
+            transition: border var(--transition);
+            outline: none;
+            margin-bottom: 14px;
+        }
+        .modal input:focus,
+        .modal select:focus,
+        .modal textarea:focus {
+            border-color: var(--accent-orange);
+        }
+        .modal .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+        .modal .actions .btn {
+            font-size: 14px;
+            padding: 10px 24px;
+        }
+
+        /* ===== Toast ===== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            background: var(--bg-panel-solid);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 14px 22px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: var(--shadow);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            pointer-events: auto;
+            animation: slideRight 0.35s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 200px;
+        }
+        .toast.success {
+            border-left: 3px solid #4caf50;
+        }
+        .toast.error {
+            border-left: 3px solid #ff6b6b;
+        }
+        .toast.info {
+            border-left: 3px solid var(--accent-gold);
+        }
+        .toast .close-toast {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 4px;
+            margin-left: auto;
+        }
+
+        /* ===== Trash ===== */
+        .trash-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 2px solid rgba(220, 50, 50, 0.3);
+        }
+        .trash-item .info {
+            display: flex;
+            flex-direction: column;
+        }
+        .trash-item .info .title {
+            font-weight: 500;
+        }
+        .trash-item .info .genre {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .trash-item .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* ===== Statistics ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .stats-grid .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stats-grid .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+        .stats-grid .stat-card .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stats-chart-wrap {
+            margin-top: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 16px;
+            height: 200px;
+            position: relative;
+        }
+        .stats-chart-wrap canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes slideRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1200px) {
+            .panel-right {
+                width: 220px;
+                min-width: 180px;
+            }
+            .panel-left {
+                width: 200px;
+                min-width: 160px;
+            }
+        }
+        @media (max-width: 1024px) {
+            .panel-right {
+                position: fixed;
+                right: -300px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 200;
+                transition: right var(--transition);
+                border-left: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+            }
+            .panel-right.open {
+                right: 0;
+            }
+            .panel-right .drawer-toggle {
+                display: flex !important;
+            }
+            .panel-left {
+                width: 180px;
+                min-width: 140px;
+            }
+            .topbar .brand {
+                font-size: 17px;
+            }
+            .library-header h1 {
+                font-size: 22px;
+            }
+            .project-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            .modal {
+                padding: 24px 28px;
+                max-width: 400px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            #quietRhythm {
+                padding: 40px 30px;
+            }
+            #quietRhythm .qr-text {
+                font-size: 16px;
+            }
+        }
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 8px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .topbar-actions {
+                gap: 6px;
+            }
+            .topbar-actions .btn {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+            .editor-topbar {
+                padding: 6px 12px;
+                gap: 8px;
+            }
+            .editor-topbar .left .project-title {
+                font-size: 14px;
+            }
+            .panel-left {
+                width: 140px;
+                min-width: 100px;
+            }
+            .panel-left .scene-item {
+                font-size: 11px;
+                padding: 4px 12px;
+            }
+            .panel-center textarea {
+                font-size: 13px;
+                padding: 12px 16px 12px 14px;
+            }
+            .panel-center .line-numbers {
+                font-size: 12px;
+                padding: 14px 0 14px 10px;
+                min-width: 32px;
+            }
+            .structure-grid {
+                grid-template-columns: 1fr;
+            }
+            #libraryView {
+                padding: 20px 16px;
+            }
+            .project-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            #quietRhythm .qr-text {
+                font-size: 15px;
+                line-height: 1.8;
+            }
+            .modal {
+                padding: 20px;
+                max-width: 94%;
+            }
+        }
+        @media (max-width: 500px) {
+            .project-grid {
+                grid-template-columns: 1fr;
+            }
+            .topbar-actions .btn span {
+                display: none;
+            }
+            .editor-topbar .right .btn span {
+                display: none;
+            }
+            .panel-left {
+                width: 120px;
+                min-width: 80px;
+            }
+            .panel-right {
+                width: 240px;
+                right: -260px;
+            }
+        }
+
+        /* ===== Utilities ===== */
+        .hidden {
+            display: none !important;
+        }
+        .flex {
+            display: flex;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .gap-12 {
+            gap: 12px;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .text-gold {
+            color: var(--accent-gold);
+        }
+        .text-orange {
+            color: var(--accent-orange);
+        }
+        .text-muted {
+            color: var(--text-secondary);
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .w-full {
+            width: 100%;
+        }
+
+        .drawer-toggle {
+            display: none !important;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .drawer-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .panel-right .drawer-toggle {
+            display: none !important;
+            position: absolute;
+            left: -44px;
+            top: 12px;
+            background: var(--bg-panel-solid);
+            border-radius: 8px 0 0 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-right: none;
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .panel-right .drawer-toggle:hover {
+            background: var(--bg-panel);
+        }
+
+        @media (max-width: 1024px) {
+            .panel-right .drawer-toggle {
+                display: flex !important;
+            }
+        }
+
+        /* ===== Character highlight in editor ===== */
+        .char-highlight {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== APP ===== -->
+    <div id="app">
+
+        <!-- ===== TOP BAR ===== -->
+        <header class="topbar" id="topbar">
+            <div class="brand" id="brandLogo">STORYPHILIUM <span>| сценарий</span></div>
+            <div class="topbar-actions" id="topbarActions">
+                <!-- dynamically filled -->
+            </div>
+        </header>
+
+        <!-- ===== LIBRARY VIEW ===== -->
+        <section id="libraryView">
+            <div class="library-header">
+                <h1>Библиотека <small>ваши проекты</small></h1>
+                <div class="library-actions">
+                    <button class="btn btn-primary" id="newProjectBtn">+ Новый сценарий</button>
+                    <button class="btn btn-ghost" id="trashBtn">Корзина</button>
+                    <button class="btn btn-ghost" id="statsBtn">Статистика</button>
+                    <button class="btn btn-ghost" id="importBtn">Восстановить</button>
+                </div>
+            </div>
+            <div class="project-grid" id="projectGrid"></div>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div class="icon">✍</div>
+                <h2>Первый сценарий ждёт</h2>
+                <p>Создайте новый проект и начните писать. Все данные сохраняются в вашем браузере.</p>
+                <button class="btn btn-primary" id="emptyNewBtn">+ Создать сценарий</button>
+            </div>
+        </section>
+
+        <!-- ===== EDITOR VIEW ===== -->
+        <section id="editorView">
+            <div class="editor-topbar">
+                <div class="left">
+                    <button class="btn btn-ghost btn-sm" id="backToLibrary">← Назад</button>
+                    <span class="project-title" id="editorProjectTitle">Без названия</span>
+                    <span class="project-genre" id="editorProjectGenre">Драма</span>
+                </div>
+                <div class="right">
+                    <div class="mode-toggle">
+                        <button class="btn active" data-mode="edit" id="modeEdit">Редактор</button>
+                        <button class="btn" data-mode="structure" id="modeStructure">Структура</button>
+                    </div>
+                    <button class="btn btn-ghost btn-sm" id="quietReadBtn">📖 Читать</button>
+                    <button class="btn btn-ghost btn-sm" id="exportBtn">Скачать ▾</button>
+                    <button class="btn btn-ghost btn-sm drawer-toggle" id="drawerToggle">☰</button>
+                </div>
+            </div>
+
+            <div class="editor-panels">
+                <!-- Left Panel -->
+                <aside class="panel-left" id="panelLeft">
+                    <div class="panel-header">
+                        <span>Сцены</span>
+                        <span class="count" id="sceneCount">0</span>
+                    </div>
+                    <div class="scene-list" id="sceneList"></div>
+                </aside>
+
+                <!-- Center Panel -->
+                <main class="panel-center" id="panelCenter">
+                    <div class="editor-wrapper" id="editorWrapper">
+                        <div class="line-numbers" id="lineNumbers"></div>
+                        <textarea id="editorTextarea" spellcheck="true" placeholder="Начните писать сцену..."></textarea>
+                    </div>
+                    <div class="editor-footer">
+                        <span class="pages" id="pageCounter">0 страниц</span>
+                        <span class="status">
+                            <span id="saveStatus">Сохранено</span>
+                            <span class="dot" id="statusDot"></span>
+                        </span>
+                    </div>
+                </main>
+
+                <!-- Right Panel -->
+                <aside class="panel-right" id="panelRight">
+                    <button class="drawer-toggle" id="drawerClose">✕</button>
+                    <div class="tabs">
+                        <button class="tab active" data-tab="characters">Персонажи</button>
+                        <button class="tab" data-tab="notes">Заметки</button>
+                    </div>
+                    <div class="tab-content active" id="tabCharacters"></div>
+                    <div class="tab-content" id="tabNotes"></div>
+                </aside>
+            </div>
+
+            <!-- Structure View (inside editor) -->
+            <div id="structureView">
+                <div class="structure-grid" id="structureGrid"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== QUIET RHYTHM ===== -->
+    <div id="quietRhythm">
+        <button class="qr-close" id="qrClose">✕ Вернуться</button>
+        <div class="qr-text" id="qrText"></div>
+    </div>
+
+    <!-- ===== MODALS ===== -->
+    <!-- New Project -->
+    <div class="modal-overlay" id="newProjectModal">
+        <div class="modal">
+            <h2>Новый сценарий</h2>
+            <p class="sub">Создайте проект для вашей истории</p>
+            <label>Название</label>
+            <input type="text" id="projectTitleInput" placeholder="Мой сценарий" value="Новый сценарий">
+            <label>Жанр</label>
+            <select id="projectGenreInput">
+                <option value="Драма">Драма</option>
+                <option value="Комедия">Комедия</option>
+                <option value="Триллер">Триллер</option>
+                <option value="Фантастика">Фантастика</option>
+                <option value="Фэнтези">Фэнтези</option>
+                <option value="Детектив">Детектив</option>
+                <option value="Романтика">Романтика</option>
+                <option value="Приключения">Приключения</option>
+                <option value="Ужасы">Ужасы</option>
+                <option value="Документальный">Документальный</option>
+            </select>
+            <div class="actions">
+                <button class="btn btn-ghost" id="modalCancel">Отмена</button>
+                <button class="btn btn-primary" id="modalCreate">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trash -->
+    <div class="modal-overlay" id="trashModal">
+        <div class="modal">
+            <h2>Корзина</h2>
+            <p class="sub">Удалённые проекты можно восстановить</p>
+            <div id="trashList"></div>
+            <div class="actions">
+                <button class="btn btn-ghost" id="trashClose">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="modal-overlay" id="statsModal">
+        <div class="modal" style="max-width:600px;">
+            <h2>Статистика</h2>
+            <p class="sub">Ваша творческая активность</p>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="value" id="statPages">0</div><div class="label">Всего страниц</div></div>
+                <div class="stat-card"><div class="value" id="statCharacters">0</div><div class="label">Персонажей</div></div>
+                <div class="stat-card"><div class="value" id="statProjects">0</div><div class="label">Проектов</div></div>
+                <div class="stat-card"><div class="value" id="statBestDay">—</div><div class="label">Самый продуктивный день</div></div>
+            </div>
+            <div class="stats-chart-wrap">
+                <canvas id="statsChart"></canvas>
+            </div>
+            <div class="actions" style="margin-top:16px;">
+                <button class="btn btn-ghost" id="statsClose">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal" style="max-width:400px;">
+            <h2 id="confirmTitle">Подтверждение</h2>
+            <p id="confirmMessage" class="sub">Вы уверены?</p>
+            <div class="actions">
+                <button class="btn btn-ghost" id="confirmCancel">Отмена</button>
+                <button class="btn btn-danger" id="confirmOk">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOASTS ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== HIDDEN FILE INPUT ===== -->
+    <input type="file" id="fileInput" accept=".json" style="display:none;">
+
+    <!-- ============================================================ -->
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        /* ================================================================
+               STORYPHILIUM — Полный код приложения
+               ================================================================ */
+
+        (function() {
+            'use strict';
+
+            // ===== PASTEL COLOR PALETTE (20 colors) =====
+            const PASTEL_COLORS = [
+                '#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF',
+                '#E8BAFF', '#FFB3E6', '#B3FFE0', '#FFD1B3', '#B3D4FF',
+                '#F0B3FF', '#B3FFB3', '#FFB3B3', '#B3D9FF', '#FFC8B3',
+                '#D4B3FF', '#B3FFD9', '#FFB3D9', '#B3ECFF', '#FFF0B3'
+            ];
+
+            // ===== UTILITY FUNCTIONS =====
+            function uid() {
+                return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+            }
+
+            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+            function debounce(fn, ms) {
+                let timer;
+                return function(...args) {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), ms);
+                };
+            }
+
+            function throttle(fn, ms) {
+                let last = 0;
+                return function(...args) {
+                    const now = Date.now();
+                    if (now - last >= ms) { last = now;
+                        fn.apply(this, args); }
+                };
+            }
+
+            function getCharColor(name, existingMap) {
+                if (existingMap && existingMap[name]) return existingMap[name];
+                // deterministic from name
+                let hash = 0;
+                for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); }
+                const idx = Math.abs(hash) % PASTEL_COLORS.length;
+                return PASTEL_COLORS[idx];
+            }
+
+            function formatDate(iso) {
+                if (!iso) return '—';
+                const d = new Date(iso);
+                return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) +
+                    ' ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            function formatDateShort(iso) {
+                if (!iso) return '—';
+                const d = new Date(iso);
+                return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            }
+
+            function countPages(text) {
+                if (!text) return 0;
+                // Cyrillic: ~1800 chars per page
+                return Math.max(1, Math.ceil(text.length / 1800));
+            }
+
+            function extractScenes(text) {
+                if (!text) return [];
+                const lines = text.split('\n');
+                const scenes = [];
+                let current = null;
+                let currentIdx = 0;
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    const match = line.match(/^(СЦЕНА[.\s]+)/i);
+                    if (match) {
+                        if (current) {
+                            current.endIdx = i - 1;
+                            scenes.push(current);
+                        }
+                        current = {
+                            title: line.trim(),
+                            startIdx: i,
+                            endIdx: i,
+                            content: ''
+                        };
+                        currentIdx = i;
+                    } else if (current) {
+                        current.content += (current.content ? '\n' : '') + lines[i];
+                        current.endIdx = i;
+                    }
+                }
+                if (current) {
+                    scenes.push(current);
+                }
+                if (scenes.length === 0 && text.trim()) {
+                    // fallback: whole text as one scene
+                    scenes.push({ title: 'СЦЕНА 1', startIdx: 0, endIdx: text.split('\n').length - 1, content: text });
+                }
+                return scenes;
+            }
+
+            function extractCharacters(text) {
+                if (!text) return {};
+                const lines = text.split('\n');
+                const charMap = {};
+                const nameRegex = /^([А-ЯA-Z][А-ЯA-Z\s\-']+):/;
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    const match = trimmed.match(nameRegex);
+                    if (match) {
+                        let name = match[1].trim();
+                        // filter out common false positives
+                        if (name.length > 1 && name.length < 40 && !name.startsWith('СЦЕНА') && !name.startsWith('СЦЕНА.')) {
+                            charMap[name] = (charMap[name] || 0) + 1;
+                        }
+                    }
+                }
+                return charMap;
+            }
+
+            function getLineNumberMap(text) {
+                if (!text) return [];
+                const lines = text.split('\n');
+                const result = [];
+                let lineNum = 1;
+                for (let i = 0; i < lines.length; i++) {
+                    result.push(lineNum);
+                    lineNum++;
+                }
+                return result;
+            }
+
+            // ===== STORAGE =====
+            const Storage = {
+                get(key) {
+                    try {
+                        const data = localStorage.getItem('storyphilium_' + key);
+                        return data ? JSON.parse(data) : null;
+                    } catch { return null; }
+                },
+                set(key, value) {
+                    localStorage.setItem('storyphilium_' + key, JSON.stringify(value));
+                },
+                getAll() {
+                    const projects = this.get('projects') || [];
+                    const deleted = this.get('deletedProjects') || [];
+                    const characters = this.get('characters') || {};
+                    const comments = this.get('comments') || {};
+                    return { projects, deleted, characters, comments };
+                },
+                saveAll(data) {
+                    this.set('projects', data.projects || []);
+                    this.set('deletedProjects', data.deleted || []);
+                    this.set('characters', data.characters || {});
+                    this.set('comments', data.comments || {});
+                },
+                getProject(id) {
+                    const all = this.getAll();
+                    return all.projects.find(p => p.id === id) || null;
+                },
+                saveProject(project) {
+                    const all = this.getAll();
+                    const idx = all.projects.findIndex(p => p.id === project.id);
+                    if (idx >= 0) {
+                        all.projects[idx] = project;
+                    } else {
+                        all.projects.push(project);
+                    }
+                    this.saveAll(all);
+                    return project;
+                },
+                deleteProject(id, permanent) {
+                    const all = this.getAll();
+                    const idx = all.projects.findIndex(p => p.id === id);
+                    if (idx < 0) return;
+                    const proj = all.projects.splice(idx, 1)[0];
+                    if (!permanent) {
+                        all.deleted.push({ ...proj, deletedAt: new Date().toISOString() });
+                    }
+                    // remove characters and comments
+                    delete all.characters[id];
+                    delete all.comments[id];
+                    this.saveAll(all);
+                    return proj;
+                },
+                restoreProject(id) {
+                    const all = this.getAll();
+                    const idx = all.deleted.findIndex(d => d.id === id);
+                    if (idx < 0) return null;
+                    const proj = all.deleted.splice(idx, 1)[0];
+                    all.projects.push(proj);
+                    this.saveAll(all);
+                    return proj;
+                },
+                purgeProject(id) {
+                    const all = this.getAll();
+                    const idx = all.deleted.findIndex(d => d.id === id);
+                    if (idx < 0) return;
+                    all.deleted.splice(idx, 1);
+                    this.saveAll(all);
+                },
+                getCharacters(projectId) {
+                    const all = this.getAll();
+                    return all.characters[projectId] || {};
+                },
+                setCharacters(projectId, chars) {
+                    const all = this.getAll();
+                    all.characters[projectId] = chars;
+                    this.saveAll(all);
+                },
+                getComments(projectId) {
+                    const all = this.getAll();
+                    return all.comments[projectId] || [];
+                },
+                setComments(projectId, comments) {
+                    const all = this.getAll();
+                    all.comments[projectId] = comments;
+                    this.saveAll(all);
+                },
+                addComment(projectId, comment) {
+                    const comments = this.getComments(projectId);
+                    comments.push(comment);
+                    this.setComments(projectId, comments);
+                    return comment;
+                },
+                removeComment(projectId, commentId) {
+                    let comments = this.getComments(projectId);
+                    comments = comments.filter(c => c.id !== commentId);
+                    this.setComments(projectId, comments);
+                },
+                getActivityDays() {
+                    const all = this.getAll();
+                    const days = {};
+                    for (const p of all.projects) {
+                        if (p.updatedAt) {
+                            const d = new Date(p.updatedAt).toISOString().slice(0, 10);
+                            days[d] = (days[d] || 0) + 1;
+                        }
+                    }
+                    return days;
+                }
+            };
+
+            // ===== DEMO DATA =====
+            function createDemoProject() {
+                const content =
+                    `СЦЕНА 1. КВАРТИРА ИВАНА - ДЕНЬ
+
+        ИВАН сидит за столом, смотрит в окно. На столе пустая чашка.
+
+        ИВАН:
+        Пора что-то менять.
+
+        В дверь звонят. Иван встаёт, идёт открывать.
+
+        АННА (за дверью):
+        Открой, я знаю, что ты дома.
+
+        Иван открывает. Анна стоит с чемоданом.
+
+        ИВАН:
+        Ты куда?
+
+        АННА:
+        Я ухожу. Не пытайся меня остановить.`;
+
+                return {
+                    id: uid(),
+                    title: 'Первый сценарий',
+                    genre: 'Драма',
+                    content: content,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                };
+            }
+
+            function ensureDemoData() {
+                const all = Storage.getAll();
+                if (all.projects.length === 0 && all.deleted.length === 0) {
+                    const demo = createDemoProject();
+                    Storage.saveProject(demo);
+                    // auto-extract characters
+                    const chars = extractCharacters(demo.content);
+                    const charMap = {};
+                    for (const [name, count] of Object.entries(chars)) {
+                        charMap[name] = { name, color: getCharColor(name), dialogueCount: count };
+                    }
+                    Storage.setCharacters(demo.id, charMap);
+                    return true;
+                }
+                return false;
+            }
+
+            // ================================================================
+            // ===== APP CLASS =====
+            // ================================================================
+            class App {
+                constructor() {
+                    this.currentProjectId = null;
+                    this.currentMode = 'edit'; // 'edit' | 'structure'
+                    this.quietMode = false;
+                    this.charHighlightName = null;
+                    this.chartInstance = null;
+                    this.saveTimer = null;
+                    this.isDirty = false;
+                    this.sceneData = [];
+                    this.sortableInstances = [];
+
+                    this.init();
+                }
+
+                init() {
+                    ensureDemoData();
+                    this.renderLibrary();
+                    this.bindEvents();
+                    this.handleBeforeUnload();
+                }
+
+                // ---- BIND EVENTS ----
+                bindEvents() {
+                    // New project
+                    document.getElementById('newProjectBtn').addEventListener('click', () => this.openNewProject());
+                    document.getElementById('emptyNewBtn').addEventListener('click', () => this.openNewProject());
+                    document.getElementById('modalCancel').addEventListener('click', () => this.closeModal('newProjectModal'));
+                    document.getElementById('modalCreate').addEventListener('click', () => this.createProject());
+
+                    // Enter key in new project modal
+                    document.getElementById('projectTitleInput').addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') this.createProject();
+                    });
+
+                    // Back to library
+                    document.getElementById('backToLibrary').addEventListener('click', () => this.goToLibrary());
+
+                    // Brand logo
+                    document.getElementById('brandLogo').addEventListener('click', () => this.goToLibrary());
+
+                    // Trash
+                    document.getElementById('trashBtn').addEventListener('click', () => this.openTrash());
+                    document.getElementById('trashClose').addEventListener('click', () => this.closeModal('trashModal'));
+
+                    // Statistics
+                    document.getElementById('statsBtn').addEventListener('click', () => this.openStats());
+                    document.getElementById('statsClose').addEventListener('click', () => this.closeModal('statsModal'));
+
+                    // Import
+                    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput')
+                        .click());
+                    document.getElementById('fileInput').addEventListener('change', (e) => this.handleImport(e));
+
+                    // Editor mode toggle
+                    document.getElementById('modeEdit').addEventListener('click', () => this.setEditorMode('edit'));
+                    document.getElementById('modeStructure').addEventListener('click', () => this.setEditorMode(
+                    'structure'));
+
+                    // Quiet read
+                    document.getElementById('quietReadBtn').addEventListener('click', () => this.toggleQuietMode());
+                    document.getElementById('qrClose').addEventListener('click', () => this.toggleQuietMode());
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && this.quietMode) this.toggleQuietMode();
+                    });
+
+                    // Export
+                    document.getElementById('exportBtn').addEventListener('click', (e) => this.showExportMenu(e));
+
+                    // Drawer toggle (mobile)
+                    document.getElementById('drawerToggle').addEventListener('click', () => this.toggleDrawer());
+                    document.getElementById('drawerClose').addEventListener('click', () => this.toggleDrawer());
+
+                    // Tabs in right panel
+                    document.querySelectorAll('.panel-right .tab').forEach(tab => {
+                        tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
+                    });
+
+                    // Editor textarea
+                    const textarea = document.getElementById('editorTextarea');
+                    textarea.addEventListener('input', () => this.onEditorInput());
+                    textarea.addEventListener('scroll', () => this.syncLineNumbers());
+                    textarea.addEventListener('keydown', (e) => this.onEditorKeydown(e));
+
+                    // Confirm modal
+                    document.getElementById('confirmCancel').addEventListener('click', () => this.closeModal(
+                    'confirmModal'));
+                    document.getElementById('confirmOk').addEventListener('click', () => this.executeConfirm());
+
+                    // Close modals on overlay click
+                    document.querySelectorAll('.modal-overlay').forEach(el => {
+                        el.addEventListener('click', (e) => {
+                            if (e.target === el) {
+                                el.classList.remove('active');
+                            }
+                        });
+                    });
+                }
+
+                handleBeforeUnload() {
+                    window.addEventListener('beforeunload', () => {
+                        if (this.currentProjectId && this.isDirty) {
+                            this.saveCurrentProject();
+                        }
+                    });
+                    // Auto-save every 3s
+                    this.saveTimer = setInterval(() => {
+                        if (this.currentProjectId && this.isDirty) {
+                            this.saveCurrentProject();
+                        }
+                    }, 3000);
+                }
+
+                // ---- NAVIGATION ----
+                goToLibrary() {
+                    if (this.currentProjectId && this.isDirty) {
+                        this.saveCurrentProject();
+                    }
+                    this.currentProjectId = null;
+                    this.currentMode = 'edit';
+                    this.charHighlightName = null;
+                    document.getElementById('editorView').classList.remove('active');
+                    document.getElementById('editorView').style.display = 'none';
+                    document.getElementById('libraryView').classList.remove('hidden');
+                    this.renderLibrary();
+                    this.closeModal('newProjectModal');
+                    this.closeModal('trashModal');
+                    this.closeModal('statsModal');
+                    if (this.quietMode) this.toggleQuietMode();
+                    document.getElementById('panelRight').classList.remove('open');
+                }
+
+                openProject(id) {
+                    if (this.currentProjectId && this.isDirty) {
+                        this.saveCurrentProject();
+                    }
+                    this.currentProjectId = id;
+                    this.currentMode = 'edit';
+                    this.charHighlightName = null;
+                    document.getElementById('libraryView').classList.add('hidden');
+                    document.getElementById('editorView').style.display = 'flex';
+                    document.getElementById('editorView').classList.add('active');
+                    document.getElementById('structureView').classList.remove('active');
+                    document.getElementById('structureView').style.display = 'none';
+                    document.getElementById('panelCenter').style.display = 'flex';
+                    document.getElementById('panelLeft').style.display = 'flex';
+                    document.getElementById('panelRight').style.display = 'flex';
+
+                    // Reset mode buttons
+                    document.getElementById('modeEdit').classList.add('active');
+                    document.getElementById('modeStructure').classList.remove('active');
+
+                    this.loadProjectIntoEditor(id);
+                    this.renderLibrary(); // update card states
+                }
+
+                // ---- LIBRARY ----
+                renderLibrary() {
+                    const all = Storage.getAll();
+                    const projects = all.projects || [];
+                    const grid = document.getElementById('projectGrid');
+                    const empty = document.getElementById('emptyState');
+
+                    if (projects.length === 0) {
+                        grid.innerHTML = '';
+                        empty.style.display = 'flex';
+                        return;
+                    }
+                    empty.style.display = 'none';
+
+                    grid.innerHTML = projects.map(p => {
+                        const pages = countPages(p.content);
+                        return `
+                            <div class="project-card" data-id="${p.id}">
+                                <button class="delete-btn" data-id="${p.id}" title="Удалить">✕</button>
+                                <div class="title">${this.escapeHtml(p.title)}</div>
+                                <div class="genre">${this.escapeHtml(p.genre)}</div>
+                                <div class="meta">
+                                    <span>📄 ${pages} стр.</span>
+                                    <span>🕒 ${formatDate(p.updatedAt)}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Click on card -> open
+                    grid.querySelectorAll('.project-card').forEach(card => {
+                        card.addEventListener('click', (e) => {
+                            if (e.target.closest('.delete-btn')) return;
+                            const id = card.dataset.id;
+                            this.openProject(id);
+                        });
+                    });
+
+                    // Delete buttons
+                    grid.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            this.confirmAction('Удалить проект?', 'Проект будет перемещён в корзину.', () => {
+                                Storage.deleteProject(id, false);
+                                this.renderLibrary();
+                                this.showToast('Проект удалён', 'info');
+                            });
+                        });
+                    });
+                }
+
+                // ---- NEW PROJECT ----
+                openNewProject() {
+                    document.getElementById('projectTitleInput').value = 'Новый сценарий';
+                    document.getElementById('projectGenreInput').value = 'Драма';
+                    this.openModal('newProjectModal');
+                    setTimeout(() => document.getElementById('projectTitleInput').focus(), 100);
+                }
+
+                createProject() {
+                    const title = document.getElementById('projectTitleInput').value.trim() || 'Без названия';
+                    const genre = document.getElementById('projectGenreInput').value;
+                    const content =
+                        `СЦЕНА 1. НАЧАЛО\n\nВведите ваш текст здесь...\n\nПЕРСОНАЖ:\nРеплика персонажа.`;
+                    const project = {
+                        id: uid(),
+                        title,
+                        genre,
+                        content,
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString()
+                    };
+                    Storage.saveProject(project);
+                    this.closeModal('newProjectModal');
+                    this.renderLibrary();
+                    this.showToast('Проект создан', 'success');
+                    this.openProject(project.id);
+                }
+
+                // ---- EDITOR LOAD ----
+                loadProjectIntoEditor(id) {
+                    const project = Storage.getProject(id);
+                    if (!project) {
+                        this.goToLibrary();
+                        return;
+                    }
+
+                    document.getElementById('editorProjectTitle').textContent = project.title;
+                    document.getElementById('editorProjectGenre').textContent = project.genre;
+
+                    const textarea = document.getElementById('editorTextarea');
+                    textarea.value = project.content || '';
+                    this.isDirty = false;
+                    this.updateSaveStatus('Сохранено', false);
+
+                    this.sceneData = extractScenes(textarea.value);
+                    this.renderSceneList();
+                    this.updateLineNumbers();
+                    this.updatePageCounter();
+                    this.updateCharacters();
+                    this.updateNotes();
+                    this.updateStructureView();
+
+                    // Reset highlight
+                    this.charHighlightName = null;
+                    document.querySelectorAll('.character-item').forEach(el => el.classList.remove('highlighted'));
+
+                    // Clear any existing text highlight
+                    textarea.style.background = '';
+
+                    setTimeout(() => {
+                        this.setupSortable();
+                    }, 100);
+
+                    // Update scene count
+                    document.getElementById('sceneCount').textContent = this.sceneData.length;
+                }
+
+                // ---- SAVE ----
+                saveCurrentProject() {
+                    if (!this.currentProjectId) return;
+                    const project = Storage.getProject(this.currentProjectId);
+                    if (!project) return;
+                    const textarea = document.getElementById('editorTextarea');
+                    project.content = textarea.value;
+                    project.updatedAt = new Date().toISOString();
+                    Storage.saveProject(project);
+                    this.isDirty = false;
+                    this.updateSaveStatus('Сохранено', false);
+
+                    // Update characters
+                    this.extractAndSaveCharacters();
+
+                    // Update scenes
+                    this.sceneData = extractScenes(textarea.value);
+                    this.renderSceneList();
+                    this.updatePageCounter();
+                    this.updateStructureView();
+                    document.getElementById('sceneCount').textContent = this.sceneData.length;
+                }
+
+                extractAndSaveCharacters() {
+                    const text = document.getElementById('editorTextarea').value;
+                    const raw = extractCharacters(text);
+                    const existing = Storage.getCharacters(this.currentProjectId) || {};
+                    const merged = {};
+                    for (const [name, count] of Object.entries(raw)) {
+                        const color = existing[name] ? existing[name].color : getCharColor(name);
+                        merged[name] = { name, color, dialogueCount: count };
+                    }
+                    // keep existing characters that might not appear anymore but we keep them
+                    for (const [name, data] of Object.entries(existing)) {
+                        if (!merged[name]) {
+                            merged[name] = data;
+                        }
+                    }
+                    Storage.setCharacters(this.currentProjectId, merged);
+                    this.updateCharacters();
+                }
+
+                // ---- EDITOR INPUT ----
+                onEditorInput() {
+                    this.isDirty = true;
+                    this.updateSaveStatus('Сохранение...', true);
+                    this.updateLineNumbers();
+                    this.updatePageCounter();
+
+                    // Debounced updates
+                    this.debouncedUpdateScenes();
+                    this.debouncedExtractCharacters();
+                    this.debouncedUpdateStructure();
+                }
+
+                debouncedUpdateScenes = debounce(() => {
+                    const text = document.getElementById('editorTextarea').value;
+                    this.sceneData = extractScenes(text);
+                    this.renderSceneList();
+                    document.getElementById('sceneCount').textContent = this.sceneData.length;
+                }, 300);
+
+                debouncedExtractCharacters = debounce(() => {
+                    this.extractAndSaveCharacters();
+                }, 400);
+
+                debouncedUpdateStructure = debounce(() => {
+                    this.updateStructureView();
+                }, 300);
+
+                // ---- LINE NUMBERS ----
+                updateLineNumbers() {
+                    const textarea = document.getElementById('editorTextarea');
+                    const lines = textarea.value.split('\n');
+                    const container = document.getElementById('lineNumbers');
+                    const scrollTop = textarea.scrollTop;
+                    const lineHeight = 21; // 14px * 1.5
+                    const startLine = Math.floor(scrollTop / lineHeight);
+                    const visibleLines = Math.ceil(textarea.clientHeight / lineHeight) + 2;
+
+                    let html = '';
+                    for (let i = startLine; i < Math.min(startLine + visibleLines, lines.length); i++) {
+                        html += `<span>${i + 1}</span>`;
+                    }
+                    container.innerHTML = html;
+                    container.style.paddingTop = (scrollTop % lineHeight) + 'px';
+                }
+
+                syncLineNumbers() {
+                    this.updateLineNumbers();
+                }
+
+                // ---- PAGE COUNTER ----
+                updatePageCounter() {
+                    const text = document.getElementById('editorTextarea').value;
+                    const pages = countPages(text);
+                    document.getElementById('pageCounter').textContent = pages + ' страниц';
+                }
+
+                // ---- SAVE STATUS ----
+                updateSaveStatus(text, saving) {
+                    document.getElementById('saveStatus').textContent = text;
+                    const dot = document.getElementById('statusDot');
+                    if (saving) {
+                        dot.classList.add('saving');
+                    } else {
+                        dot.classList.remove('saving');
+                    }
+                }
+
+                // ---- SCENE LIST (left panel) ----
+                renderSceneList() {
+                    const container = document.getElementById('sceneList');
+                    if (!this.sceneData || this.sceneData.length === 0) {
+                        container.innerHTML =
+                            '<div style="padding:16px 18px;font-size:13px;color:var(--text-secondary);">Нет сцен</div>';
+                        return;
+                    }
+                    container.innerHTML = this.sceneData.map((scene, idx) => {
+                        const title = scene.title || 'СЦЕНА ' + (idx + 1);
+                        return `<div class="scene-item" data-index="${idx}">
+                                    <span class="num">${idx + 1}.</span>
+                                    <span>${this.escapeHtml(title)}</span>
+                                </div>`;
+                    }).join('');
+
+                    // Click to scroll
+                    container.querySelectorAll('.scene-item').forEach(el => {
+                        el.addEventListener('click', () => {
+                            const idx = parseInt(el.dataset.index);
+                            this.scrollToScene(idx);
+                            // highlight
+                            container.querySelectorAll('.scene-item').forEach(e => e.classList.remove('active'));
+                            el.classList.add('active');
+                        });
+                    });
+
+                    // Setup sortable on scene list
+                    this.setupSceneSortable();
+                }
+
+                setupSceneSortable() {
+                    const container = document.getElementById('sceneList');
+                    if (this.sortableInstances.sceneList) {
+                        this.sortableInstances.sceneList.destroy();
+                    }
+                    if (!container || container.children.length < 2) return;
+                    this.sortableInstances.sceneList = new Sortable(container, {
+                        animation: 200,
+                        handle: '.scene-item',
+                        direction: 'vertical',
+                        onEnd: (evt) => {
+                            const from = evt.oldIndex;
+                            const to = evt.newIndex;
+                            if (from === to) return;
+                            this.reorderScenes(from, to);
+                        }
+                    });
+                }
+
+                reorderScenes(from, to) {
+                    const textarea = document.getElementById('editorTextarea');
+                    const text = textarea.value;
+                    const scenes = extractScenes(text);
+                    if (from < 0 || to < 0 || from >= scenes.length || to >= scenes.length) return;
+                    const [moved] = scenes.splice(from, 1);
+                    scenes.splice(to, 0, moved);
+
+                    // Rebuild text from scenes
+                    let newText = '';
+                    let currentLine = 0;
+                    const lines = text.split('\n');
+                    // We'll rebuild by replacing scene blocks
+                    // Simpler: rebuild from scratch
+                    const newLines = [];
+                    for (const scene of scenes) {
+                        // find the original lines for this scene from the old text
+                        // Instead, just use the stored content
+                        if (scene.content) {
+                            newLines.push(scene.title);
+                            newLines.push(scene.content);
+                        } else {
+                            newLines.push(scene.title);
+                        }
+                    }
+                    // But we need to preserve all lines, including those between scenes.
+                    // Better approach: use the start/end indices.
+                    // Let's use a simpler but robust method: extract all lines and reassemble.
+                    // We'll use the scene data to reconstruct.
+                    const allLines = text.split('\n');
+                    const sceneBlocks = [];
+                    let currentBlock = [];
+                    let inScene = false;
+                    let sceneIdx = 0;
+                    for (let i = 0; i < allLines.length; i++) {
+                        const line = allLines[i];
+                        const trimmed = line.trim();
+                        if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
+                            if (currentBlock.length > 0) {
+                                // flush previous
+                                sceneBlocks.push(currentBlock.join('\n'));
+                            }
+                            currentBlock = [line];
+                            inScene = true;
+                        } else {
+                            if (inScene) {
+                                currentBlock.push(line);
+                            } else {
+                                // before first scene or between scenes - treat as part of previous scene or separate
+                                // We'll just keep it as-is
+                            }
+                        }
+                    }
+                    if (currentBlock.length > 0) {
+                        sceneBlocks.push(currentBlock.join('\n'));
+                    }
+
+                    // Now reorder scenes using the scenes array
+                    // Actually, let's use a simpler approach: rebuild from scene data
+                    // We'll use the scene titles and content to reconstruct.
+                    // This is a simplified version - for production we need more robust.
+                    // Since we have the scene data with start/end indices, we can rebuild.
+                    // Let's use the start/end indices approach.
+
+                    // Get all lines
+                    const linesArr = text.split('\n');
+                    // Build scene segments with their line ranges
+                    const segments = [];
+                    let lastEnd = 0;
+                    for (const scene of scenes) {
+                        const start = scene.startIdx;
+                        const end = scene.endIdx;
+                        if (start !== undefined && end !== undefined) {
+                            // Include any lines between lastEnd and start
+                            if (lastEnd < start) {
+                                segments.push({
+                                    type: 'text',
+                                    lines: linesArr.slice(lastEnd, start)
+                                });
+                            }
+                            segments.push({
+                                type: 'scene',
+                                lines: linesArr.slice(start, end + 1),
+                                title: scene.title
+                            });
+                            lastEnd = end + 1;
+                        }
+                    }
+                    if (lastEnd < linesArr.length) {
+                        segments.push({
+                            type: 'text',
+                            lines: linesArr.slice(lastEnd)
+                        });
+                    }
+
+                    // Now reorder: we need to put scenes in the new order
+                    // Extract scene blocks in new order
+                    const sceneBlocks2 = [];
+                    const textBlocks = [];
+                    for (const seg of segments) {
+                        if (seg.type === 'scene') {
+                            sceneBlocks2.push(seg.lines.join('\n'));
+                        } else {
+                            textBlocks.push(seg.lines.join('\n'));
+                        }
+                    }
+
+                    // Rebuild text with reordered scenes
+                    // This is complex, let's use a simpler approach: just reorder the scene items in the text
+                    // by replacing the content of each scene block.
+
+                    // We'll use a simpler method: split by scene headers and reorder.
+                    // Let's use the scene data to rebuild.
+
+                    // Actually, let's use a more reliable method:
+                    // We'll extract all scene blocks with their full text, then reorder.
+                    const sceneRegex = /(СЦЕНА[.\s]+[^\n]*)([\s\S]*?)(?=\n\s*СЦЕНА[.\s]+|$)/gi;
+                    const matches = [];
+                    let match;
+                    const tempText = text;
+                    while ((match = sceneRegex.exec(tempText)) !== null) {
+                        matches.push({
+                            full: match[0],
+                            title: match[1].trim(),
+                            body: match[2] || ''
+                        });
+                    }
+
+                    if (matches.length === 0) {
+                        // fallback: treat whole text as one scene
+                        this.showToast('Не удалось переупорядочить сцены', 'error');
+                        return;
+                    }
+
+                    // Reorder matches based on scenes array
+                    const orderedMatches = [];
+                    for (const scene of scenes) {
+                        const found = matches.find(m => m.title === scene.title);
+                        if (found) {
+                            orderedMatches.push(found);
+                        }
+                    }
+
+                    // Rebuild text
+                    let newText2 = orderedMatches.map(m => m.full).join('\n\n');
+                    // Preserve any text before first scene
+                    const firstMatch = matches.length > 0 ? tempText.indexOf(matches[0].full) : -1;
+                    if (firstMatch > 0) {
+                        newText2 = tempText.slice(0, firstMatch) + newText2;
+                    }
+
+                    // Set new text
+                    textarea.value = newText2;
+                    this.isDirty = true;
+                    this.onEditorInput();
+                    this.showToast('Порядок сцен изменён', 'info');
+                }
+
+                scrollToScene(index) {
+                    const textarea = document.getElementById('editorTextarea');
+                    const scenes = this.sceneData;
+                    if (!scenes || index < 0 || index >= scenes.length) return;
+                    const scene = scenes[index];
+                    const lines = textarea.value.split('\n');
+                    let lineNum = 0;
+                    for (let i = 0; i < lines.length; i++) {
+                        const trimmed = lines[i].trim();
+                        if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
+                            if (lineNum === index) {
+                                // calculate y position
+                                const lineHeight = 21;
+                                const charHeight = 18;
+                                const top = i * lineHeight;
+                                textarea.scrollTop = Math.max(0, top - 40);
+                                textarea.focus();
+                                // highlight the line briefly
+                                const orig = textarea.value;
+                                const start = orig.split('\n').slice(0, i).join('\n').length + (i > 0 ? 1 : 0);
+                                const end = start + lines[i].length;
+                                textarea.setSelectionRange(start, end);
+                                setTimeout(() => {
+                                    textarea.setSelectionRange(0, 0);
+                                }, 800);
+                                return;
+                            }
+                            lineNum++;
+                        }
+                    }
+                }
+
+                // ---- CHARACTERS ----
+                updateCharacters() {
+                    const container = document.getElementById('tabCharacters');
+                    const chars = Storage.getCharacters(this.currentProjectId) || {};
+                    const names = Object.keys(chars);
+                    if (names.length === 0) {
+                        container.innerHTML =
+                            '<div style="font-size:13px;color:var(--text-secondary);padding:12px 0;">Персонажи появятся здесь после того, как вы начнёте писать диалоги.</div>';
+                        return;
+                    }
+                    // Sort by dialogue count descending
+                    const sorted = names.sort((a, b) => (chars[b].dialogueCount || 0) - (chars[a].dialogueCount || 0));
+                    container.innerHTML = sorted.map(name => {
+                        const data = chars[name];
+                        const color = data.color || getCharColor(name);
+                        const count = data.dialogueCount || 0;
+                        const highlight = this.charHighlightName === name ? 'highlighted' : '';
+                        return `<div class="character-item ${highlight}" data-name="${this.escapeHtml(name)}">
+                                    <span class="name">
+                                        <span class="dot" style="background:${color};"></span>
+                                        ${this.escapeHtml(name)}
+                                    </span>
+                                    <span class="count">${count}</span>
+                                </div>`;
+                    }).join('');
+
+                    container.querySelectorAll('.character-item').forEach(el => {
+                        el.addEventListener('click', () => {
+                            const name = el.dataset.name;
+                            this.toggleCharacterHighlight(name);
+                        });
+                    });
+                }
+
+                toggleCharacterHighlight(name) {
+                    if (this.charHighlightName === name) {
+                        this.charHighlightName = null;
+                    } else {
+                        this.charHighlightName = name;
+                    }
+                    this.updateCharacters();
+                    this.highlightDialoguesInEditor();
+                }
+
+                highlightDialoguesInEditor() {
+                    const textarea = document.getElementById('editorTextarea');
+                    if (!this.charHighlightName) {
+                        textarea.style.background = '';
+                        return;
+                    }
+                    // We'll use a subtle background highlight via a wrapper or just rely on the character list highlight
+                    // For simplicity, we show a visual indicator in the character list only.
+                    // Could also add a marker in the text but that's complex without a rich editor.
+                    this.showToast('Подсветка диалогов: ' + this.charHighlightName, 'info');
+                }
+
+                // ---- NOTES ----
+                updateNotes() {
+                    const container = document.getElementById('tabNotes');
+                    const comments = Storage.getComments(this.currentProjectId) || [];
+                    if (comments.length === 0) {
+                        container.innerHTML = `
+                            <div class="add-note-hint">
+                                Выделите текст в редакторе и нажмите «Добавить заметку»
+                            </div>
+                            <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" id="addNoteBtn">+ Добавить заметку</button>
+                        `;
+                        const addBtn = container.querySelector('#addNoteBtn');
+                        if (addBtn) {
+                            addBtn.addEventListener('click', () => this.addNoteFromSelection());
+                        }
+                        return;
+                    }
+                    container.innerHTML = comments.map(c => `
+                            <div class="note-item" data-id="${c.id}">
+                                <button class="delete-note" data-id="${c.id}">✕</button>
+                                <div class="text">${this.escapeHtml(c.text)}</div>
+                                <div class="preview">${this.escapeHtml(c.preview || '')}</div>
+                            </div>
+                        `).join('') + `
+                            <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" id="addNoteBtn2">+ Добавить заметку</button>
+                        `;
+
+                    container.querySelectorAll('.note-item').forEach(el => {
+                        el.addEventListener('click', (e) => {
+                            if (e.target.closest('.delete-note')) return;
+                            const id = el.dataset.id;
+                            this.scrollToNote(id);
+                        });
+                        const del = el.querySelector('.delete-note');
+                        if (del) {
+                            del.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                const id = del.dataset.id;
+                                Storage.removeComment(this.currentProjectId, id);
+                                this.updateNotes();
+                                this.showToast('Заметка удалена', 'info');
+                            });
+                        }
+                    });
+
+                    const addBtn2 = container.querySelector('#addNoteBtn2');
+                    if (addBtn2) {
+                        addBtn2.addEventListener('click', () => this.addNoteFromSelection());
+                    }
+                }
+
+                addNoteFromSelection() {
+                    const textarea = document.getElementById('editorTextarea');
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    if (start === end) {
+                        this.showToast('Выделите текст для заметки', 'error');
+                        return;
+                    }
+                    const selected = textarea.value.slice(start, end);
+                    const comment = {
+                        id: uid(),
+                        text: prompt('Текст заметки:', 'Изменить эту часть'),
+                        startPos: start,
+                        endPos: end,
+                        preview: selected.slice(0, 60) + (selected.length > 60 ? '...' : '')
+                    };
+                    if (comment.text && comment.text.trim()) {
+                        Storage.addComment(this.currentProjectId, comment);
+                        this.updateNotes();
+                        this.showToast('Заметка добавлена', 'success');
+                    }
+                }
+
+                scrollToNote(id) {
+                    const comments = Storage.getComments(this.currentProjectId) || [];
+                    const note = comments.find(c => c.id === id);
+                    if (!note) return;
+                    const textarea = document.getElementById('editorTextarea');
+                    const text = textarea.value;
+                    const lines = text.slice(0, note.startPos).split('\n');
+                    const lineNum = lines.length - 1;
+                    const lineHeight = 21;
+                    textarea.scrollTop = Math.max(0, lineNum * lineHeight - 40);
+                    textarea.focus();
+                    textarea.setSelectionRange(note.startPos, note.endPos);
+                    setTimeout(() => {
+                        textarea.setSelectionRange(0, 0);
+                    }, 1500);
+                }
+
+                // ---- STRUCTURE VIEW ----
+                updateStructureView() {
+                    const container = document.getElementById('structureGrid');
+                    const scenes = this.sceneData;
+                    if (!scenes || scenes.length === 0) {
+                        container.innerHTML =
+                            '<div style="color:var(--text-secondary);padding:40px;text-align:center;">Нет сцен для отображения</div>';
+                        return;
+                    }
+                    container.innerHTML = scenes.map((scene, idx) => {
+                        const preview = scene.content ? scene.content.trim().slice(0, 50) : '';
+                        const title = scene.title || 'СЦЕНА ' + (idx + 1);
+                        return `<div class="structure-card" data-index="${idx}">
+                                    <div class="header">
+                                        <span class="scene-title">${this.escapeHtml(title)}</span>
+                                        <button class="edit-btn" data-index="${idx}">Редактировать</button>
+                                    </div>
+                                    <div class="preview">${this.escapeHtml(preview)}${preview.length >= 50 ? '…' : ''}</div>
+                                </div>`;
+                    }).join('');
+
+                    container.querySelectorAll('.edit-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const idx = parseInt(btn.dataset.index);
+                            this.setEditorMode('edit');
+                            this.scrollToScene(idx);
+                        });
+                    });
+
+                    // Setup sortable for structure
+                    if (this.sortableInstances.structure) {
+                        this.sortableInstances.structure.destroy();
+                    }
+                    if (container.children.length > 1) {
+                        this.sortableInstances.structure = new Sortable(container, {
+                            animation: 200,
+                            handle: '.structure-card',
+                            direction: 'vertical',
+                            onEnd: (evt) => {
+                                const from = evt.oldIndex;
+                                const to = evt.newIndex;
+                                if (from === to) return;
+                                this.reorderScenes(from, to);
+                            }
+                        });
+                    }
+                }
+
+                // ---- MODE SWITCH ----
+                setEditorMode(mode) {
+                    if (mode === this.currentMode) return;
+                    this.currentMode = mode;
+
+                    document.getElementById('modeEdit').classList.toggle('active', mode === 'edit');
+                    document.getElementById('modeStructure').classList.toggle('active', mode === 'structure');
+
+                    const panelCenter = document.getElementById('panelCenter');
+                    const structureView = document.getElementById('structureView');
+                    const panelLeft = document.getElementById('panelLeft');
+                    const panelRight = document.getElementById('panelRight');
+
+                    if (mode === 'edit') {
+                        panelCenter.style.display = 'flex';
+                        structureView.style.display = 'none';
+                        structureView.classList.remove('active');
+                        panelLeft.style.display = 'flex';
+                        panelRight.style.display = 'flex';
+                        // Refresh scene list
+                        this.renderSceneList();
+                    } else {
+                        panelCenter.style.display = 'none';
+                        structureView.style.display = 'block';
+                        structureView.classList.add('active');
+                        panelLeft.style.display = 'none';
+                        panelRight.style.display = 'none';
+                        this.updateStructureView();
+                    }
+                }
+
+                // ---- QUIET MODE ----
+                toggleQuietMode() {
+                    this.quietMode = !this.quietMode;
+                    const overlay = document.getElementById('quietRhythm');
+                    if (this.quietMode) {
+                        const text = document.getElementById('editorTextarea').value || 'Напишите ваш сценарий...';
+                        document.getElementById('qrText').textContent = text;
+                        overlay.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        overlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                }
+
+                // ---- EXPORT ----
+                showExportMenu(e) {
+                    const btn = e.currentTarget;
+                    const rect = btn.getBoundingClientRect();
+                    // Simple dropdown using a quick modal-ish approach
+                    const items = [
+                        { label: 'TXT', action: () => this.exportTXT() },
+                        { label: 'DOCX', action: () => this.exportDOCX() },
+                        { label: 'PDF', action: () => this.exportPDF() },
+                        { label: 'JSON (резервная копия)', action: () => this.exportJSON() },
+                    ];
+                    // Use a simple custom dropdown
+                    const existing = document.getElementById('exportDropdown');
+                    if (existing) existing.remove();
+
+                    const dropdown = document.createElement('div');
+                    dropdown.id = 'exportDropdown';
+                    dropdown.style.cssText = `
+                                position: fixed;
+                                top: ${rect.bottom + 8}px;
+                                right: ${window.innerWidth - rect.right}px;
+                                background: var(--bg-panel-solid);
+                                border-radius: 10px;
+                                border: 1px solid rgba(255,255,255,0.06);
+                                padding: 6px;
+                                box-shadow: var(--shadow);
+                                z-index: 500;
+                                min-width: 180px;
+                                animation: slideUp 0.2s ease;
+                            `;
+                    items.forEach(item => {
+                        const el = document.createElement('div');
+                        el.textContent = item.label;
+                        el.style.cssText = `
+                                    padding: 10px 18px;
+                                    cursor: pointer;
+                                    border-radius: 6px;
+                                    font-size: 14px;
+                                    transition: all var(--transition);
+                                    color: var(--text-primary);
+                                `;
+                        el.addEventListener('mouseenter', () => {
+                            el.style.background = 'rgba(255,255,255,0.05)';
+                        });
+                        el.addEventListener('mouseleave', () => {
+                            el.style.background = 'transparent';
+                        });
+                        el.addEventListener('click', () => {
+                            item.action();
+                            dropdown.remove();
+                        });
+                        dropdown.appendChild(el);
+                    });
+                    document.body.appendChild(dropdown);
+
+                    // Close on click outside
+                    setTimeout(() => {
+                        document.addEventListener('click', function closeDrop(e) {
+                            if (!dropdown.contains(e.target) && e.target !== btn) {
+                                dropdown.remove();
+                                document.removeEventListener('click', closeDrop);
+                            }
+                        });
+                    }, 10);
+                }
+
+                exportTXT() {
+                    const project = Storage.getProject(this.currentProjectId);
+                    if (!project) return;
+                    const blob = new Blob([project.content], { type: 'text/plain;charset=utf-8' });
+                    this.downloadBlob(blob, project.title + '.txt');
+                    this.showToast('TXT скачан', 'success');
+                }
+
+                async exportDOCX() {
+                    try {
+                        const project = Storage.getProject(this.currentProjectId);
+                        if (!project) return;
+                        const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
+                        const lines = project.content.split('\n');
+                        const children = [];
+                        for (const line of lines) {
+                            const trimmed = line.trim();
+                            if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
+                                children.push(new Paragraph({
+                                    text: trimmed,
+                                    heading: HeadingLevel.HEADING_2,
+                                    spacing: { before: 200, after: 100 }
+                                }));
+                            } else if (trimmed.match(/^[А-ЯA-Z][А-ЯA-Z\s\-']+:/)) {
+                                children.push(new Paragraph({
+                                    children: [
+                                        new TextRun({ text: trimmed, bold: true, size: 22 })
+                                    ],
+                                    spacing: { before: 80, after: 40 }
+                                }));
+                            } else if (trimmed === '') {
+                                children.push(new Paragraph({ spacing: { before: 80 } }));
+                            } else {
+                                children.push(new Paragraph({
+                                    text: trimmed,
+                                    spacing: { before: 20, after: 20 }
+                                }));
+                            }
+                        }
+                        const doc = new Document({
+                            sections: [{
+                                properties: {},
+                                children: children
+                            }]
+                        });
+                        const blob = await Packer.toBlob(doc);
+                        this.downloadBlob(blob, project.title + '.docx');
+                        this.showToast('DOCX скачан', 'success');
+                    } catch (err) {
+                        console.error(err);
+                        this.showToast('Ошибка при создании DOCX', 'error');
+                    }
+                }
+
+                async exportPDF() {
+                    try {
+                        const project = Storage.getProject(this.currentProjectId);
+                        if (!project) return;
+                        // Create a temporary element with styled content
+                        const el = document.createElement('div');
+                        el.style.cssText = `
+                                    font-family: 'PT Mono', 'Courier New', monospace;
+                                    font-size: 12px;
+                                    line-height: 1.6;
+                                    padding: 40px;
+                                    max-width: 800px;
+                                    margin: 0 auto;
+                                    background: white;
+                                    color: #222;
+                                    white-space: pre-wrap;
+                                `;
+                        el.textContent = project.content;
+                        document.body.appendChild(el);
+                        const opt = {
+                            margin: [0.7, 0.7, 0.7, 0.7],
+                            filename: project.title + '.pdf',
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                        };
+                        await html2pdf().set(opt).from(el).save();
+                        document.body.removeChild(el);
+                        this.showToast('PDF скачан', 'success');
+                    } catch (err) {
+                        console.error(err);
+                        this.showToast('Ошибка при создании PDF', 'error');
+                    }
+                }
+
+                exportJSON() {
+                    const all = Storage.getAll();
+                    const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
+                    this.downloadBlob(blob, 'storyphilium_backup.json');
+                    this.showToast('Резервная копия скачана', 'success');
+                }
+
+                downloadBlob(blob, filename) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+
+                // ---- IMPORT ----
+                handleImport(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        try {
+                            const data = JSON.parse(ev.target.result);
+                            if (data.projects && Array.isArray(data.projects)) {
+                                this.confirmAction('Восстановить проекты?',
+                                    'Все текущие проекты будут заменены данными из файла.', () => {
+                                        Storage.saveAll(data);
+                                        this.renderLibrary();
+                                        this.showToast('Проекты восстановлены', 'success');
+                                    });
+                            } else {
+                                this.showToast('Неверный формат файла', 'error');
+                            }
+                        } catch (err) {
+                            this.showToast('Ошибка чтения файла', 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                    e.target.value = '';
+                }
+
+                // ---- TRASH ----
+                openTrash() {
+                    const all = Storage.getAll();
+                    const deleted = all.deleted || [];
+                    const list = document.getElementById('trashList');
+                    if (deleted.length === 0) {
+                        list.innerHTML = '<div style="color:var(--text-secondary);padding:12px 0;">Корзина пуста</div>';
+                    } else {
+                        list.innerHTML = deleted.map(d => `
+                                <div class="trash-item" data-id="${d.id}">
+                                    <div class="info">
+                                        <span class="title">${this.escapeHtml(d.title)}</span>
+                                        <span class="genre">${this.escapeHtml(d.genre)} • удалён ${formatDate(d.deletedAt)}</span>
+                                    </div>
+                                    <div class="actions">
+                                        <button class="btn btn-primary btn-sm restore-btn" data-id="${d.id}">Восстановить</button>
+                                        <button class="btn btn-danger btn-sm purge-btn" data-id="${d.id}">Удалить навсегда</button>
+                                    </div>
+                                </div>
+                            `).join('');
+                        list.querySelectorAll('.restore-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const id = btn.dataset.id;
+                                Storage.restoreProject(id);
+                                this.openTrash();
+                                this.renderLibrary();
+                                this.showToast('Проект восстановлен', 'success');
+                            });
+                        });
+                        list.querySelectorAll('.purge-btn').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                const id = btn.dataset.id;
+                                this.confirmAction('Удалить навсегда?',
+                                    'Это действие нельзя отменить.', () => {
+                                        Storage.purgeProject(id);
+                                        this.openTrash();
+                                        this.renderLibrary();
+                                        this.showToast('Проект удалён безвозвратно',
+                                        'info');
+                                    });
+                            });
+                        });
+                    }
+                    this.openModal('trashModal');
+                }
+
+                // ---- STATISTICS ----
+                openStats() {
+                    const all = Storage.getAll();
+                    const projects = all.projects || [];
+                    let totalPages = 0;
+                    let totalChars = 0;
+                    for (const p of projects) {
+                        totalPages += countPages(p.content);
+                        const chars = Storage.getCharacters(p.id) || {};
+                        totalChars += Object.keys(chars).length;
+                    }
+                    document.getElementById('statPages').textContent = totalPages;
+                    document.getElementById('statCharacters').textContent = totalChars;
+                    document.getElementById('statProjects').textContent = projects.length;
+
+                    // Best day
+                    const days = Storage.getActivityDays();
+                    let bestDay = '—';
+                    let bestCount = 0;
+                    for (const [d, count] of Object.entries(days)) {
+                        if (count > bestCount) { bestCount = count;
+                            bestDay = d; }
+                    }
+                    if (bestDay !== '—') {
+                        const d = new Date(bestDay + 'T00:00:00');
+                        bestDay = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }) +
+                            ` (${bestCount} проект${bestCount > 1 ? 'а' : ''})`;
+                    }
+                    document.getElementById('statBestDay').textContent = bestDay;
+
+                    // Chart: last 7 days
+                    this.renderStatsChart(days);
+                    this.openModal('statsModal');
+                    setTimeout(() => this.renderStatsChart(days), 100);
+                }
+
+                renderStatsChart(days) {
+                    const canvas = document.getElementById('statsChart');
+                    if (this.chartInstance) {
+                        this.chartInstance.destroy();
+                        this.chartInstance = null;
+                    }
+                    const ctx = canvas.getContext('2d');
+                    // Last 7 days
+                    const labels = [];
+                    const data = [];
+                    for (let i = 6; i >= 0; i--) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        const key = d.toISOString().slice(0, 10);
+                        labels.push(d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
+                        data.push(days[key] || 0);
+                    }
+                    this.chartInstance = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Сохранений',
+                                data: data,
+                                backgroundColor: 'rgba(255, 107, 53, 0.6)',
+                                borderColor: '#ff6b35',
+                                borderWidth: 2,
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (ctx) => ctx.parsed.y + ' сохранений'
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 1, color: '#a8a6a3' },
+                                    grid: { color: 'rgba(255,255,255,0.04)' }
+                                },
+                                x: {
+                                    ticks: { color: '#a8a6a3' },
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // ---- CONFIRM ----
+                confirmAction(title, message, onOk) {
+                    document.getElementById('confirmTitle').textContent = title;
+                    document.getElementById('confirmMessage').textContent = message;
+                    this._confirmCallback = onOk;
+                    this.openModal('confirmModal');
+                }
+
+                executeConfirm() {
+                    if (this._confirmCallback) {
+                        this._confirmCallback();
+                        this._confirmCallback = null;
+                    }
+                    this.closeModal('confirmModal');
+                }
+
+                // ---- MODAL HELPERS ----
+                openModal(id) {
+                    document.getElementById(id).classList.add('active');
+                }
+
+                closeModal(id) {
+                    document.getElementById(id).classList.remove('active');
+                }
+
+                // ---- DRAWER ----
+                toggleDrawer() {
+                    document.getElementById('panelRight').classList.toggle('open');
+                }
+
+                // ---- TABS ----
+                switchTab(tab) {
+                    document.querySelectorAll('.panel-right .tab').forEach(t => {
+                        t.classList.toggle('active', t.dataset.tab === tab);
+                    });
+                    document.querySelectorAll('.panel-right .tab-content').forEach(el => {
+                        el.classList.toggle('active', el.id === 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+                    });
+                    if (tab === 'characters') this.updateCharacters();
+                    if (tab === 'notes') this.updateNotes();
+                }
+
+                // ---- KEYBOARD ----
+                onEditorKeydown(e) {
+                    // Ctrl+S
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        this.saveCurrentProject();
+                        this.showToast('Сохранено!', 'success');
+                    }
+                    // Tab -> 4 spaces
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        const textarea = document.getElementById('editorTextarea');
+                        const start = textarea.selectionStart;
+                        const end = textarea.selectionEnd;
+                        const value = textarea.value;
+                        textarea.value = value.slice(0, start) + '    ' + value.slice(end);
+                        textarea.selectionStart = textarea.selectionEnd = start + 4;
+                        this.onEditorInput();
+                    }
+                }
+
+                // ---- TOAST ----
+                showToast(message, type) {
+                    const container = document.getElementById('toastContainer');
+                    const toast = document.createElement('div');
+                    toast.className = 'toast ' + (type || 'info');
+                    toast.innerHTML = `
+                                <span>${message}</span>
+                                <button class="close-toast">✕</button>
+                            `;
+                    container.appendChild(toast);
+                    const closeBtn = toast.querySelector('.close-toast');
+                    closeBtn.addEventListener('click', () => toast.remove());
+                    setTimeout(() => {
+                        toast.style.opacity = '0';
+                        toast.style.transform = 'translateX(20px)';
+                        setTimeout(() => toast.remove(), 300);
+                    }, 3000);
+                }
+
+                // ---- UTILITY ----
+                escapeHtml(str) {
+                    if (!str) return '';
+                    const div = document.createElement('div');
+                    div.textContent = str;
+                    return div.innerHTML;
+                }
+
+                // ---- SORTABLE SETUP ----
+                setupSortable() {
+                    // Left panel sortable is set up in renderSceneList
+                    // Structure sortable is set up in updateStructureView
+                }
+            }
+
+            // ================================================================
+            // ===== INIT =====
+            // ================================================================
+            document.addEventListener('DOMContentLoaded', () => {
+                window.app = new App();
+            });
+
+        })();
+    </script>
+
+    <!--
+    ================================================================
+    ИНСТРУКЦИИ ПО РАЗВЁРТЫВАНИЮ
+    ================================================================
+
+    КАК ЗАПУСТИТЬ ЛОКАЛЬНО:
+    1. Сохраните этот файл как index.html
+    2. Откройте его в браузере (Chrome, Firefox, Edge)
+    3. Готово! Все данные сохраняются в localStorage вашего браузера.
+
+    КАК ЗАЛИТЬ НА GITHUB PAGES:
+    1. Создайте репозиторий на GitHub (например, storyphilium)
+    2. Загрузите этот файл в репозиторий (можно прямо через веб-интерфейс)
+    3. Перейдите в Settings -> Pages
+    4. Выберите ветку main и папку / (root)
+    5. Нажмите Save — через 2 минуты сайт будет доступен по адресу:
+    https://[ваш-username].github.io/storyphilium/
+
+    КАК ЗАЛИТЬ НА VERCEL:
+    1. Загрузите файл на GitHub (как описано выше)
+    2. Зайдите на vercel.com, нажмите "Add New -> Project"
+    3. Импортируйте ваш репозиторий
+    4. Настройки оставьте по умолчанию
+    5. Нажмите Deploy — через 1 минуту получите ссылку вида:
+    https://storyphilium.vercel.app/
+
+    ================================================================
+    -->
+</body>
+</html>
