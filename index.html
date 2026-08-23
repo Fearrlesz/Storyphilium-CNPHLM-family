@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="cosmic">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,6 +20,51 @@
         }
 
         :root {
+            /* Базовые переменные (заполняются темами) */
+            --bg-main: #17152E;
+            --bg-surface: #1F1D3A;
+            --bg-card: #2A2850;
+            --bg-input: #14122A;
+            --bg-input-focus: #1A1840;
+            --accent: #6C4AB6;
+            --accent-hover: #8A6CD4;
+            --accent-border: #4A3A7A;
+            --accent-light: #2A2250;
+            --text-primary: #E5B8FF;
+            --text-secondary: #B89AD9;
+            --text-light: #8A7AAA;
+            --shadow-soft: 0 4px 24px rgba(108, 74, 182, 0.15);
+            --shadow-hover: 0 12px 40px rgba(108, 74, 182, 0.25);
+            --border-light: 1px solid rgba(74, 58, 122, 0.4);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --script-font: 'Courier Prime', 'Courier New', monospace;
+            --transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --sidebar-width: 280px;
+        }
+
+        /* Тема: Космос (по умолчанию) */
+        [data-theme="cosmic"] {
+            --bg-main: #17152E;
+            --bg-surface: #1F1D3A;
+            --bg-card: #2A2850;
+            --bg-input: #14122A;
+            --bg-input-focus: #1A1840;
+            --accent: #6C4AB6;
+            --accent-hover: #8A6CD4;
+            --accent-border: #4A3A7A;
+            --accent-light: #2A2250;
+            --text-primary: #E5B8FF;
+            --text-secondary: #B89AD9;
+            --text-light: #8A7AAA;
+            --shadow-soft: 0 4px 24px rgba(108, 74, 182, 0.15);
+            --shadow-hover: 0 12px 40px rgba(108, 74, 182, 0.25);
+            --border-light: 1px solid rgba(74, 58, 122, 0.4);
+        }
+
+        /* Тема: Лес (светлая зелёная) */
+        [data-theme="forest"] {
             --bg-main: #eef3ed;
             --bg-surface: #f7faf6;
             --bg-card: #ffffff;
@@ -34,30 +79,45 @@
             --text-light: #6a8765;
             --shadow-soft: 0 4px 24px rgba(91, 140, 90, 0.10);
             --shadow-hover: 0 12px 40px rgba(91, 140, 90, 0.16);
-            --radius: 16px;
-            --radius-sm: 10px;
-            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --script-font: 'Courier Prime', 'Courier New', monospace;
-            --transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             --border-light: 1px solid rgba(179, 208, 176, 0.35);
         }
 
-        [data-theme="dark"] {
-            --bg-main: #1a281a;
-            --bg-surface: #243024;
-            --bg-card: #2d3d2d;
-            --bg-input: #1e2e1e;
-            --bg-input-focus: #2a3f2a;
-            --accent: #8ab882;
-            --accent-hover: #7ba373;
-            --accent-border: #4a6a4a;
-            --accent-light: #3a553a;
-            --text-primary: #d4e6d0;
-            --text-secondary: #a0c0a0;
-            --text-light: #80a080;
-            --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4);
-            --border-light: 1px solid rgba(74, 106, 74, 0.4);
+        /* Тема: Кино (тёплая сепия) */
+        [data-theme="cinema"] {
+            --bg-main: #2a1e16;
+            --bg-surface: #3d2e22;
+            --bg-card: #4f3a2b;
+            --bg-input: #2f221a;
+            --bg-input-focus: #3f2f24;
+            --accent: #c68b5e;
+            --accent-hover: #d49d72;
+            --accent-border: #7a5a44;
+            --accent-light: #4f3a2b;
+            --text-primary: #f0ddc8;
+            --text-secondary: #d4b89a;
+            --text-light: #b2947a;
+            --shadow-soft: 0 4px 24px rgba(198, 139, 94, 0.15);
+            --shadow-hover: 0 12px 40px rgba(198, 139, 94, 0.25);
+            --border-light: 1px solid rgba(122, 90, 68, 0.5);
+        }
+
+        /* Тема: Светлая (минимализм) */
+        [data-theme="light"] {
+            --bg-main: #f5f5f5;
+            --bg-surface: #ffffff;
+            --bg-card: #ffffff;
+            --bg-input: #ffffff;
+            --bg-input-focus: #fafafa;
+            --accent: #3a7bd5;
+            --accent-hover: #2a6bc5;
+            --accent-border: #b0c8e8;
+            --accent-light: #dce6f5;
+            --text-primary: #1a1a1a;
+            --text-secondary: #3d3d3d;
+            --text-light: #6b6b6b;
+            --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.10);
+            --border-light: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         html,
@@ -75,9 +135,19 @@
             padding: 14px 18px 0;
             transition: background 0.4s, color 0.4s;
             background-image:
-                radial-gradient(circle at 10% 20%, rgba(91, 140, 90, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(91, 140, 90, 0.03) 0%, transparent 50%);
+                radial-gradient(circle at 10% 20%, rgba(108, 74, 182, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(108, 74, 182, 0.04) 0%, transparent 50%);
             -webkit-text-size-adjust: 100%;
+        }
+
+        [data-theme="forest"] body,
+        [data-theme="light"] body {
+            background-image: none;
+        }
+        [data-theme="cinema"] body {
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(198, 139, 94, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(198, 139, 94, 0.04) 0%, transparent 50%);
         }
 
         /* ===== SCROLLBAR ===== */
@@ -169,6 +239,30 @@
             gap: 4px;
         }
 
+        /* ===== THEME SELECTOR ===== */
+        .theme-selector {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+        .theme-selector select {
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            border: var(--border-light);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            max-width: 110px;
+        }
+        .theme-selector select:focus {
+            border-color: var(--accent);
+        }
+
         /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex;
@@ -192,11 +286,11 @@
         .btn-primary {
             background: var(--accent);
             color: #fff;
-            box-shadow: 0 2px 12px rgba(91, 140, 90, 0.2);
+            box-shadow: 0 2px 12px rgba(108, 74, 182, 0.2);
         }
         .btn-primary:hover {
             background: var(--accent-hover);
-            box-shadow: 0 6px 20px rgba(91, 140, 90, 0.25);
+            box-shadow: 0 6px 20px rgba(108, 74, 182, 0.25);
             transform: translateY(-1px);
         }
         .btn-secondary {
@@ -242,7 +336,6 @@
             border-color: var(--accent);
         }
 
-        /* Стили для селекта формата экспорта */
         .export-select {
             padding: 4px 8px;
             background: var(--bg-card);
@@ -362,12 +455,12 @@
             }
         }
 
-        /* ===== EDITOR ===== */
-        .editor-wrapper {
+        /* ===== MAIN LAYOUT: EDITOR + SIDEBAR ===== */
+        .main-area {
             flex: 1;
             min-height: 0;
             display: flex;
-            flex-direction: column;
+            gap: 0;
             border-radius: 0 0 var(--radius) var(--radius);
             overflow: hidden;
             background: var(--bg-surface);
@@ -375,6 +468,15 @@
             border: var(--border-light);
             border-top: none;
             position: relative;
+            transition: all 0.4s;
+        }
+
+        .editor-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            background: var(--bg-surface);
         }
 
         .editor-wrapper textarea {
@@ -403,6 +505,132 @@
             font-family: var(--font);
             font-size: 14px;
             font-weight: 400;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-left: var(--border-light);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow: hidden;
+            transition: width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+            opacity: 1;
+        }
+        .sidebar.closed {
+            width: 0;
+            opacity: 0;
+            margin-right: 0;
+            border-left: none;
+            pointer-events: none;
+        }
+        .sidebar-header {
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            border-bottom: var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .sidebar-header .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+        .sidebar-header .close-sidebar:hover {
+            color: var(--text-primary);
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: var(--border-light);
+            flex-shrink: 0;
+        }
+        .sidebar-tabs button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 8px 0;
+            font-family: var(--font);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .sidebar-tabs button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .sidebar-tabs button:hover {
+            color: var(--text-primary);
+            background: var(--bg-main);
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        .sidebar-content .tab-pane {
+            display: none;
+            padding: 0 8px;
+        }
+        .sidebar-content .tab-pane.active {
+            display: block;
+        }
+
+        .sidebar-item {
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+        .sidebar-item:hover {
+            background: var(--bg-main);
+            color: var(--text-primary);
+        }
+        .sidebar-item .item-num {
+            display: inline-block;
+            min-width: 24px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-right: 6px;
+        }
+        .sidebar-item .item-name {
+            font-weight: 500;
+        }
+        .sidebar-item .item-desc {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-left: 30px;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar-empty {
+            padding: 20px 14px;
+            color: var(--text-light);
+            font-size: 13px;
+            text-align: center;
         }
 
         /* ===== FIND/REPLACE BAR ===== */
@@ -507,10 +735,15 @@
         /* ===== FOCUS MODE ===== */
         body.focus-mode .app-header,
         body.focus-mode .app-footer,
-        body.focus-mode .editor-toolbar {
+        body.focus-mode .editor-toolbar,
+        body.focus-mode .sidebar {
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.4s;
+        }
+        body.focus-mode .main-area {
+            border-radius: var(--radius);
+            border: var(--border-light);
         }
         body.focus-mode .editor-wrapper textarea {
             padding: 2cm 3cm;
@@ -532,10 +765,11 @@
             .app-header,
             .app-footer,
             .editor-toolbar,
-            .find-replace-bar {
+            .find-replace-bar,
+            .sidebar {
                 display: none !important;
             }
-            .editor-wrapper {
+            .main-area {
                 border-radius: 0;
                 box-shadow: none;
                 border: none;
@@ -556,7 +790,6 @@
                 word-wrap: break-word;
                 overflow-wrap: break-word;
             }
-            /* Скрыть всё, кроме .print-content */
             body * {
                 visibility: hidden;
             }
@@ -594,6 +827,12 @@
             .project-selector select {
                 max-width: 120px;
                 font-size: 11px;
+            }
+            .sidebar {
+                width: 230px;
+            }
+            :root {
+                --sidebar-width: 230px;
             }
         }
 
@@ -673,6 +912,15 @@
                 height: 26px;
                 padding: 2px 6px;
             }
+            .sidebar {
+                width: 200px;
+            }
+            :root {
+                --sidebar-width: 200px;
+            }
+            .sidebar.closed {
+                width: 0;
+            }
         }
 
         @media (max-width: 480px) {
@@ -699,8 +947,8 @@
                 font-size: 11px;
             }
             .editor-wrapper textarea {
-                padding: 1cm 1cm; /* увеличен отступ для читаемости */
-                font-size: 11pt;  /* чуть крупнее */
+                padding: 1cm 1cm;
+                font-size: 11pt;
             }
             .editor-toolbar .stats {
                 font-size: 9px;
@@ -731,6 +979,15 @@
                 font-size: 8px;
                 padding: 0 4px;
             }
+            .sidebar {
+                width: 160px;
+            }
+            :root {
+                --sidebar-width: 160px;
+            }
+            .sidebar.closed {
+                width: 0;
+            }
         }
     </style>
 </head>
@@ -752,16 +1009,25 @@
                     <button class="btn btn-secondary btn-sm" id="deleteProjectBtn" title="Удалить проект">✕</button>
                 </div>
             </div>
-            <button class="btn btn-secondary btn-icon" id="themeToggle" title="Тема (Ctrl+T)">🌓</button>
+
+            <!-- Theme Selector -->
+            <div class="theme-selector">
+                <select id="themeSelect">
+                    <option value="cosmic">🌌 Космос</option>
+                    <option value="forest">🌿 Лес</option>
+                    <option value="cinema">🎞️ Кино</option>
+                    <option value="light">☀️ Светлая</option>
+                </select>
+            </div>
+
             <button class="btn btn-secondary btn-icon" id="focusToggle" title="Фокус (Ctrl+F)">◎</button>
             <button class="btn btn-secondary btn-icon" id="findToggle" title="Поиск/Замена (Ctrl+H)">🔍</button>
             <button class="btn btn-secondary btn-sm" id="undoBtn" title="Отменить (Ctrl+Z)">↩</button>
             <button class="btn btn-secondary btn-sm" id="redoBtn" title="Повторить (Ctrl+Y)">↪</button>
-            <!-- Экспорт с выбором формата -->
             <div style="display:flex; gap:4px; align-items:center;">
                 <select id="exportFormat" class="export-select">
                     <option value="txt">TXT</option>
-                    <option value="fountain">Fountain</option>
+                    <option value="fountain" selected>Fountain</option>
                     <option value="json">JSON</option>
                     <option value="pdf">PDF</option>
                 </select>
@@ -783,6 +1049,9 @@
             <button class="toolbar-btn" data-insert="РЕМ">Ремарка</button>
             <button class="toolbar-btn" data-insert="СЦЕНА">Сцена #</button>
         </div>
+        <div class="toolbar-group">
+            <button class="toolbar-btn" id="toggleSidebarBtn" title="Показать/скрыть панель сцен и персонажей">📋</button>
+        </div>
         <div class="spacer"></div>
         <div class="stats" id="statsBar">
             <span>📝 <span class="num" id="charCount">0</span></span>
@@ -801,9 +1070,29 @@
         </div>
     </div>
 
-    <!-- EDITOR -->
-    <div class="editor-wrapper">
-        <textarea id="scriptInput" placeholder="Начните писать сценарий…&#10;Используйте Ctrl+S для сохранения, Ctrl+E для экспорта" spellcheck="true"></textarea>
+    <!-- MAIN AREA (EDITOR + SIDEBAR) -->
+    <div class="main-area">
+        <div class="editor-wrapper">
+            <textarea id="scriptInput" placeholder="Начните писать сценарий…&#10;Используйте Ctrl+S для сохранения, Ctrl+E для экспорта" spellcheck="true"></textarea>
+        </div>
+        <div class="sidebar closed" id="sidebar">
+            <div class="sidebar-header">
+                <span>Навигация</span>
+                <button class="close-sidebar" id="closeSidebarBtn">✕</button>
+            </div>
+            <div class="sidebar-tabs">
+                <button class="active" data-tab="scenes">Сцены</button>
+                <button data-tab="characters">Персонажи</button>
+            </div>
+            <div class="sidebar-content">
+                <div class="tab-pane active" id="tab-scenes">
+                    <div id="sceneList"></div>
+                </div>
+                <div class="tab-pane" id="tab-characters">
+                    <div id="characterList"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- FIND/REPLACE BAR -->
@@ -846,7 +1135,9 @@
             const CURRENT_PROJECT_KEY = 'storyphilium_pro_current';
             const THEME_KEY = 'storyphilium_pro_theme';
             const FOCUS_KEY = 'storyphilium_pro_focus';
+            const SIDEBAR_KEY = 'storyphilium_pro_sidebar';
             const MAX_HISTORY = 60;
+            const DEBOUNCE_DELAY = 500;
 
             // ===== DOM REFS =====
             const textarea = document.getElementById('scriptInput');
@@ -864,7 +1155,7 @@
             const exportBtn = document.getElementById('exportBtn');
             const exportFormat = document.getElementById('exportFormat');
             const clearBtn = document.getElementById('clearBtn');
-            const themeToggle = document.getElementById('themeToggle');
+            const themeSelect = document.getElementById('themeSelect');
             const focusToggle = document.getElementById('focusToggle');
             const findToggle = document.getElementById('findToggle');
             const findReplaceBar = document.getElementById('findReplaceBar');
@@ -880,19 +1171,32 @@
             const newProjectBtn = document.getElementById('newProjectBtn');
             const deleteProjectBtn = document.getElementById('deleteProjectBtn');
             const printContent = document.querySelector('.print-content');
+            const sidebar = document.getElementById('sidebar');
+            const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+            const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+            const sceneList = document.getElementById('sceneList');
+            const characterList = document.getElementById('characterList');
+            const tabButtons = document.querySelectorAll('.sidebar-tabs button');
+            const tabPanes = {
+                scenes: document.getElementById('tab-scenes'),
+                characters: document.getElementById('tab-characters')
+            };
 
             // ===== STATE =====
             let saveTimer = null;
             let timerInterval = null;
             let startTime = Date.now();
             let elapsedSeconds = 0;
-            let isDark = localStorage.getItem(THEME_KEY) === 'dark';
             let isFocus = localStorage.getItem(FOCUS_KEY) === 'true';
+            let isSidebarOpen = localStorage.getItem(SIDEBAR_KEY) !== 'closed';
 
-            // История для текущего проекта (хранится в памяти)
+            // История для текущего проекта
             let history = [];
             let historyIndex = -1;
             let isUndoRedo = false;
+
+            // Текущая тема
+            let currentTheme = localStorage.getItem(THEME_KEY) || 'cosmic';
 
             // ===== PROJECTS MANAGEMENT =====
             function getProjects() {
@@ -918,7 +1222,6 @@
                 const projects = getProjects();
                 const content = projects[name] || '';
                 textarea.value = content;
-                // Обновляем историю
                 history = [content];
                 historyIndex = 0;
                 setCurrentProject(name);
@@ -928,6 +1231,7 @@
                 projectSelect.value = name;
                 statusText.textContent = `📁 ${name}`;
                 setTimeout(() => { statusText.textContent = 'Сохранено'; }, 1500);
+                updateSidebar();
             }
 
             function saveCurrentProject() {
@@ -961,7 +1265,6 @@
                 const projects = getProjects();
                 delete projects[name];
                 saveProjects(projects);
-                // Переключаемся на default
                 if (projects['default'] === undefined) {
                     projects['default'] = '';
                     saveProjects(projects);
@@ -975,7 +1278,6 @@
                 projectSelect.innerHTML = '';
                 const names = Object.keys(projects);
                 if (names.length === 0) {
-                    // Создаём проект по умолчанию
                     projects['default'] = '';
                     saveProjects(projects);
                     names.push('default');
@@ -991,14 +1293,18 @@
             }
 
             // ===== THEME =====
-            function applyTheme(dark) {
-                isDark = dark;
-                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-                themeToggle.textContent = dark ? '☀️' : '🌓';
-                localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
+            function applyTheme(theme) {
+                currentTheme = theme;
+                document.documentElement.setAttribute('data-theme', theme);
+                themeSelect.value = theme;
+                localStorage.setItem(THEME_KEY, theme);
             }
-            applyTheme(isDark);
-            themeToggle.addEventListener('click', () => applyTheme(!isDark));
+
+            // Инициализация темы
+            applyTheme(currentTheme);
+            themeSelect.addEventListener('change', function() {
+                applyTheme(this.value);
+            });
 
             // ===== FOCUS =====
             function applyFocus(focus) {
@@ -1006,9 +1312,175 @@
                 document.body.classList.toggle('focus-mode', focus);
                 focusToggle.textContent = focus ? '◉' : '◎';
                 localStorage.setItem(FOCUS_KEY, focus ? 'true' : 'false');
+                // В фокусе скрываем сайдбар
+                if (focus) {
+                    closeSidebar();
+                }
             }
             applyFocus(isFocus);
             focusToggle.addEventListener('click', () => applyFocus(!isFocus));
+
+            // ===== SIDEBAR =====
+            function toggleSidebar() {
+                if (isSidebarOpen) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            }
+
+            function openSidebar() {
+                isSidebarOpen = true;
+                sidebar.classList.remove('closed');
+                localStorage.setItem(SIDEBAR_KEY, 'open');
+                updateSidebar();
+            }
+
+            function closeSidebar() {
+                isSidebarOpen = false;
+                sidebar.classList.add('closed');
+                localStorage.setItem(SIDEBAR_KEY, 'closed');
+            }
+
+            toggleSidebarBtn.addEventListener('click', toggleSidebar);
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+
+            // Восстанавливаем состояние сайдбара
+            if (!isSidebarOpen) {
+                sidebar.classList.add('closed');
+            } else {
+                sidebar.classList.remove('closed');
+            }
+
+            // ===== SIDEBAR TABS =====
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const tab = this.dataset.tab;
+                    Object.keys(tabPanes).forEach(key => {
+                        tabPanes[key].classList.toggle('active', key === tab);
+                    });
+                });
+            });
+
+            // ===== SIDEBAR CONTENT: scenes & characters =====
+            function parseScenes(text) {
+                const lines = text.split('\n');
+                const scenes = [];
+                let sceneNum = 0;
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    const match = line.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*(.*)/i);
+                    if (match) {
+                        sceneNum++;
+                        const heading = match[2] || '';
+                        // Ищем следующую непустую строку как описание
+                        let desc = '';
+                        for (let j = i + 1; j < lines.length; j++) {
+                            const next = lines[j].trim();
+                            if (next && !next.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)/i) && !next.match(/^[А-ЯA-Z\s\-']+$/)) {
+                                desc = next.substring(0, 60);
+                                break;
+                            }
+                            if (next && next.match(/^[А-ЯA-Z\s\-']+$/)) break;
+                        }
+                        scenes.push({
+                            num: sceneNum,
+                            heading: heading,
+                            desc: desc,
+                            lineIndex: i
+                        });
+                    }
+                }
+                return scenes;
+            }
+
+            function parseCharacters(text) {
+                const lines = text.split('\n');
+                const chars = new Set();
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (trimmed.length > 0 && trimmed === trimmed.toUpperCase() &&
+                        !trimmed.startsWith('НАР.') && !trimmed.startsWith('ИНТ.') && !trimmed.startsWith('ЭКСТ.') &&
+                        !trimmed.startsWith('NAR.') && !trimmed.startsWith('INT.') && !trimmed.startsWith('EXT.') &&
+                        !trimmed.startsWith('(') && !trimmed.startsWith('[') &&
+                        !trimmed.match(/^\d+\./) && 
+                        trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {   // <-- Убрано отрицание
+                        chars.add(trimmed);
+                    }
+                }
+                return Array.from(chars).sort();
+            }
+
+            let updateSidebarTimer = null;
+
+            function updateSidebar() {
+                clearTimeout(updateSidebarTimer);
+                updateSidebarTimer = setTimeout(() => {
+                    const text = textarea.value;
+                    // Сцены
+                    const scenes = parseScenes(text);
+                    sceneList.innerHTML = '';
+                    if (scenes.length === 0) {
+                        sceneList.innerHTML = '<div class="sidebar-empty">Нет сцен</div>';
+                    } else {
+                        for (const sc of scenes) {
+                            const div = document.createElement('div');
+                            div.className = 'sidebar-item';
+                            div.innerHTML = `
+                                <span class="item-num">${sc.num}</span>
+                                <span class="item-name">${sc.heading || 'Сцена'}</span>
+                                ${sc.desc ? `<span class="item-desc">${sc.desc}</span>` : ''}
+                            `;
+                            div.addEventListener('click', () => {
+                                // Переход к строке сцены
+                                const lines = text.split('\n');
+                                let pos = 0;
+                                for (let i = 0; i < sc.lineIndex && i < lines.length; i++) {
+                                    pos += lines[i].length + 1;
+                                }
+                                textarea.focus();
+                                textarea.setSelectionRange(pos, pos);
+                                // Прокрутка с учётом высоты строки
+                                const computedLH = getComputedStyle(textarea).lineHeight;
+                                let lineHeight = parseFloat(computedLH);
+                                if (isNaN(lineHeight)) lineHeight = 30; // fallback
+                                textarea.scrollTop = sc.lineIndex * lineHeight - 100;
+                            });
+                            sceneList.appendChild(div);
+                        }
+                    }
+
+                    // Персонажи
+                    const chars = parseCharacters(text);
+                    characterList.innerHTML = '';
+                    if (chars.length === 0) {
+                        characterList.innerHTML = '<div class="sidebar-empty">Нет персонажей</div>';
+                    } else {
+                        for (const ch of chars) {
+                            const div = document.createElement('div');
+                            div.className = 'sidebar-item';
+                            div.innerHTML = `<span class="item-name">${ch}</span>`;
+                            div.addEventListener('click', () => {
+                                // Найти первое вхождение имени в тексте
+                                const index = text.indexOf(ch);
+                                if (index !== -1) {
+                                    textarea.focus();
+                                    textarea.setSelectionRange(index, index + ch.length);
+                                    // Прокрутка
+                                    const lines = text.substring(0, index).split('\n');
+                                    const computedLH = getComputedStyle(textarea).lineHeight;
+                                    let lineHeight = parseFloat(computedLH);
+                                    if (isNaN(lineHeight)) lineHeight = 30;
+                                    textarea.scrollTop = (lines.length - 1) * lineHeight - 50;
+                                }
+                            });
+                            characterList.appendChild(div);
+                        }
+                    }
+                }, DEBOUNCE_DELAY);
+            }
 
             // ===== TIMER =====
             function updateTimer() {
@@ -1048,6 +1520,7 @@
                 textarea.dispatchEvent(new Event('input'));
                 isUndoRedo = false;
                 updateStats();
+                updateSidebar();
             }
 
             function redo() {
@@ -1058,6 +1531,7 @@
                 textarea.dispatchEvent(new Event('input'));
                 isUndoRedo = false;
                 updateStats();
+                updateSidebar();
             }
 
             // ===== STATS =====
@@ -1068,11 +1542,9 @@
                 const lines = text ? text.split('\n').length : 0;
                 const pages = Math.max(1, Math.ceil(chars / 1000));
 
-                // Сцены: строки начинающиеся с НАР., ИНТ., ЭКСТ. (регистронезависимо)
                 const sceneMatches = text.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)/gim);
                 const scenes = sceneMatches ? sceneMatches.length : 0;
 
-                // Персонажи: строки с именем в верхнем регистре (не диалог, не ремарка)
                 const linesArr = text.split('\n');
                 let charNames = new Set();
                 for (let line of linesArr) {
@@ -1081,7 +1553,8 @@
                         !trimmed.startsWith('НАР.') && !trimmed.startsWith('ИНТ.') && !trimmed.startsWith('ЭКСТ.') &&
                         !trimmed.startsWith('NAR.') && !trimmed.startsWith('INT.') && !trimmed.startsWith('EXT.') &&
                         !trimmed.startsWith('(') && !trimmed.startsWith('[') &&
-                        !trimmed.match(/^\d+\./) && !trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {
+                        !trimmed.match(/^\d+\./) &&
+                        trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {   // <-- Убрано отрицание
                         charNames.add(trimmed);
                     }
                 }
@@ -1104,6 +1577,16 @@
                 }
             }
 
+            let statsTimer = null;
+
+            function scheduleStatsUpdate() {
+                clearTimeout(statsTimer);
+                statsTimer = setTimeout(() => {
+                    updateStats();
+                    updateSidebar();
+                }, 200);
+            }
+
             // ===== SAVE =====
             function saveScript(showFeedback = true) {
                 const val = textarea.value;
@@ -1117,6 +1600,7 @@
                 }
                 pushHistory();
                 updateStats();
+                updateSidebar();
             }
 
             function triggerAutoSave() {
@@ -1126,9 +1610,8 @@
                 saveTimer = setTimeout(() => saveScript(true), 1000);
             }
 
-            // ===== LOAD =====
+            // ===== LOAD DEFAULT =====
             function loadDefaultScript() {
-                // Пример сценария на русском сценарном языке
                 return `НАР. КВАРТИРА ИВАНА - ДЕНЬ
 
         Иван сидит на диване, смотрит в стену. За окном шумят машины.
@@ -1190,30 +1673,34 @@
                 updateStats();
                 saveScript(false);
                 projectSelect.value = getCurrentProject();
+                updateSidebar();
             }
 
-            // ===== EXPORT FUNCTIONS =====
+            // ===== EXPORT =====
             function getExportContent() {
                 return textarea.value;
             }
 
+            function addBOM(content) {
+                return '\uFEFF' + content;
+            }
+
             function downloadFile(content, filename, mimeType) {
-                const blob = new Blob([content], { type: mimeType });
+                const isText = mimeType.includes('text/plain') || mimeType.includes('application/json');
+                const finalContent = isText ? addBOM(content) : content;
+                const blob = new Blob([finalContent], { type: mimeType });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
                 link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-                URL.revokeObjectURL(link.href);
+                setTimeout(() => URL.revokeObjectURL(link.href), 1000);
             }
 
             function exportTXT() {
                 const content = getExportContent();
-                if (!content.trim()) {
-                    alert('Сценарий пуст. Нечего экспортировать.');
-                    return;
-                }
+                if (!content.trim()) { alert('Сценарий пуст.'); return; }
                 const projectName = getCurrentProject();
                 const now = new Date();
                 const dateStr =
@@ -1225,15 +1712,13 @@
 
             function exportFountain() {
                 const content = getExportContent();
-                if (!content.trim()) {
-                    alert('Сценарий пуст. Нечего экспортировать.');
-                    return;
-                }
+                if (!content.trim()) { alert('Сценарий пуст.'); return; }
                 const projectName = getCurrentProject();
                 const now = new Date();
                 const dateStr =
                     `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-                downloadFile(content, `${projectName}_${dateStr}.fountain`, 'text/plain;charset=utf-8');
+                const fountainContent = `Title: ${projectName}\nCredit: Storyphilium\nDate: ${dateStr}\n\n` + content;
+                downloadFile(fountainContent, `${projectName}_${dateStr}.fountain`, 'text/plain;charset=utf-8');
                 statusText.textContent = '✅ Fountain экспортирован!';
                 setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
             }
@@ -1242,12 +1727,8 @@
                 const content = getExportContent();
                 const projectName = getCurrentProject();
                 const now = new Date();
-                const data = {
-                    project: projectName,
-                    content: content,
-                    exportedAt: now.toISOString(),
-                    version: '1.0'
-                };
+                const data = { project: projectName, content: content, exportedAt: now.toISOString(), version: '1.0',
+                    format: 'storyphilium' };
                 const json = JSON.stringify(data, null, 2);
                 const dateStr =
                     `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
@@ -1258,18 +1739,11 @@
 
             function exportPDF() {
                 const content = getExportContent();
-                if (!content.trim()) {
-                    alert('Сценарий пуст. Нечего экспортировать.');
-                    return;
-                }
-                // Заполняем печатный контейнер
+                if (!content.trim()) { alert('Сценарий пуст.'); return; }
                 printContent.textContent = content;
-                // Вызываем печать
                 window.print();
-                // После печати очищаем (событие afterprint)
             }
 
-            // Обработчик afterprint для очистки
             window.addEventListener('afterprint', function() {
                 if (printContent.textContent) {
                     printContent.textContent = '';
@@ -1278,7 +1752,6 @@
                 }
             });
 
-            // ===== EXPORT HANDLER =====
             function handleExport() {
                 const format = exportFormat.value;
                 switch (format) {
@@ -1295,20 +1768,20 @@
                         exportPDF();
                         break;
                     default:
-                        alert('Неизвестный формат экспорта');
+                        alert('Неизвестный формат');
                 }
             }
-
             exportBtn.addEventListener('click', handleExport);
 
             // ===== CLEAR =====
             function clearScript() {
                 if (textarea.value.trim() === '') return;
-                if (!confirm('Удалить весь текст сценария без возможности восстановления?')) return;
+                if (!confirm('Удалить весь текст сценария?')) return;
                 textarea.value = '';
                 saveScript(true);
                 textarea.focus();
                 updateStats();
+                updateSidebar();
             }
             clearBtn.addEventListener('click', clearScript);
 
@@ -1321,9 +1794,7 @@
                 const text = textarea.value;
                 const start = textarea.selectionEnd;
                 let idx = text.indexOf(query, start);
-                if (idx === -1) {
-                    idx = text.indexOf(query);
-                }
+                if (idx === -1) idx = text.indexOf(query);
                 if (idx === -1) {
                     statusText.textContent = '❌ Не найдено';
                     setTimeout(() => { statusText.textContent = 'Сохранено'; }, 1500);
@@ -1341,10 +1812,7 @@
                 const text = textarea.value;
                 const start = textarea.selectionStart;
                 const end = textarea.selectionEnd;
-                if (start === end || text.substring(start, end) !== query) {
-                    findNext();
-                    return;
-                }
+                if (start === end || text.substring(start, end) !== query) { findNext(); return; }
                 const before = text.substring(0, start);
                 const after = text.substring(end);
                 textarea.value = before + replacement + after;
@@ -1353,6 +1821,7 @@
                 textarea.dispatchEvent(new Event('input'));
                 triggerAutoSave();
                 updateStats();
+                updateSidebar();
             }
 
             function replaceAll() {
@@ -1366,6 +1835,7 @@
                     textarea.dispatchEvent(new Event('input'));
                     triggerAutoSave();
                     updateStats();
+                    updateSidebar();
                     statusText.textContent = `✅ Заменено ${(text.length - newText.length) / query.length}`;
                     setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
                 } else {
@@ -1374,7 +1844,20 @@
                 }
             }
 
-            // ===== INSERT ELEMENTS (Русский сценарный язык) =====
+            findToggle.addEventListener('click', () => {
+                findReplaceBar.classList.toggle('open');
+                if (findReplaceBar.classList.contains('open')) findInput.focus();
+            });
+            closeFindBtn.addEventListener('click', () => findReplaceBar.classList.remove('open'));
+            findNextBtn.addEventListener('click', findNext);
+            replaceBtn.addEventListener('click', replaceCurrent);
+            replaceAllBtn.addEventListener('click', replaceAll);
+            findInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault();
+                    findNext(); } });
+            replaceInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault();
+                    replaceCurrent(); } });
+
+            // ===== INSERT ELEMENTS =====
             function insertElement(type) {
                 const start = textarea.selectionStart;
                 const end = textarea.selectionEnd;
@@ -1383,7 +1866,6 @@
                 const after = text.substring(end);
                 let insert = '';
                 let cursorOffset = 0;
-
                 switch (type) {
                     case 'НАР':
                         insert = 'НАР.  - ДЕНЬ\n\n';
@@ -1417,7 +1899,6 @@
                     default:
                         return;
                 }
-
                 textarea.value = before + insert + after;
                 const newPos = start + cursorOffset;
                 textarea.setSelectionRange(newPos, newPos);
@@ -1425,23 +1906,9 @@
                 textarea.dispatchEvent(new Event('input'));
                 triggerAutoSave();
                 updateStats();
+                updateSidebar();
             }
 
-            // ===== EVENTS =====
-            textarea.addEventListener('input', function() {
-                triggerAutoSave();
-                updateStats();
-            });
-
-            textarea.addEventListener('blur', function() {
-                clearTimeout(saveTimer);
-                saveScript(true);
-            });
-
-            textarea.addEventListener('select', updateStats);
-            textarea.addEventListener('click', updateStats);
-
-            // ===== TOOLBAR BUTTONS =====
             document.querySelectorAll('[data-insert]').forEach(btn => {
                 btn.addEventListener('click', () => insertElement(btn.dataset.insert));
             });
@@ -1450,32 +1917,12 @@
             projectSelect.addEventListener('change', function() {
                 const name = this.value;
                 if (name) {
-                    // Сохраняем текущий проект перед переключением
                     saveCurrentProject();
                     loadProject(name);
                 }
             });
-
             newProjectBtn.addEventListener('click', createProject);
             deleteProjectBtn.addEventListener('click', deleteCurrentProject);
-
-            // ===== FIND TOGGLE =====
-            findToggle.addEventListener('click', () => {
-                findReplaceBar.classList.toggle('open');
-                if (findReplaceBar.classList.contains('open')) {
-                    findInput.focus();
-                }
-            });
-            closeFindBtn.addEventListener('click', () => {
-                findReplaceBar.classList.remove('open');
-            });
-            findNextBtn.addEventListener('click', findNext);
-            replaceBtn.addEventListener('click', replaceCurrent);
-            replaceAllBtn.addEventListener('click', replaceAll);
-            findInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault();
-                    findNext(); } });
-            replaceInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault();
-                    replaceCurrent(); } });
 
             // ===== UNDO / REDO =====
             undoBtn.addEventListener('click', undo);
@@ -1497,7 +1944,10 @@
                 }
                 if (e.ctrlKey && e.key === 't') {
                     e.preventDefault();
-                    applyTheme(!isDark);
+                    const themes = ['cosmic', 'forest', 'cinema', 'light'];
+                    let idx = themes.indexOf(currentTheme);
+                    idx = (idx + 1) % themes.length;
+                    applyTheme(themes[idx]);
                     return;
                 }
                 if (e.ctrlKey && e.key === 'f') {
@@ -1508,10 +1958,8 @@
                 if (e.ctrlKey && e.key === 'h') {
                     e.preventDefault();
                     findReplaceBar.classList.toggle('open');
-                    if (findReplaceBar.classList.contains('open')) {
-                        findInput.focus();
-                        findInput.select();
-                    }
+                    if (findReplaceBar.classList.contains('open')) { findInput.focus();
+                        findInput.select(); }
                     return;
                 }
                 if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
@@ -1529,34 +1977,37 @@
                     redo();
                     return;
                 }
-                // Ctrl+1..7 для вставки на русском
                 if (e.ctrlKey && !e.shiftKey && e.key >= '1' && e.key <= '7') {
                     e.preventDefault();
-                    const map = {
-                        '1': 'НАР',
-                        '2': 'ИНТ',
-                        '3': 'ЭКСТ',
-                        '4': 'ПЕРС',
-                        '5': 'ДИАЛ',
-                        '6': 'РЕМ',
-                        '7': 'СЦЕНА'
-                    };
+                    const map = { '1': 'НАР', '2': 'ИНТ', '3': 'ЭКСТ', '4': 'ПЕРС', '5': 'ДИАЛ', '6': 'РЕМ', '7': 'СЦЕНА' };
                     insertElement(map[e.key]);
                     return;
                 }
             });
 
+            // ===== EVENTS ON TEXTAREA =====
+            textarea.addEventListener('input', function() {
+                triggerAutoSave();
+                scheduleStatsUpdate();
+            });
+            textarea.addEventListener('blur', function() {
+                clearTimeout(saveTimer);
+                saveScript(true);
+            });
+            textarea.addEventListener('select', updateStats);
+            textarea.addEventListener('click', updateStats);
+
             // ===== INIT =====
             initProjects();
 
-            // Сохраняем при закрытии
             window.addEventListener('beforeunload', function() {
                 saveCurrentProject();
             });
 
-            console.log('📝 Storyphilium — сценарный редактор на русском языке');
-            console.log('📁 Поддержка множества проектов');
-            console.log('⌨️  Ctrl+1..7 — НАР, ИНТ, ЭКСТ, персонаж, диалог, ремарка, сцена');
+            console.log('📝 Storyphilium — сценарный редактор с космической душой');
+            console.log('🌌 Темы: Космос, Лес, Кино, Светлая');
+            console.log('📋 Панель сцен и персонажей — кнопка 📋 в тулбаре');
+            console.log('⌨️  Ctrl+1..7 — вставка элементов');
 
         })();
     </script>
