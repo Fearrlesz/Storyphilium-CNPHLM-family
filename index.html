@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>STORYPHILIUM | CINEPHILIUM FAMILY</title>
+    <title>STORYPHILIUM | CINEPHILIUM FAMILY — Русский сценарный редактор</title>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -38,6 +38,14 @@
 
             --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Профессиональные отступы для сценария */
+            --scene-margin-left: 1.5cm;
+            --character-margin-left: 3.5cm;
+            --dialogue-margin-left: 2.5cm;
+            --dialogue-margin-right: 2cm;
+            --parenthetical-margin-left: 3cm;
+            --transition-margin-left: 5cm;
         }
 
         /* ============================================================
@@ -92,38 +100,46 @@
            ============================================================ */
         .app-header {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 28px;
+            padding: 14px 28px;
             background: var(--bg-surface);
             border-radius: var(--radius);
             box-shadow: var(--shadow-soft);
             margin-bottom: 28px;
             backdrop-filter: blur(4px);
             border: 1px solid rgba(174, 201, 166, 0.3);
+            gap: 16px;
         }
 
         .app-header .brand {
-            font-size: 28px;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: nowrap;
+            gap: 6px;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: -0.5px;
             color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 4px;
+            white-space: nowrap;
         }
-        .app-header .brand .family {
-            font-weight: 400;
-            font-size: 14px;
-            color: var(--text-secondary);
-            letter-spacing: 0.2px;
+        .app-header .brand .story {
+            font-size: 22px;
+            font-weight: 700;
         }
         .app-header .brand .separator {
             color: var(--accent-border);
             font-weight: 300;
+            font-size: 20px;
             margin: 0 2px;
+        }
+        .app-header .brand .family {
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 0.2px;
+            white-space: nowrap;
         }
 
         .app-header .stats {
@@ -131,7 +147,7 @@
             gap: 14px;
             font-size: 14px;
             color: var(--text-secondary);
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
         .app-header .stats span {
             background: var(--bg-card);
@@ -141,6 +157,7 @@
             font-weight: 500;
             color: var(--text-primary);
             box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.6);
+            white-space: nowrap;
         }
         .app-header .stats .num {
             font-weight: 700;
@@ -148,12 +165,47 @@
         }
 
         /* ============================================================
-           WELCOME — органичная волна
+           TABS
+           ============================================================ */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 28px;
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 6px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(174, 201, 166, 0.15);
+        }
+        .tabs button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            font-family: var(--font);
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .tabs button.active {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            box-shadow: 0 4px 12px rgba(123, 163, 115, 0.12);
+        }
+        .tabs button:hover:not(.active) {
+            background: rgba(123, 163, 115, 0.08);
+        }
+
+        /* ============================================================
+           WELCOME — органичный блок без жёстких границ
            ============================================================ */
         .welcome {
             background: var(--bg-surface);
             border-radius: var(--radius);
-            padding: 28px 32px 24px;
+            padding: 24px 32px 20px;
             box-shadow: var(--shadow-soft);
             margin-bottom: 28px;
             border: 1px solid rgba(174, 201, 166, 0.25);
@@ -216,9 +268,9 @@
             gap: 8px;
         }
         .welcome .tips li::before {
-            content: "◆";
+            content: "—";
             color: var(--accent);
-            font-size: 10px;
+            font-size: 14px;
             opacity: 0.6;
         }
 
@@ -233,6 +285,22 @@
             font-size: 13px;
             color: var(--text-light);
             font-weight: 450;
+        }
+
+        /* ============================================================
+           PANELS — вкладки
+           ============================================================ */
+        .panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
 
         /* ============================================================
@@ -414,6 +482,18 @@
             transform: translateY(-2px);
         }
 
+        .btn-toolbar {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--accent-border);
+            padding: 8px 18px;
+            font-size: 13px;
+        }
+        .btn-toolbar:hover {
+            background: var(--bg-main);
+            border-color: var(--accent);
+        }
+
         /* ============================================================
            TABLE — парящая, с лёгкими строками
            ============================================================ */
@@ -562,6 +642,113 @@
         }
 
         /* ============================================================
+           SCRIPT VIEWER — профессиональное форматирование
+           ============================================================ */
+        .script-viewer {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(174, 201, 166, 0.15);
+            position: relative;
+        }
+
+        .script-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--accent-border);
+        }
+        .script-toolbar .left {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .script-toolbar .right {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .page-navigation {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .page-navigation .page-num {
+            font-weight: 700;
+            color: var(--text-primary);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .script-page {
+            background: #ffffff;
+            padding: 2cm 2.5cm;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border-radius: var(--radius-sm);
+            min-height: 700px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #1a1a1a;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-bottom: 16px;
+        }
+
+        /* Стили для форматирования сценария внутри страницы */
+        .script-page .scene-heading {
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: var(--scene-margin-left);
+            margin-bottom: 0.5em;
+        }
+        .script-page .action {
+            margin-left: var(--scene-margin-left);
+            margin-bottom: 0.5em;
+        }
+        .script-page .character {
+            margin-left: var(--character-margin-left);
+            margin-bottom: 0.2em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .script-page .dialogue {
+            margin-left: var(--dialogue-margin-left);
+            margin-right: var(--dialogue-margin-right);
+            margin-bottom: 0.5em;
+        }
+        .script-page .parenthetical {
+            margin-left: var(--parenthetical-margin-left);
+            margin-bottom: 0.3em;
+            font-style: italic;
+        }
+        .script-page .transition {
+            margin-left: var(--transition-margin-left);
+            text-transform: uppercase;
+            margin-bottom: 0.5em;
+        }
+        .script-page .empty-line {
+            height: 0.5em;
+        }
+
+        .script-page .page-break-indicator {
+            text-align: center;
+            color: #ccc;
+            font-size: 10pt;
+            margin: 20px 0;
+            border-top: 1px dashed #ddd;
+            padding-top: 10px;
+        }
+
+        /* ============================================================
            FOOTER — лёгкий, прозрачный
            ============================================================ */
         .app-footer {
@@ -606,6 +793,12 @@
             .form-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            .app-header .brand .family {
+                font-size: 22px;
+            }
+            .app-header .brand .story {
+                font-size: 18px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -613,21 +806,24 @@
                 padding: 12px 14px 0;
             }
             .app-header {
-                padding: 16px 20px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 12px;
+                padding: 14px 18px;
+                flex-wrap: wrap;
+                gap: 10px;
             }
             .app-header .brand {
-                font-size: 22px;
+                font-size: 16px;
                 flex-wrap: wrap;
             }
             .app-header .brand .family {
-                font-size: 12px;
+                font-size: 20px;
+            }
+            .app-header .brand .story {
+                font-size: 16px;
             }
             .app-header .stats {
                 gap: 8px;
                 font-size: 13px;
+                flex-wrap: wrap;
             }
             .app-header .stats span {
                 padding: 4px 14px;
@@ -676,6 +872,24 @@
             tbody td .scene-preview {
                 max-width: 120px;
                 font-size: 12px;
+            }
+
+            .script-viewer {
+                padding: 16px;
+            }
+            .script-page {
+                padding: 1.5cm 1.5cm;
+                font-size: 11pt;
+                min-height: 500px;
+            }
+            .script-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .script-toolbar .left,
+            .script-toolbar .right {
+                justify-content: center;
             }
 
             .app-footer {
@@ -728,6 +942,66 @@
                 font-size: 11px;
                 padding: 4px 10px;
             }
+            .script-page {
+                padding: 1cm 1cm;
+                font-size: 10pt;
+                min-height: 400px;
+            }
+        }
+
+        /* ============================================================
+           PRINT STYLES — для экспорта PDF
+           ============================================================ */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .app-header,
+            .welcome,
+            .tabs,
+            .form-card,
+            .table-wrap,
+            .script-toolbar,
+            .app-footer {
+                display: none !important;
+            }
+            .panel {
+                display: block !important;
+            }
+            .script-viewer {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                background: white;
+                border-radius: 0;
+            }
+            .script-page {
+                box-shadow: none;
+                border: none;
+                padding: 2cm 2.5cm;
+                page-break-after: always;
+                min-height: auto;
+                background: white;
+                margin: 0;
+                border-radius: 0;
+            }
+            .script-page:last-child {
+                page-break-after: avoid;
+            }
+            .page-navigation {
+                display: none !important;
+            }
+            .script-toolbar .right {
+                display: none !important;
+            }
+            .page-number {
+                display: block !important;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
 
         /* ============================================================
@@ -757,6 +1031,21 @@
         .w-full {
             width: 100%;
         }
+        .page-number {
+            display: none;
+            text-align: center;
+            font-size: 11pt;
+            color: #666;
+            margin-top: 12px;
+        }
+        .print-only {
+            display: none;
+        }
+        @media print {
+            .print-only {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 
@@ -767,28 +1056,29 @@
     ============================================================ -->
     <header class="app-header">
         <div class="brand">
-            STORYPHILIUM
+            <span class="story">STORYPHILIUM</span>
             <span class="separator">|</span>
             <span class="family">CINEPHILIUM FAMILY</span>
         </div>
         <div class="stats" id="headerStats">
-            <span>Всего: <span class="num" id="totalCount">0</span></span>
+            <span>Сцены: <span class="num" id="totalCount">0</span></span>
             <span>ИНТ.: <span class="num" id="intCount">0</span></span>
             <span>НАТ.: <span class="num" id="natCount">0</span></span>
+            <span>Страниц: <span class="num" id="pageCount">0</span></span>
         </div>
     </header>
 
     <!-- ============================================================
-    WELCOME — органичный блок без жёстких границ
+    WELCOME
     ============================================================ -->
     <section class="welcome">
         <div class="welcome-content">
-            <h2>Добро пожаловать в ваш сценарный редактор</h2>
-            <p class="sub">Записывайте идеи, структурируйте сцены и создавайте историю</p>
+            <h2>Русский сценарный редактор</h2>
+            <p class="sub">Профессиональное форматирование, автосохранение и экспорт</p>
             <ul class="tips">
-                <li>Выберите тип локации — ИНТ. (интерьер) или НАТ. (натура)</li>
-                <li>Заполните поля и добавьте сцену в таблицу</li>
-                <li>Редактируйте и удаляйте сцены по мере работы</li>
+                <li>Создавайте сцены с типом ИНТ. или НАТ.</li>
+                <li>Пишите текст сценария с разметкой: имена персонажей — ЗАГЛАВНЫМИ, диалоги — с новой строки.</li>
+                <li>Просматривайте сценарий постранично с точным форматированием.</li>
             </ul>
             <hr class="welcome-divider" />
             <div class="last-updated" id="lastUpdated">Последнее изменение: —</div>
@@ -796,72 +1086,109 @@
     </section>
 
     <!-- ============================================================
-    FORM
+    TABS
     ============================================================ -->
-    <section class="form-card" id="formCard">
-        <div class="form-title">
-            <span id="formTitle">Добавить новую сцену</span>
-            <span class="edit-badge" id="editBadge">Редактирование</span>
-        </div>
-
-        <form id="sceneForm" autocomplete="off">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="sceneType">Тип локации</label>
-                    <select id="sceneType">
-                        <option value="ИНТ.">ИНТ. — интерьер</option>
-                        <option value="НАТ.">НАТ. — натура</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="sceneLocation">Локация</label>
-                    <input type="text" id="sceneLocation" placeholder="КВАРТИРА ДЯДИ ВАСИ" />
-                </div>
-
-                <div class="form-group">
-                    <label for="sceneTime">Время суток</label>
-                    <select id="sceneTime">
-                        <option value="ДЕНЬ">ДЕНЬ</option>
-                        <option value="НОЧЬ">НОЧЬ</option>
-                        <option value="УТРО">УТРО</option>
-                        <option value="ВЕЧЕР">ВЕЧЕР</option>
-                    </select>
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="sceneDescription">Краткое описание</label>
-                    <input type="text" id="sceneDescription" placeholder="Персонаж просыпается и идёт на кухню" />
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="sceneText">Текст сцены</label>
-                    <textarea id="sceneText" rows="4" placeholder="Иван открывает глаза. За окном шумят машины. Он встаёт с кровати..."></textarea>
-                </div>
-            </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" id="formSubmitBtn">Добавить сцену</button>
-                <button type="button" class="btn btn-secondary btn-cancel" id="formCancelBtn">Отменить</button>
-            </div>
-        </form>
-    </section>
+    <div class="tabs" id="tabContainer">
+        <button class="active" data-tab="scenes">Сцены</button>
+        <button data-tab="script">Сценарий</button>
+    </div>
 
     <!-- ============================================================
-    TABLE
+    PANEL: СЦЕНЫ
     ============================================================ -->
-    <section class="table-wrap">
-        <div class="table-header">
-            <h3>Сцены</h3>
-            <div class="actions">
-                <button class="btn btn-outline btn-sm" id="clearAllBtn">Очистить все</button>
+    <div class="panel active" id="panelScenes">
+        <!-- FORM -->
+        <section class="form-card" id="formCard">
+            <div class="form-title">
+                <span id="formTitle">Добавить новую сцену</span>
+                <span class="edit-badge" id="editBadge">Редактирование</span>
             </div>
-        </div>
 
-        <div class="table-scroll" id="tableContainer">
-            <!-- Таблица будет вставлена JS -->
-        </div>
-    </section>
+            <form id="sceneForm" autocomplete="off">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="sceneType">Тип локации</label>
+                        <select id="sceneType">
+                            <option value="ИНТ.">ИНТ. — интерьер</option>
+                            <option value="НАТ.">НАТ. — натура</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sceneLocation">Локация</label>
+                        <input type="text" id="sceneLocation" placeholder="КВАРТИРА ДЯДИ ВАСИ" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sceneTime">Время суток</label>
+                        <select id="sceneTime">
+                            <option value="ДЕНЬ">ДЕНЬ</option>
+                            <option value="НОЧЬ">НОЧЬ</option>
+                            <option value="УТРО">УТРО</option>
+                            <option value="ВЕЧЕР">ВЕЧЕР</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="sceneDescription">Краткое описание</label>
+                        <input type="text" id="sceneDescription" placeholder="Краткий смысл сцены" />
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="sceneText">Текст сцены</label>
+                        <textarea id="sceneText" rows="4" placeholder="Иван открывает глаза. За окном шумят машины.&#10;ИВАН&#10;(вставая)&#10;Ну и денёк..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" id="formSubmitBtn">Добавить сцену</button>
+                    <button type="button" class="btn btn-secondary btn-cancel" id="formCancelBtn">Отменить</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- TABLE -->
+        <section class="table-wrap">
+            <div class="table-header">
+                <h3>Список сцен</h3>
+                <div class="actions">
+                    <button class="btn btn-outline btn-sm" id="clearAllBtn">Очистить все</button>
+                </div>
+            </div>
+
+            <div class="table-scroll" id="tableContainer">
+                <!-- Таблица вставляется JS -->
+            </div>
+        </section>
+    </div>
+
+    <!-- ============================================================
+    PANEL: СЦЕНАРИЙ (ПРОСМОТР)
+    ============================================================ -->
+    <div class="panel" id="panelScript">
+        <section class="script-viewer">
+            <div class="script-toolbar">
+                <div class="left">
+                    <button class="btn btn-toolbar" id="restoreBtn">Восстановить сценарий</button>
+                    <button class="btn btn-toolbar" id="exportPdfBtn">Экспорт в PDF</button>
+                    <button class="btn btn-toolbar" id="exportTxtBtn">Экспорт в TXT</button>
+                </div>
+                <div class="right">
+                    <div class="page-navigation">
+                        <button class="btn btn-secondary btn-sm" id="prevPageBtn">◀</button>
+                        <span class="page-num" id="currentPageNum">1 / 1</span>
+                        <button class="btn btn-secondary btn-sm" id="nextPageBtn">▶</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="scriptContent">
+                <!-- Страницы вставляются JS -->
+            </div>
+
+            <div class="page-number print-only" id="printPageNum"></div>
+        </section>
+    </div>
 
     <!-- ============================================================
     FOOTER
@@ -886,7 +1213,7 @@
             /* ============================================================
                ДАННЫЕ
                ============================================================ */
-            const STORAGE_KEY = 'storyphilium_scenes';
+            const STORAGE_KEY = 'storyphilium_scenes_v2';
 
             const DEMO_SCENES = [{
                 id: 'demo1',
@@ -894,24 +1221,24 @@
                 type: 'ИНТ.',
                 location: 'КВАРТИРА',
                 time: 'ДЕНЬ',
-                description: 'Персонаж просыпается и идёт на кухню',
-                text: 'Иван открывает глаза. За окном шумят машины. Он встаёт с кровати и направляется на кухню, где уже кипит чайник.'
+                description: 'Пробуждение',
+                text: 'Иван открывает глаза. За окном шумят машины.\nОн садится на кровати и смотрит в потолок.\nИВАН\n(вздыхая)\nОпять этот кошмар.\nОн встаёт и идёт на кухню.'
             }, {
                 id: 'demo2',
                 number: 2,
                 type: 'НАТ.',
                 location: 'ПАРК',
                 time: 'ВЕЧЕР',
-                description: 'Встреча двух друзей на скамейке',
-                text: 'Солнце садится за деревья. Анна сидит на скамейке, держит книгу в руках. Подходит Сергей, улыбается и садится рядом.'
+                description: 'Встреча',
+                text: 'Солнце садится за деревья. На скамейке сидит Анна с книгой.\nПодходит Сергей.\nСЕРГЕЙ\nПривет. Давно не виделись.\nАННА\n(улыбаясь)\nПривет. Садись.\nОни обмениваются взглядами.'
             }, {
                 id: 'demo3',
                 number: 3,
                 type: 'ИНТ.',
                 location: 'КАФЕ',
                 time: 'УТРО',
-                description: 'Разговор за чашкой кофе',
-                text: 'В кафе тихо играет джаз. Ольга и Дмитрий сидят за столиком у окна. Ольга помешивает кофе и задумчиво смотрит вдаль.'
+                description: 'Разговор за кофе',
+                text: 'В кафе тихо играет джаз. Ольга и Дмитрий сидят за столиком.\nОЛЬГА\nТы сегодня какой-то задумчивый.\nДМИТРИЙ\nПросто мысли.\nОльга помешивает кофе.\nОЛЬГА\nРассказывай.'
             }];
 
             /* ============================================================
@@ -919,6 +1246,9 @@
                ============================================================ */
             let scenes = [];
             let editingId = null;
+            let currentPage = 0;
+            let totalPages = 0;
+            let autoSaveTimer = null;
 
             /* ============================================================
                ЭЛЕМЕНТЫ
@@ -937,8 +1267,20 @@
             const totalCount = document.getElementById('totalCount');
             const intCount = document.getElementById('intCount');
             const natCount = document.getElementById('natCount');
+            const pageCountEl = document.getElementById('pageCount');
             const lastUpdated = document.getElementById('lastUpdated');
             const clearAllBtn = document.getElementById('clearAllBtn');
+            const tabContainer = document.getElementById('tabContainer');
+            const panelScenes = document.getElementById('panelScenes');
+            const panelScript = document.getElementById('panelScript');
+            const scriptContent = document.getElementById('scriptContent');
+            const currentPageNum = document.getElementById('currentPageNum');
+            const prevPageBtn = document.getElementById('prevPageBtn');
+            const nextPageBtn = document.getElementById('nextPageBtn');
+            const restoreBtn = document.getElementById('restoreBtn');
+            const exportPdfBtn = document.getElementById('exportPdfBtn');
+            const exportTxtBtn = document.getElementById('exportTxtBtn');
+            const printPageNum = document.getElementById('printPageNum');
 
             /* ============================================================
                ХРАНЕНИЕ
@@ -955,13 +1297,17 @@
                     } catch (_) { /* ignore */ }
                 }
                 scenes = DEMO_SCENES.map(s => ({ ...s }));
-                saveScenes();
+                saveScenes(false);
             }
 
-            function saveScenes() {
+            function saveScenes(updateView = true) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(scenes));
-                updateStatsAndFooter();
-                renderTable();
+                if (updateView) {
+                    updateStatsAndFooter();
+                    renderTable();
+                    renderScript();
+                    updatePageNav();
+                }
             }
 
             /* ============================================================
@@ -977,15 +1323,11 @@
                 return Math.max(...nums) + 1;
             }
 
-            function formatSceneTitle(scene) {
-                return 'СЦЕНА ' + scene.number + ' — ' + scene.type + ' ' + scene.location + ' - ' + scene.time;
-            }
-
-            function getPreview(text, max = 55) {
-                if (!text) return '';
-                const clean = text.replace(/\s+/g, ' ').trim();
-                if (clean.length <= max) return clean;
-                return clean.slice(0, max) + '…';
+            function escapeHtml(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
             }
 
             function getTypeBadge(type) {
@@ -993,11 +1335,8 @@
                 return '<span class="type-badge ' + cls + '">' + type + '</span>';
             }
 
-            function escapeHtml(str) {
-                if (!str) return '';
-                const div = document.createElement('div');
-                div.textContent = str;
-                return div.innerHTML;
+            function getSceneTitle(scene) {
+                return 'СЦЕНА ' + scene.number + ' — ' + scene.type + ' ' + scene.location + ' - ' + scene.time;
             }
 
             /* ============================================================
@@ -1010,6 +1349,17 @@
                 totalCount.textContent = total;
                 intCount.textContent = int;
                 natCount.textContent = nat;
+
+                // Обновляем количество страниц (приблизительно)
+                const linesPerPage = 55;
+                let totalLines = 0;
+                for (const s of scenes) {
+                    if (s.text) {
+                        totalLines += s.text.split('\n').length;
+                    }
+                }
+                const pages = Math.ceil(totalLines / linesPerPage) || 1;
+                pageCountEl.textContent = pages;
 
                 if (scenes.length) {
                     const dates = scenes.map(s => s.updatedAt || s.createdAt || null).filter(Boolean);
@@ -1035,7 +1385,7 @@
                 if (scenes.length === 0) {
                     tableContainer.innerHTML = `
                         <div class="empty-table">
-                            <div class="icon">◇</div>
+                            <div class="icon">—</div>
                             <p>Пока нет ни одной сцены.</p>
                             <p class="text-muted" style="font-size:13px;margin-top:4px;">Добавьте первую сцену с помощью формы выше.</p>
                         </div>
@@ -1052,7 +1402,7 @@
                                 <th scope="col">Локация</th>
                                 <th scope="col">Время</th>
                                 <th scope="col">Описание</th>
-                                <th scope="col">Текст</th>
+                                <th scope="col">Текст (начало)</th>
                                 <th scope="col">Действия</th>
                             </tr>
                         </thead>
@@ -1062,7 +1412,7 @@
                 const sorted = [...scenes].sort((a, b) => (a.number || 0) - (b.number || 0));
 
                 for (const scene of sorted) {
-                    const preview = getPreview(scene.text, 55);
+                    const preview = scene.text ? scene.text.replace(/\n/g, ' ').slice(0, 60) + '…' : '—';
                     html += `
                         <tr data-id="${scene.id}">
                             <td>${scene.number}</td>
@@ -1132,6 +1482,8 @@
                 formTitle.textContent = 'Редактировать сцену';
                 editBadge.classList.add('active');
                 cancelBtn.classList.add('active');
+                // Переключиться на вкладку "Сцены"
+                switchTab('scenes');
                 document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
 
@@ -1174,10 +1526,8 @@
                         text: text,
                         updatedAt: new Date().toISOString()
                     };
-                    saveScenes();
+                    saveScenes(true);
                     resetForm();
-                    renderTable();
-                    updateStatsAndFooter();
                 } else {
                     const newScene = {
                         id: generateId(),
@@ -1191,11 +1541,10 @@
                         updatedAt: new Date().toISOString()
                     };
                     scenes.push(newScene);
-                    saveScenes();
+                    saveScenes(true);
                     resetForm();
-                    renderTable();
-                    updateStatsAndFooter();
-                    document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Переключиться на список сцен
+                    switchTab('scenes');
                 }
             });
 
@@ -1207,17 +1556,16 @@
             function deleteScene(id) {
                 const scene = scenes.find(s => s.id === id);
                 if (!scene) return;
-                const title = 'СЦЕНА ' + scene.number + ' — ' + scene.type + ' ' + scene.location;
+                const title = getSceneTitle(scene);
                 if (!confirm('Удалить сцену "' + title + '"?')) return;
 
                 scenes = scenes.filter(s => s.id !== id);
+                // Перенумеровать
                 scenes.sort((a, b) => (a.number || 0) - (b.number || 0));
                 scenes.forEach((s, idx) => { s.number = idx + 1; });
 
                 if (editingId === id) resetForm();
-                saveScenes();
-                renderTable();
-                updateStatsAndFooter();
+                saveScenes(true);
             }
 
             /* ============================================================
@@ -1228,9 +1576,229 @@
                 if (!confirm('Удалить все сцены без возможности восстановления?')) return;
                 scenes = [];
                 resetForm();
-                saveScenes();
+                saveScenes(true);
+            });
+
+            /* ============================================================
+               ФОРМАТИРОВАНИЕ СЦЕНАРИЯ
+               ============================================================ */
+            function formatSceneText(text) {
+                if (!text) return '';
+                const lines = text.split('\n');
+                let html = '';
+                let inDialogue = false;
+                for (let line of lines) {
+                    line = line.trim();
+                    if (line === '') {
+                        html += '<div class="empty-line"></div>';
+                        inDialogue = false;
+                        continue;
+                    }
+                    // Определение типа строки
+                    // Заголовок сцены: начинается с ИНТ. или НАТ.
+                    if (/^(ИНТ\.|НАТ\.)\s/.test(line)) {
+                        html += `<div class="scene-heading">${escapeHtml(line)}</div>`;
+                        inDialogue = false;
+                        continue;
+                    }
+                    // Переход: например, "СМЕНА КАРТИНЫ" (заглавными, в конце может быть двоеточие)
+                    if (/^[А-ЯЁA-Z\s]+:$/.test(line)) {
+                        html += `<div class="transition">${escapeHtml(line)}</div>`;
+                        inDialogue = false;
+                        continue;
+                    }
+                    // Имя персонажа: строка из заглавных букв (кириллица/латиница) и пробелов, не содержит строчных
+                    if (/^[А-ЯЁA-Z\s]+$/.test(line) && line.length < 40 && !inDialogue) {
+                        html += `<div class="character">${escapeHtml(line)}</div>`;
+                        inDialogue = true;
+                        continue;
+                    }
+                    // Ремарка в скобках
+                    if (/^\(.*\)$/.test(line) && inDialogue) {
+                        html += `<div class="parenthetical">${escapeHtml(line)}</div>`;
+                        continue;
+                    }
+                    // Диалог (если мы находимся в диалоге)
+                    if (inDialogue) {
+                        html += `<div class="dialogue">${escapeHtml(line)}</div>`;
+                        continue;
+                    }
+                    // Всё остальное — действие
+                    html += `<div class="action">${escapeHtml(line)}</div>`;
+                    inDialogue = false;
+                }
+                return html;
+            }
+
+            /* ============================================================
+               РЕНДЕР СЦЕНАРИЯ (ПОСТРАНИЧНО)
+               ============================================================ */
+            function renderScript() {
+                const linesPerPage = 55;
+                // Собираем весь сценарий в виде HTML-строк (без обёртки страниц)
+                let fullHtml = '';
+                for (const scene of scenes) {
+                    // Заголовок сцены
+                    const header = getSceneTitle(scene);
+                    fullHtml += `<div class="scene-heading">${escapeHtml(header)}</div>`;
+                    // Текст сцены с форматированием
+                    fullHtml += formatSceneText(scene.text);
+                    fullHtml += '<div class="empty-line"></div>';
+                }
+
+                // Разбиваем на строки (по <br> или по блокам?)
+                // Мы будем считать, что каждая строка в тексте сцены соответствует одной строке.
+                // Для простоты разобьём по количеству блоков <div> с определёнными классами.
+                // Создадим временный контейнер и посчитаем строки.
+                const container = document.createElement('div');
+                container.innerHTML = fullHtml;
+                const lineElements = container.querySelectorAll('.scene-heading, .action, .character, .dialogue, .parenthetical, .transition, .empty-line');
+                const totalLines = lineElements.length;
+                const pages = Math.ceil(totalLines / linesPerPage) || 1;
+                totalPages = pages;
+
+                // Генерируем страницы
+                let pagesHtml = '';
+                let currentLine = 0;
+                for (let p = 0; p < pages; p++) {
+                    const start = p * linesPerPage;
+                    const end = Math.min(start + linesPerPage, totalLines);
+                    const pageLines = [];
+                    for (let i = start; i < end; i++) {
+                        const el = lineElements[i];
+                        pageLines.push(el.outerHTML);
+                    }
+                    const pageContent = pageLines.join('');
+                    const pageNum = p + 1;
+                    pagesHtml += `
+                        <div class="script-page" data-page="${pageNum}" ${p > 0 ? 'style="display:none;"' : ''}>
+                            ${pageContent}
+                            <div class="page-number" style="display:block;text-align:center;font-size:11pt;color:#666;margin-top:12px;">
+                                ${pageNum}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                scriptContent.innerHTML = pagesHtml;
+
+                // Обновляем навигацию
+                currentPage = 0;
+                updatePageNav();
+            }
+
+            function updatePageNav() {
+                if (totalPages === 0) {
+                    currentPageNum.textContent = '0 / 0';
+                    return;
+                }
+                currentPageNum.textContent = (currentPage + 1) + ' / ' + totalPages;
+                // Показать/скрыть страницы
+                const pages = scriptContent.querySelectorAll('.script-page');
+                pages.forEach((page, idx) => {
+                    page.style.display = (idx === currentPage) ? 'block' : 'none';
+                });
+                // Обновить номер страницы для печати
+                printPageNum.textContent = 'Страница ' + (currentPage + 1) + ' из ' + totalPages;
+            }
+
+            function goToPage(num) {
+                if (num < 0 || num >= totalPages) return;
+                currentPage = num;
+                updatePageNav();
+            }
+
+            /* ============================================================
+               АВТОСОХРАНЕНИЕ
+               ============================================================ */
+            function triggerAutoSave() {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(() => {
+                    // Сохраняем только если форма не в режиме редактирования? Нет, сохраняем всегда, но нужно обновить данные из формы?
+                    // Однако изменения в форме не влияют на scenes, пока не отправлена. Поэтому автосохранение триггерится только при изменении сцен через добавление/удаление/редактирование.
+                    // Но мы можем сохранять, если пользователь что-то редактирует в тексте сцены, но это не привязано к сценам. Для простоты автосохранение происходит при любом изменении данных (после отправки формы).
+                    // Поэтому мы уже вызываем saveScenes после изменений.
+                }, 500);
+            }
+
+            /* ============================================================
+               ВКЛАДКИ
+               ============================================================ */
+            function switchTab(tabId) {
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+                if (tabId === 'scenes') {
+                    panelScenes.classList.add('active');
+                    document.querySelector('[data-tab="scenes"]').classList.add('active');
+                } else {
+                    panelScript.classList.add('active');
+                    document.querySelector('[data-tab="script"]').classList.add('active');
+                    renderScript(); // перерендерим при переключении
+                }
+            }
+
+            tabContainer.addEventListener('click', function(e) {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                const tab = btn.dataset.tab;
+                if (tab) switchTab(tab);
+            });
+
+            /* ============================================================
+               НАВИГАЦИЯ ПО СТРАНИЦАМ
+               ============================================================ */
+            prevPageBtn.addEventListener('click', function() {
+                goToPage(currentPage - 1);
+            });
+            nextPageBtn.addEventListener('click', function() {
+                goToPage(currentPage + 1);
+            });
+
+            /* ============================================================
+               ВОССТАНОВЛЕНИЕ СЦЕНАРИЯ
+               ============================================================ */
+            restoreBtn.addEventListener('click', function() {
+                if (!confirm('Восстановить сценарий из последнего сохранения? Все несохранённые изменения будут потеряны.')) return;
+                loadScenes();
+                resetForm();
                 renderTable();
+                renderScript();
                 updateStatsAndFooter();
+                updatePageNav();
+                alert('Сценарий восстановлен.');
+            });
+
+            /* ============================================================
+               ЭКСПОРТ В PDF (через print)
+               ============================================================ */
+            exportPdfBtn.addEventListener('click', function() {
+                // Перед печатью убедимся, что все страницы видимы
+                const pages = scriptContent.querySelectorAll('.script-page');
+                pages.forEach(p => p.style.display = 'block');
+                // Обновим номер страницы для печати
+                printPageNum.textContent = 'Страница ' + (currentPage + 1) + ' из ' + totalPages;
+                window.print();
+                // После печати вернуть видимость только текущей страницы
+                pages.forEach((p, idx) => {
+                    p.style.display = (idx === currentPage) ? 'block' : 'none';
+                });
+            });
+
+            /* ============================================================
+               ЭКСПОРТ В TXT
+               ============================================================ */
+            exportTxtBtn.addEventListener('click', function() {
+                let txt = '';
+                for (const scene of scenes) {
+                    txt += getSceneTitle(scene) + '\n';
+                    txt += scene.text + '\n\n';
+                }
+                const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'szenariy.txt';
+                link.click();
+                URL.revokeObjectURL(link.href);
             });
 
             /* ============================================================
@@ -1238,12 +1806,13 @@
                ============================================================ */
             function init() {
                 loadScenes();
-                renderTable();
-                updateStatsAndFooter();
                 resetForm();
-                if (scenes.length === 0) {
-                    locationEl.focus();
-                }
+                renderTable();
+                renderScript();
+                updateStatsAndFooter();
+                updatePageNav();
+                // По умолчанию показываем вкладку "Сцены"
+                switchTab('scenes');
             }
 
             init();
@@ -1252,4 +1821,4 @@
     </script>
 
 </body>
-</html>
+</html>8888
