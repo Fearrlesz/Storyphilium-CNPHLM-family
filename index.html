@@ -21,11 +21,11 @@
 
         :root {
             /* Базовые переменные (заполняются темами) */
-            --bg-main: #17152E;
-            --bg-surface: #1F1D3A;
-            --bg-card: #2A2850;
-            --bg-input: #14122A;
-            --bg-input-focus: #1A1840;
+            --bg-main: #0B0A14;
+            --bg-surface: #15132B;
+            --bg-card: #1E1B38;
+            --bg-input: #0F0D1F;
+            --bg-input-focus: #19163A;
             --accent: #6C4AB6;
             --accent-hover: #8A6CD4;
             --accent-border: #4A3A7A;
@@ -44,7 +44,83 @@
             --sidebar-width: 280px;
         }
 
-        /* Тема: Космос (по умолчанию) */
+        /* ===== ТЕМА: ESPRESSO (кофейно-карамельная) ===== */
+        [data-theme="espresso"] {
+            --bg-main: #4A2C20;
+            --bg-surface: #5C3A2B;
+            --bg-card: #6E4533;
+            --bg-input: #3D241A;
+            --bg-input-focus: #553227;
+            --accent: #B87333;
+            --accent-hover: #CC8A4A;
+            --accent-border: #8A5A3A;
+            --accent-light: #5C3A2B;
+            --text-primary: #F1DEC2;
+            --text-secondary: #D4B89A;
+            --text-light: #B2947A;
+            --shadow-soft: 0 4px 24px rgba(184, 115, 51, 0.20);
+            --shadow-hover: 0 12px 40px rgba(184, 115, 51, 0.30);
+            --border-light: 1px solid rgba(138, 90, 58, 0.5);
+        }
+
+        /* ===== ТЕМА: NEURAL WHITE (минималистичная светлая) ===== */
+        [data-theme="neural-white"] {
+            --bg-main: #F6F8FC;
+            --bg-surface: #FFFFFF;
+            --bg-card: #FFFFFF;
+            --bg-input: #FFFFFF;
+            --bg-input-focus: #FAFBFD;
+            --accent: #5D8CFF;
+            --accent-hover: #4A7AEE;
+            --accent-border: #B0C8F0;
+            --accent-light: #E3EBFA;
+            --text-primary: #1A2330;
+            --text-secondary: #3D4A5A;
+            --text-light: #6B7A8A;
+            --shadow-soft: 0 4px 24px rgba(93, 140, 255, 0.08);
+            --shadow-hover: 0 12px 40px rgba(93, 140, 255, 0.14);
+            --border-light: 1px solid rgba(176, 200, 240, 0.35);
+        }
+
+        /* ===== ТЕМА: EMERALD (изумрудный лес) ===== */
+        [data-theme="emerald"] {
+            --bg-main: #1A2A24;
+            --bg-surface: #243A32;
+            --bg-card: #2D4A3F;
+            --bg-input: #16221E;
+            --bg-input-focus: #20352C;
+            --accent: #5ECC67;
+            --accent-hover: #72E07A;
+            --accent-border: #3A7A45;
+            --accent-light: #2A4A35;
+            --text-primary: #D4EAD0;
+            --text-secondary: #A0C8A0;
+            --text-light: #7AAA80;
+            --shadow-soft: 0 4px 24px rgba(94, 204, 103, 0.15);
+            --shadow-hover: 0 12px 40px rgba(94, 204, 103, 0.25);
+            --border-light: 1px solid rgba(58, 122, 69, 0.4);
+        }
+
+        /* ===== ТЕМА: NEURAL BLUE (синий минимализм) ===== */
+        [data-theme="neural-blue"] {
+            --bg-main: #E8EDF8;
+            --bg-surface: #F4F7FC;
+            --bg-card: #FFFFFF;
+            --bg-input: #FFFFFF;
+            --bg-input-focus: #F0F4FA;
+            --accent: #5D8CFF;
+            --accent-hover: #4A7AEE;
+            --accent-border: #A0BCE8;
+            --accent-light: #DCE6F5;
+            --text-primary: #1A2A40;
+            --text-secondary: #3A5070;
+            --text-light: #6A809A;
+            --shadow-soft: 0 4px 24px rgba(93, 140, 255, 0.10);
+            --shadow-hover: 0 12px 40px rgba(93, 140, 255, 0.18);
+            --border-light: 1px solid rgba(160, 188, 232, 0.35);
+        }
+
+        /* ===== ТЕМА: COSMIC (классическая космическая) — оставляем как опцию ===== */
         [data-theme="cosmic"] {
             --bg-main: #17152E;
             --bg-surface: #1F1D3A;
@@ -63,63 +139,6 @@
             --border-light: 1px solid rgba(74, 58, 122, 0.4);
         }
 
-        /* Тема: Лес (светлая зелёная) */
-        [data-theme="forest"] {
-            --bg-main: #eef3ed;
-            --bg-surface: #f7faf6;
-            --bg-card: #ffffff;
-            --bg-input: #ffffff;
-            --bg-input-focus: #fafffa;
-            --accent: #5b8c5a;
-            --accent-hover: #4a7549;
-            --accent-border: #b3d0b0;
-            --accent-light: #d8e8d6;
-            --text-primary: #1e2f1c;
-            --text-secondary: #3d553a;
-            --text-light: #6a8765;
-            --shadow-soft: 0 4px 24px rgba(91, 140, 90, 0.10);
-            --shadow-hover: 0 12px 40px rgba(91, 140, 90, 0.16);
-            --border-light: 1px solid rgba(179, 208, 176, 0.35);
-        }
-
-        /* Тема: Кино (тёплая сепия) */
-        [data-theme="cinema"] {
-            --bg-main: #2a1e16;
-            --bg-surface: #3d2e22;
-            --bg-card: #4f3a2b;
-            --bg-input: #2f221a;
-            --bg-input-focus: #3f2f24;
-            --accent: #c68b5e;
-            --accent-hover: #d49d72;
-            --accent-border: #7a5a44;
-            --accent-light: #4f3a2b;
-            --text-primary: #f0ddc8;
-            --text-secondary: #d4b89a;
-            --text-light: #b2947a;
-            --shadow-soft: 0 4px 24px rgba(198, 139, 94, 0.15);
-            --shadow-hover: 0 12px 40px rgba(198, 139, 94, 0.25);
-            --border-light: 1px solid rgba(122, 90, 68, 0.5);
-        }
-
-        /* Тема: Светлая (минимализм) */
-        [data-theme="light"] {
-            --bg-main: #f5f5f5;
-            --bg-surface: #ffffff;
-            --bg-card: #ffffff;
-            --bg-input: #ffffff;
-            --bg-input-focus: #fafafa;
-            --accent: #3a7bd5;
-            --accent-hover: #2a6bc5;
-            --accent-border: #b0c8e8;
-            --accent-light: #dce6f5;
-            --text-primary: #1a1a1a;
-            --text-secondary: #3d3d3d;
-            --text-light: #6b6b6b;
-            --shadow-soft: 0 4px 24px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.10);
-            --border-light: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
         html,
         body {
             height: 100%;
@@ -134,20 +153,28 @@
             flex-direction: column;
             padding: 14px 18px 0;
             transition: background 0.4s, color 0.4s;
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(108, 74, 182, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(108, 74, 182, 0.04) 0%, transparent 50%);
             -webkit-text-size-adjust: 100%;
         }
 
-        [data-theme="forest"] body,
-        [data-theme="light"] body {
+        /* Специфичные фоны для тем */
+        [data-theme="cosmic"] body {
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(108, 74, 182, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(108, 74, 182, 0.04) 0%, transparent 50%);
+        }
+        [data-theme="espresso"] body {
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(184, 115, 51, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(184, 115, 51, 0.03) 0%, transparent 50%);
+        }
+        [data-theme="neural-white"] body,
+        [data-theme="neural-blue"] body {
             background-image: none;
         }
-        [data-theme="cinema"] body {
+        [data-theme="emerald"] body {
             background-image:
-                radial-gradient(circle at 10% 20%, rgba(198, 139, 94, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(198, 139, 94, 0.04) 0%, transparent 50%);
+                radial-gradient(circle at 10% 20%, rgba(94, 204, 103, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(94, 204, 103, 0.03) 0%, transparent 50%);
         }
 
         /* ===== SCROLLBAR ===== */
@@ -257,7 +284,7 @@
             font-weight: 500;
             cursor: pointer;
             outline: none;
-            max-width: 110px;
+            max-width: 140px;
         }
         .theme-selector select:focus {
             border-color: var(--accent);
@@ -1014,9 +1041,10 @@
             <div class="theme-selector">
                 <select id="themeSelect">
                     <option value="cosmic">🌌 Космос</option>
-                    <option value="forest">🌿 Лес</option>
-                    <option value="cinema">🎞️ Кино</option>
-                    <option value="light">☀️ Светлая</option>
+                    <option value="espresso">☕ Эспрессо</option>
+                    <option value="neural-white">⬜ Neural White</option>
+                    <option value="emerald">🌿 Изумруд</option>
+                    <option value="neural-blue">🔵 Neural Blue</option>
                 </select>
             </div>
 
@@ -1406,7 +1434,7 @@
                         !trimmed.startsWith('NAR.') && !trimmed.startsWith('INT.') && !trimmed.startsWith('EXT.') &&
                         !trimmed.startsWith('(') && !trimmed.startsWith('[') &&
                         !trimmed.match(/^\d+\./) && 
-                        trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {   // <-- Убрано отрицание
+                        trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {
                         chars.add(trimmed);
                     }
                 }
@@ -1554,7 +1582,7 @@
                         !trimmed.startsWith('NAR.') && !trimmed.startsWith('INT.') && !trimmed.startsWith('EXT.') &&
                         !trimmed.startsWith('(') && !trimmed.startsWith('[') &&
                         !trimmed.match(/^\d+\./) &&
-                        trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {   // <-- Убрано отрицание
+                        trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {
                         charNames.add(trimmed);
                     }
                 }
@@ -1836,7 +1864,8 @@
                     triggerAutoSave();
                     updateStats();
                     updateSidebar();
-                    statusText.textContent = `✅ Заменено ${(text.length - newText.length) / query.length}`;
+                    const count = text.split(query).length - 1;
+                    statusText.textContent = `✅ Заменено ${count}`;
                     setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
                 } else {
                     statusText.textContent = '❌ Ничего не найдено';
@@ -1944,7 +1973,7 @@
                 }
                 if (e.ctrlKey && e.key === 't') {
                     e.preventDefault();
-                    const themes = ['cosmic', 'forest', 'cinema', 'light'];
+                    const themes = ['cosmic', 'espresso', 'neural-white', 'emerald', 'neural-blue'];
                     let idx = themes.indexOf(currentTheme);
                     idx = (idx + 1) % themes.length;
                     applyTheme(themes[idx]);
@@ -2005,7 +2034,7 @@
             });
 
             console.log('📝 Storyphilium — сценарный редактор с космической душой');
-            console.log('🌌 Темы: Космос, Лес, Кино, Светлая');
+            console.log('☕ Темы: Космос, Эспрессо, Neural White, Изумруд, Neural Blue');
             console.log('📋 Панель сцен и персонажей — кнопка 📋 в тулбаре');
             console.log('⌨️  Ctrl+1..7 — вставка элементов');
 
