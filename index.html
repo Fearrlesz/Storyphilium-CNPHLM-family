@@ -77,6 +77,7 @@
             background-image:
                 radial-gradient(circle at 10% 20%, rgba(91, 140, 90, 0.05) 0%, transparent 50%),
                 radial-gradient(circle at 90% 80%, rgba(91, 140, 90, 0.03) 0%, transparent 50%);
+            -webkit-text-size-adjust: 100%;
         }
 
         /* ===== SCROLLBAR ===== */
@@ -241,6 +242,24 @@
             border-color: var(--accent);
         }
 
+        /* Стили для селекта формата экспорта */
+        .export-select {
+            padding: 4px 8px;
+            background: var(--bg-card);
+            border: var(--border-light);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            height: 30px;
+        }
+        .export-select:focus {
+            border-color: var(--accent);
+        }
+
         /* ===== TOOLBAR ===== */
         .editor-toolbar {
             display: flex;
@@ -373,6 +392,7 @@
             transition: background 0.3s, padding 0.4s, font-size 0.4s;
             letter-spacing: 0.15px;
             tab-size: 4;
+            -webkit-text-size-adjust: 100%;
         }
         .editor-wrapper textarea:focus {
             background: var(--bg-input-focus);
@@ -497,6 +517,64 @@
             font-size: 15pt;
         }
 
+        /* ===== PRINT ===== */
+        .print-content {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                overflow: visible;
+            }
+            .app-header,
+            .app-footer,
+            .editor-toolbar,
+            .find-replace-bar {
+                display: none !important;
+            }
+            .editor-wrapper {
+                border-radius: 0;
+                box-shadow: none;
+                border: none;
+                overflow: visible;
+            }
+            .editor-wrapper textarea {
+                display: none !important;
+            }
+            .print-content {
+                display: block !important;
+                white-space: pre-wrap;
+                font-family: 'Courier Prime', 'Courier New', monospace;
+                font-size: 12pt;
+                padding: 2cm 2.5cm;
+                line-height: 1.6;
+                background: white;
+                color: black;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+            /* Скрыть всё, кроме .print-content */
+            body * {
+                visibility: hidden;
+            }
+            .print-content,
+            .print-content * {
+                visibility: visible;
+            }
+            .print-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+                margin: 0;
+                padding: 2cm 2.5cm;
+            }
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
             .app-header .brand .family {
@@ -590,6 +668,11 @@
                 font-size: 10px;
                 padding: 3px 6px;
             }
+            .export-select {
+                font-size: 10px;
+                height: 26px;
+                padding: 2px 6px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -616,8 +699,8 @@
                 font-size: 11px;
             }
             .editor-wrapper textarea {
-                padding: 0.6cm 0.8cm;
-                font-size: 10.5pt;
+                padding: 1cm 1cm; /* увеличен отступ для читаемости */
+                font-size: 11pt;  /* чуть крупнее */
             }
             .editor-toolbar .stats {
                 font-size: 9px;
@@ -636,38 +719,17 @@
                 font-size: 9px;
                 padding: 2px 4px;
             }
-        }
-
-        /* ===== PRINT ===== */
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-                margin: 0;
+            .export-select {
+                font-size: 9px;
+                height: 24px;
+                padding: 2px 4px;
             }
-            .app-header,
-            .app-footer,
-            .editor-toolbar,
-            .find-replace-bar {
-                display: none !important;
+            .app-footer .copy {
+                font-size: 9px;
             }
-            .editor-wrapper {
-                border-radius: 0;
-                box-shadow: none;
-                border: none;
-            }
-            .editor-wrapper textarea {
-                display: none !important;
-            }
-            .print-content {
-                display: block !important;
-                white-space: pre-wrap;
-                font-family: 'Courier Prime', monospace;
-                font-size: 12pt;
-                padding: 2cm 2.5cm;
-                line-height: 1.6;
-                background: white;
-                color: black;
+            .hotkeys-hint kbd {
+                font-size: 8px;
+                padding: 0 4px;
             }
         }
     </style>
@@ -695,7 +757,16 @@
             <button class="btn btn-secondary btn-icon" id="findToggle" title="Поиск/Замена (Ctrl+H)">🔍</button>
             <button class="btn btn-secondary btn-sm" id="undoBtn" title="Отменить (Ctrl+Z)">↩</button>
             <button class="btn btn-secondary btn-sm" id="redoBtn" title="Повторить (Ctrl+Y)">↪</button>
-            <button class="btn btn-primary btn-sm" id="exportTxtBtn">📄 Экспорт</button>
+            <!-- Экспорт с выбором формата -->
+            <div style="display:flex; gap:4px; align-items:center;">
+                <select id="exportFormat" class="export-select">
+                    <option value="txt">TXT</option>
+                    <option value="fountain">Fountain</option>
+                    <option value="json">JSON</option>
+                    <option value="pdf">PDF</option>
+                </select>
+                <button class="btn btn-primary btn-sm" id="exportBtn">📄 Экспорт</button>
+            </div>
             <button class="btn btn-danger btn-sm" id="clearBtn">✕</button>
         </div>
     </header>
@@ -750,7 +821,7 @@
     </div>
 
     <!-- PRINT PLACEHOLDER -->
-    <div class="print-content" style="display:none;"></div>
+    <div class="print-content"></div>
 
     <!-- FOOTER -->
     <footer class="app-footer">
@@ -790,7 +861,8 @@
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
             const timerDisplay = document.getElementById('timerDisplay');
-            const exportBtn = document.getElementById('exportTxtBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const exportFormat = document.getElementById('exportFormat');
             const clearBtn = document.getElementById('clearBtn');
             const themeToggle = document.getElementById('themeToggle');
             const focusToggle = document.getElementById('focusToggle');
@@ -1120,28 +1192,114 @@
                 projectSelect.value = getCurrentProject();
             }
 
-            // ===== EXPORT =====
-            function exportTxt() {
-                const content = textarea.value;
-                if (!content.trim()) {
-                    alert('Сценарий пуст. Нечего экспортировать.');
-                    return;
-                }
-                const now = new Date();
-                const dateStr =
-                    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-                const projectName = getCurrentProject();
-                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            // ===== EXPORT FUNCTIONS =====
+            function getExportContent() {
+                return textarea.value;
+            }
+
+            function downloadFile(content, filename, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `${projectName}_${dateStr}.txt`;
+                link.download = filename;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(link.href);
-                statusText.textContent = '✅ Экспортировано!';
+            }
+
+            function exportTXT() {
+                const content = getExportContent();
+                if (!content.trim()) {
+                    alert('Сценарий пуст. Нечего экспортировать.');
+                    return;
+                }
+                const projectName = getCurrentProject();
+                const now = new Date();
+                const dateStr =
+                    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                downloadFile(content, `${projectName}_${dateStr}.txt`, 'text/plain;charset=utf-8');
+                statusText.textContent = '✅ TXT экспортирован!';
                 setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
             }
+
+            function exportFountain() {
+                const content = getExportContent();
+                if (!content.trim()) {
+                    alert('Сценарий пуст. Нечего экспортировать.');
+                    return;
+                }
+                const projectName = getCurrentProject();
+                const now = new Date();
+                const dateStr =
+                    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                downloadFile(content, `${projectName}_${dateStr}.fountain`, 'text/plain;charset=utf-8');
+                statusText.textContent = '✅ Fountain экспортирован!';
+                setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
+            }
+
+            function exportJSON() {
+                const content = getExportContent();
+                const projectName = getCurrentProject();
+                const now = new Date();
+                const data = {
+                    project: projectName,
+                    content: content,
+                    exportedAt: now.toISOString(),
+                    version: '1.0'
+                };
+                const json = JSON.stringify(data, null, 2);
+                const dateStr =
+                    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                downloadFile(json, `${projectName}_${dateStr}.json`, 'application/json;charset=utf-8');
+                statusText.textContent = '✅ JSON экспортирован!';
+                setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
+            }
+
+            function exportPDF() {
+                const content = getExportContent();
+                if (!content.trim()) {
+                    alert('Сценарий пуст. Нечего экспортировать.');
+                    return;
+                }
+                // Заполняем печатный контейнер
+                printContent.textContent = content;
+                // Вызываем печать
+                window.print();
+                // После печати очищаем (событие afterprint)
+            }
+
+            // Обработчик afterprint для очистки
+            window.addEventListener('afterprint', function() {
+                if (printContent.textContent) {
+                    printContent.textContent = '';
+                    statusText.textContent = '✅ PDF отправлен на печать';
+                    setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
+                }
+            });
+
+            // ===== EXPORT HANDLER =====
+            function handleExport() {
+                const format = exportFormat.value;
+                switch (format) {
+                    case 'txt':
+                        exportTXT();
+                        break;
+                    case 'fountain':
+                        exportFountain();
+                        break;
+                    case 'json':
+                        exportJSON();
+                        break;
+                    case 'pdf':
+                        exportPDF();
+                        break;
+                    default:
+                        alert('Неизвестный формат экспорта');
+                }
+            }
+
+            exportBtn.addEventListener('click', handleExport);
 
             // ===== CLEAR =====
             function clearScript() {
@@ -1152,6 +1310,7 @@
                 textarea.focus();
                 updateStats();
             }
+            clearBtn.addEventListener('click', clearScript);
 
             // ===== FIND / REPLACE =====
             let lastFindIndex = -1;
@@ -1333,7 +1492,7 @@
                 }
                 if (e.ctrlKey && e.key === 'e') {
                     e.preventDefault();
-                    exportTxt();
+                    handleExport();
                     return;
                 }
                 if (e.ctrlKey && e.key === 't') {
@@ -1386,10 +1545,6 @@
                     return;
                 }
             });
-
-            // ===== EXPORT & CLEAR BUTTONS =====
-            exportBtn.addEventListener('click', exportTxt);
-            clearBtn.addEventListener('click', clearScript);
 
             // ===== INIT =====
             initProjects();
