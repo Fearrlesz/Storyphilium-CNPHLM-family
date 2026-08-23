@@ -1,72 +1,43 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Storyphilium — сценарный редактор</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STORYPHILIUM | CINEPHILIUM FAMILY</title>
 
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=PT+Mono&display=swap" rel="stylesheet">
-
-    <!-- CDN Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/docx@8.0.0/build/index.min.js">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
 
     <style>
         /* ============================================================
-           ROOT — обновлённая цветовая система
+           ROOT — мягкая матча-зелёная палитра
            ============================================================ */
         :root {
-            --bg-deep: #0d0d12;
-            --bg-surface: #15151e;
-            --bg-panel: rgba(20, 20, 30, 0.9);
-            --bg-panel-solid: #1a1a24;
-            --bg-card: #1e1e2a;
-            --bg-hover: rgba(255, 255, 255, 0.05);
-            --border-subtle: rgba(255, 255, 255, 0.06);
+            --bg-main: #D4E6D0;
+            --bg-surface: #E4F0E0;
+            --bg-card: #EEF6EB;
+            --bg-input: #F4F9F2;
 
-            --text-primary: #eeedea;
-            --text-secondary: #a8a6a3;
-            --text-muted: #6e6c6a;
+            --accent: #7BA373;
+            --accent-hover: #648D5C;
+            --accent-border: #AEC9A6;
+            --accent-glow: rgba(123, 163, 115, 0.18);
 
-            /* Основные акценты — более разнообразная палитра */
-            --accent-1: #c084fc; /* фиолетовый */
-            --accent-2: #60a5fa; /* синий */
-            --accent-3: #34d399; /* изумрудный */
-            --accent-4: #f472b6; /* розовый */
-            --accent-5: #fbbf24; /* золотой */
-            --accent-6: #fb923c; /* оранжевый */
-            --accent-7: #f87171; /* красный */
-            --accent-8: #a78bfa; /* лавандовый */
+            --text-primary: #1E2F1C;
+            --text-secondary: #3D553A;
+            --text-light: #688562;
 
-            /* Текущий акцент (можно переключать) */
-            --accent-primary: var(--accent-5);
-            --accent-secondary: var(--accent-2);
+            --shadow-soft: 0 8px 32px rgba(123, 163, 115, 0.12);
+            --shadow-hover: 0 14px 44px rgba(123, 163, 115, 0.18);
 
-            --accent-gradient: linear-gradient(135deg, var(--accent-5), var(--accent-6));
-            --accent-glow: 0 4px 24px rgba(251, 191, 36, 0.2);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --radius-xs: 8px;
 
-            --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'PT Mono', 'Courier New', monospace;
-
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 14px;
-            --radius-xl: 20px;
-
-            --shadow-card: 0 6px 28px rgba(0, 0, 0, 0.5);
-            --shadow-panel: 0 10px 40px rgba(0, 0, 0, 0.5);
-
-            --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         /* ============================================================
@@ -83,1260 +54,679 @@
         html {
             font-size: 15px;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: var(--font-ui);
-            background: var(--bg-deep);
+            font-family: var(--font);
+            background: var(--bg-main);
             color: var(--text-primary);
             min-height: 100vh;
-            overflow: hidden;
+            padding: 18px 20px 0;
             display: flex;
             flex-direction: column;
             background-image:
-                radial-gradient(ellipse at 20% 10%, rgba(192, 132, 252, 0.04) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 90%, rgba(96, 165, 250, 0.03) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(251, 191, 36, 0.02) 0%, transparent 70%);
+                radial-gradient(circle at 10% 20%, rgba(123, 163, 115, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(123, 163, 115, 0.04) 0%, transparent 50%);
         }
 
         /* ============================================================
-           SCROLLBARS
+           SCROLLBAR
            ============================================================ */
         ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: transparent;
+            background: var(--bg-main);
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-primary);
+            background: var(--accent);
             border-radius: 20px;
-            opacity: 0.6;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-6);
+            background: var(--accent-hover);
         }
 
         /* ============================================================
-           APP SHELL
+           HEADER — мягкая лента
            ============================================================ */
-        #app {
+        .app-header {
             display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* ============================================================
-           TOPBAR
-           ============================================================ */
-        .topbar {
-            display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 32px;
-            background: var(--bg-panel);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            z-index: 100;
-            min-height: 60px;
+            padding: 18px 28px;
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(174, 201, 166, 0.3);
         }
 
-        .topbar .brand {
-            font-size: 20px;
+        .app-header .brand {
+            font-size: 28px;
             font-weight: 700;
-            letter-spacing: -0.4px;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            cursor: pointer;
-            user-select: none;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
         }
-        .topbar .brand span {
+        .app-header .brand .family {
             font-weight: 400;
-            opacity: 0.35;
-            -webkit-text-fill-color: var(--text-secondary);
-            background: none;
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: 0.2px;
+        }
+        .app-header .brand .separator {
+            color: var(--accent-border);
+            font-weight: 300;
+            margin: 0 2px;
         }
 
-        .topbar-actions {
+        .app-header .stats {
+            display: flex;
+            gap: 14px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+        .app-header .stats span {
+            background: var(--bg-card);
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1px solid var(--accent-border);
+            font-weight: 500;
+            color: var(--text-primary);
+            box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.6);
+        }
+        .app-header .stats .num {
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* ============================================================
+           WELCOME — органичная волна
+           ============================================================ */
+        .welcome {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 28px 32px 24px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 28px;
+            border: 1px solid rgba(174, 201, 166, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 163, 115, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .welcome::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -30px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 163, 115, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+        }
+        .welcome h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+            letter-spacing: -0.3px;
+        }
+        .welcome .sub {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .welcome .tips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 28px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 0;
+            margin: 0;
+        }
+        .welcome .tips li {
+            list-style: none;
             display: flex;
             align-items: center;
             gap: 8px;
-            flex-wrap: wrap;
+        }
+        .welcome .tips li::before {
+            content: "◆";
+            color: var(--accent);
+            font-size: 10px;
+            opacity: 0.6;
+        }
+
+        .welcome-divider {
+            margin: 16px 0 12px;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, var(--accent-border), transparent);
+            opacity: 0.35;
+        }
+        .welcome .last-updated {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 450;
         }
 
         /* ============================================================
-           BUTTONS
+           FORM — плавающая карта
+           ============================================================ */
+        .form-card {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 28px 32px 24px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 28px;
+            border: 1px solid rgba(174, 201, 166, 0.2);
+            transition: box-shadow var(--transition);
+        }
+        .form-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .form-title {
+            font-size: 19px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.2px;
+        }
+        .form-title .edit-badge {
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--accent);
+            color: #fff;
+            padding: 3px 16px;
+            border-radius: 40px;
+            display: none;
+            letter-spacing: 0.2px;
+        }
+        .form-title .edit-badge.active {
+            display: inline-block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 14px 20px;
+        }
+        .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            font-family: var(--font);
+            font-size: 14px;
+            padding: 11px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--accent-border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            outline: none;
+            transition: border var(--transition), box-shadow var(--transition), transform var(--transition);
+            width: 100%;
+            box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.4);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-glow), inset 0 1px 4px rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-light);
+            opacity: 0.6;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+            line-height: 1.55;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .form-actions .btn-cancel {
+            display: none;
+        }
+        .form-actions .btn-cancel.active {
+            display: inline-flex;
+        }
+
+        /* ============================================================
+           BUTTONS — мягкие, с плавностью
            ============================================================ */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            font-family: var(--font-ui);
-            font-weight: 500;
-            font-size: 13px;
-            padding: 8px 18px;
+            gap: 7px;
+            font-family: var(--font);
+            font-weight: 600;
+            font-size: 14px;
+            padding: 11px 28px;
             border: none;
             border-radius: var(--radius-sm);
             cursor: pointer;
-            transition: all var(--transition-fast);
-            background: var(--bg-panel-solid);
-            color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
+            transition: all var(--transition);
             text-decoration: none;
             white-space: nowrap;
-            position: relative;
+            letter-spacing: 0.2px;
         }
-        .btn:hover {
-            transform: translateY(-1px);
-            border-color: rgba(255, 255, 255, 0.12);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            background: rgba(255, 255, 255, 0.05);
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(123, 163, 115, 0.25);
         }
-        .btn:active {
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 8px 28px rgba(123, 163, 115, 0.30);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active {
             transform: scale(0.97);
         }
 
-        .btn-primary {
-            background: var(--accent-gradient);
-            color: #fff;
-            border-color: transparent;
-            box-shadow: var(--accent-glow);
-            font-weight: 600;
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1.5px solid var(--accent-border);
         }
-        .btn-primary:hover {
-            box-shadow: 0 4px 32px rgba(251, 191, 36, 0.35);
-            border-color: transparent;
+        .btn-secondary:hover {
+            background: var(--bg-main);
+            border-color: var(--accent);
             transform: translateY(-2px);
         }
 
-        .btn-ghost {
-            background: transparent;
-            border-color: transparent;
-        }
-        .btn-ghost:hover {
-            background: var(--bg-hover);
-            border-color: transparent;
-        }
-
         .btn-danger {
-            background: rgba(248, 113, 113, 0.12);
-            color: var(--accent-7);
-            border-color: rgba(248, 113, 113, 0.12);
+            background: #dbb5b5;
+            color: #4a2e2e;
         }
         .btn-danger:hover {
-            background: rgba(248, 113, 113, 0.25);
-            border-color: rgba(248, 113, 113, 0.2);
+            background: #d0a3a3;
+            transform: translateY(-2px);
         }
 
         .btn-sm {
             font-size: 12px;
-            padding: 5px 14px;
+            padding: 6px 16px;
+            border-radius: var(--radius-xs);
         }
 
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            border-radius: 50%;
-            font-size: 17px;
+        .btn-outline {
             background: transparent;
-            border-color: transparent;
             color: var(--text-secondary);
+            border: 1.5px solid var(--accent-border);
         }
-        .btn-icon:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-        }
-
-        /* ============================================================
-           LIBRARY VIEW
-           ============================================================ */
-        #libraryView {
-            flex: 1;
-            padding: 36px 40px 44px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            animation: fadeSlide 0.5s ease;
-        }
-        #libraryView.hidden {
-            display: none;
-        }
-
-        .library-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .library-header h1 {
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-            color: var(--text-primary);
-        }
-        .library-header h1 small {
-            font-weight: 400;
-            font-size: 15px;
-            color: var(--text-secondary);
-            margin-left: 12px;
-        }
-        .library-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        /* ============================================================
-           PROJECT GRID
-           ============================================================ */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-            flex: 1;
-            align-content: start;
-        }
-
-        .project-card {
+        .btn-outline:hover {
             background: var(--bg-card);
-            border-radius: var(--radius-md);
-            padding: 22px 24px 18px;
-            border: 1px solid var(--border-subtle);
-            cursor: pointer;
-            transition: all var(--transition-smooth);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            min-height: 150px;
-            box-shadow: var(--shadow-card);
-        }
-        .project-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-primary);
-            box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5), 0 0 60px rgba(192, 132, 252, 0.04);
-        }
-
-        .project-card .title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 2px;
-            color: var(--text-primary);
-            letter-spacing: -0.2px;
-        }
-        .project-card .genre {
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 14px;
-            opacity: 0.8;
-            color: var(--accent-primary);
-        }
-        .project-card .meta {
-            font-size: 12px;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-            margin-top: auto;
-            padding-top: 14px;
-            border-top: 1px solid var(--border-subtle);
-        }
-        .project-card .meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .project-card .delete-btn {
-            position: absolute;
-            top: 12px;
-            right: 14px;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 16px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity var(--transition-fast);
-            padding: 4px 8px;
-            border-radius: var(--radius-sm);
-            line-height: 1;
-        }
-        .project-card:hover .delete-btn {
-            opacity: 1;
-        }
-        .project-card .delete-btn:hover {
-            background: rgba(248, 113, 113, 0.12);
-            color: var(--accent-7);
+            border-color: var(--accent);
+            transform: translateY(-2px);
         }
 
         /* ============================================================
-           EMPTY STATE
+           TABLE — парящая, с лёгкими строками
            ============================================================ */
-        .empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            text-align: center;
-            padding: 60px 20px;
-            animation: fadeSlide 0.6s ease;
+        .table-wrap {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            padding: 24px 24px 20px 24px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 24px;
+            border: 1px solid rgba(174, 201, 166, 0.15);
+            transition: box-shadow var(--transition);
         }
-        .empty-state .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-        .empty-state h2 {
-            font-size: 24px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-        .empty-state p {
-            color: var(--text-secondary);
-            font-size: 15px;
-            max-width: 400px;
-            margin-bottom: 28px;
+        .table-wrap:hover {
+            box-shadow: var(--shadow-hover);
         }
 
-        /* ============================================================
-           EDITOR VIEW
-           ============================================================ */
-        #editorView {
-            flex: 1;
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            animation: fadeSlide 0.35s ease;
-        }
-        #editorView.active {
+        .table-header {
             display: flex;
-        }
-
-        .editor-topbar {
-            display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 8px 20px;
-            background: var(--bg-panel);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            min-height: 52px;
+            align-items: center;
+            padding: 0 4px 16px 4px;
+            flex-wrap: wrap;
             gap: 12px;
-            flex-wrap: wrap;
         }
-        .editor-topbar .left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .editor-topbar .left .project-title {
+        .table-header h3 {
+            font-size: 19px;
             font-weight: 600;
-            font-size: 15px;
+            color: var(--text-primary);
             letter-spacing: -0.2px;
         }
-        .editor-topbar .left .project-genre {
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            padding: 2px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(192, 132, 252, 0.15);
-            background: rgba(192, 132, 252, 0.08);
-            color: var(--accent-1);
-        }
-        .editor-topbar .right {
+        .table-header .actions {
             display: flex;
-            align-items: center;
-            gap: 6px;
+            gap: 10px;
             flex-wrap: wrap;
         }
-        .editor-topbar .right .btn {
-            font-size: 12px;
-            padding: 5px 14px;
-        }
 
-        .editor-topbar .mode-toggle {
-            display: flex;
-            gap: 3px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 3px;
+        .table-scroll {
+            overflow-x: auto;
             border-radius: var(--radius-sm);
-        }
-        .editor-topbar .mode-toggle .btn {
-            border-radius: var(--radius-sm);
-            padding: 4px 14px;
-            font-size: 12px;
-            background: transparent;
-            border-color: transparent;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-        .editor-topbar .mode-toggle .btn.active {
-            background: var(--bg-panel-solid);
-            color: var(--text-primary);
-            border-color: var(--border-subtle);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-        .editor-topbar .mode-toggle .btn:hover:not(.active) {
-            background: var(--bg-hover);
+            background: var(--bg-card);
+            padding: 2px 0;
         }
 
-        /* ============================================================
-           EDITOR PANELS
-           ============================================================ */
-        .editor-panels {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            min-width: 720px;
         }
-
-        /* ---- LEFT PANEL ---- */
-        .panel-left {
-            width: 220px;
-            min-width: 170px;
-            background: var(--bg-panel);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-right: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: width var(--transition-smooth);
+        thead {
+            background: var(--bg-main);
         }
-        .panel-left .panel-header {
-            padding: 14px 20px 10px;
-            font-size: 11px;
+        thead th {
+            text-align: left;
+            padding: 14px 16px;
             font-weight: 600;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.6px;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .panel-left .panel-header .count {
-            font-weight: 400;
-            font-size: 11px;
-            background: rgba(255, 255, 255, 0.04);
-            padding: 0 10px;
-            border-radius: 20px;
             color: var(--text-secondary);
+            border-bottom: 2px solid var(--accent-border);
         }
-        .panel-left .scene-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 0;
+        thead th:first-child {
+            border-radius: var(--radius-sm) 0 0 0;
         }
-        .panel-left .scene-item {
-            padding: 6px 20px;
-            font-size: 13px;
-            font-family: var(--font-mono);
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            border-left: 2px solid transparent;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            user-select: none;
-        }
-        .panel-left .scene-item:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-        }
-        .panel-left .scene-item.active {
-            color: var(--text-primary);
-            border-left-color: var(--accent-primary);
-            background: rgba(192, 132, 252, 0.05);
-        }
-        .panel-left .scene-item .num {
-            font-weight: 600;
-            margin-right: 8px;
-            font-size: 11px;
-            opacity: 0.7;
-            color: var(--accent-2);
-        }
-        .panel-left .scene-item.dragging {
-            opacity: 0.3;
+        thead th:last-child {
+            border-radius: 0 var(--radius-sm) 0 0;
         }
 
-        /* ---- CENTER PANEL ---- */
-        .panel-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-deep);
-            overflow: hidden;
-            position: relative;
+        tbody tr {
+            transition: background var(--transition);
         }
-        .panel-center .editor-wrapper {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-        }
-        .panel-center .line-numbers {
-            padding: 16px 0 16px 16px;
-            font-family: var(--font-mono);
-            font-size: 13px;
-            line-height: 1.55;
-            color: var(--text-muted);
-            text-align: right;
-            user-select: none;
-            overflow: hidden;
-            min-width: 42px;
-            background: var(--bg-deep);
-            border-right: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            padding-top: 18px;
-            opacity: 0.5;
-        }
-        .panel-center .line-numbers span {
-            display: block;
-            font-size: 12px;
-        }
-        .panel-center textarea {
-            flex: 1;
-            font-family: var(--font-mono);
-            font-size: 14px;
-            line-height: 1.55;
-            color: var(--text-primary);
-            background: transparent;
-            border: none;
-            outline: none;
-            resize: none;
-            padding: 16px 24px 16px 20px;
-            tab-size: 4;
-            width: 100%;
-            min-height: 100%;
-            scroll-behavior: smooth;
-        }
-        .panel-center textarea::selection {
-            background: rgba(192, 132, 252, 0.2);
-        }
-        .panel-center textarea::placeholder {
-            color: var(--text-muted);
-            opacity: 0.4;
-        }
-
-        .panel-center .editor-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 20px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            border-top: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-            background: var(--bg-panel);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-        .panel-center .editor-footer .pages {
-            font-weight: 500;
-            font-size: 12px;
-            color: var(--accent-primary);
-        }
-        .panel-center .editor-footer .status {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 12px;
-        }
-        .panel-center .editor-footer .status .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-3);
-            display: inline-block;
-            transition: all var(--transition-fast);
-        }
-        .panel-center .editor-footer .status .dot.saving {
-            background: var(--accent-primary);
-            animation: pulse 1s infinite;
-        }
-
-        /* ---- RIGHT PANEL ---- */
-        .panel-right {
-            width: 270px;
-            min-width: 220px;
-            background: var(--bg-panel);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-left: 1px solid var(--border-subtle);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: width var(--transition-smooth);
-        }
-        .panel-right .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-subtle);
-            flex-shrink: 0;
-        }
-        .panel-right .tabs .tab {
-            flex: 1;
-            padding: 12px 0;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            border-bottom: 2px solid transparent;
-            background: transparent;
-            border-top: none;
-            border-left: none;
-            border-right: none;
-            font-family: var(--font-ui);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .panel-right .tabs .tab:hover {
-            color: var(--text-primary);
-            background: var(--bg-hover);
-        }
-        .panel-right .tabs .tab.active {
-            color: var(--text-primary);
-            border-bottom-color: var(--accent-primary);
-        }
-        .panel-right .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 14px 16px;
-            display: none;
-        }
-        .panel-right .tab-content.active {
-            display: block;
-        }
-
-        /* Characters */
-        .character-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 7px 10px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            margin-bottom: 2px;
-        }
-        .character-item:hover {
-            background: var(--bg-hover);
-        }
-        .character-item .name {
-            font-weight: 500;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .character-item .name .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-            flex-shrink: 0;
-        }
-        .character-item .count {
-            font-size: 11px;
-            color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.04);
-            padding: 0 10px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-        .character-item.highlighted {
-            background: rgba(192, 132, 252, 0.1);
-            border-radius: var(--radius-sm);
-        }
-
-        /* Notes */
-        .note-item {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: var(--radius-sm);
-            padding: 12px 14px;
-            margin-bottom: 10px;
-            border-left: 3px solid var(--accent-primary);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
-        .note-item:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-        .note-item .text {
-            font-size: 13px;
-            line-height: 1.4;
-            color: var(--text-primary);
-        }
-        .note-item .preview {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            font-style: italic;
-            opacity: 0.6;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .note-item .delete-note {
-            float: right;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 15px;
-            padding: 0 4px;
-            transition: color var(--transition-fast);
-        }
-        .note-item .delete-note:hover {
-            color: var(--accent-7);
-        }
-        .add-note-hint {
-            font-size: 13px;
-            color: var(--text-muted);
-            text-align: center;
-            padding: 20px 0;
-            border: 1px dashed var(--border-subtle);
-            border-radius: var(--radius-sm);
-            margin-top: 8px;
-        }
-
-        /* ============================================================
-           STRUCTURE MODE
-           ============================================================ */
-        #structureView {
-            flex: 1;
-            display: none;
-            padding: 28px 36px;
-            overflow-y: auto;
-            background: var(--bg-deep);
-            animation: fadeSlide 0.35s ease;
-        }
-        #structureView.active {
-            display: block;
-        }
-        .structure-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 18px;
-        }
-        .structure-card {
+        tbody tr:nth-child(even) {
             background: var(--bg-card);
-            border-radius: var(--radius-md);
-            padding: 16px 20px;
-            border: 1px solid var(--border-subtle);
-            transition: all var(--transition-smooth);
-            cursor: default;
-            box-shadow: var(--shadow-card);
         }
-        .structure-card:hover {
-            border-color: rgba(192, 132, 252, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        tbody tr:nth-child(odd) {
+            background: var(--bg-input);
         }
-        .structure-card .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
+        tbody tr:hover {
+            background: #e8f2e4;
         }
-        .structure-card .header .scene-title {
-            font-family: var(--font-mono);
-            font-size: 13px;
+
+        tbody td {
+            padding: 13px 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(174, 201, 166, 0.2);
+            color: var(--text-primary);
+            line-height: 1.45;
+        }
+        tbody td:first-child {
             font-weight: 600;
-            color: var(--accent-primary);
+            color: var(--accent);
+            white-space: nowrap;
         }
-        .structure-card .header .edit-btn {
-            font-size: 11px;
-            padding: 3px 12px;
-            border-radius: var(--radius-sm);
-            background: rgba(192, 132, 252, 0.08);
-            color: var(--accent-1);
-            border: 1px solid rgba(192, 132, 252, 0.08);
-            cursor: pointer;
-            transition: all var(--transition-fast);
-            font-weight: 500;
-        }
-        .structure-card .header .edit-btn:hover {
-            background: rgba(192, 132, 252, 0.18);
-        }
-        .structure-card .preview {
+        tbody td .scene-title {
+            font-weight: 600;
             font-size: 13px;
+            color: var(--text-primary);
+        }
+        tbody td .scene-preview {
             color: var(--text-secondary);
-            line-height: 1.4;
-            overflow: hidden;
+            font-size: 13px;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-width: 200px;
         }
-        .structure-card.dragging {
-            opacity: 0.3;
-        }
-
-        /* ============================================================
-           QUIET RHYTHM
-           ============================================================ */
-        #quietRhythm {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #f3efe8;
-            z-index: 9999;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 60px 80px;
-            overflow-y: auto;
-            animation: fadeIn 0.4s ease;
-        }
-        #quietRhythm.active {
-            display: flex;
-        }
-        #quietRhythm .qr-text {
-            font-family: var(--font-mono);
-            font-size: 18px;
-            line-height: 2.0;
-            color: #2a2a2a;
-            max-width: 720px;
-            width: 100%;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            padding: 20px 0;
-        }
-        #quietRhythm .qr-close {
-            position: fixed;
-            top: 28px;
-            right: 36px;
-            background: rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            color: #2a2a2a;
-            font-size: 15px;
-            padding: 10px 24px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-family: var(--font-ui);
-            font-weight: 500;
-            transition: all var(--transition-fast);
-            backdrop-filter: blur(6px);
-        }
-        #quietRhythm .qr-close:hover {
-            background: rgba(0, 0, 0, 0.08);
-        }
-
-        /* ============================================================
-           MODALS
-           ============================================================ */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 1000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.25s ease;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal {
-            background: var(--bg-panel-solid);
-            border-radius: var(--radius-lg);
-            padding: 32px 40px;
-            max-width: 480px;
-            width: 90%;
-            border: 1px solid var(--border-subtle);
-            box-shadow: var(--shadow-panel);
-            animation: slideUp 0.3s ease;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal h2 {
-            font-size: 21px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            letter-spacing: -0.2px;
-        }
-        .modal .sub {
-            color: var(--text-secondary);
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-        .modal label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-        }
-        .modal input,
-        .modal select,
-        .modal textarea {
-            width: 100%;
-            padding: 10px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-family: var(--font-ui);
-            font-size: 14px;
-            transition: border var(--transition-fast);
-            outline: none;
-            margin-bottom: 14px;
-        }
-        .modal input:focus,
-        .modal select:focus,
-        .modal textarea:focus {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(192, 132, 252, 0.06);
-        }
-        .modal .actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 8px;
-        }
-        .modal .actions .btn {
-            font-size: 14px;
-            padding: 10px 24px;
-        }
-
-        /* ============================================================
-           TOASTS
-           ============================================================ */
-        .toast-container {
-            position: fixed;
-            top: 80px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-        .toast {
-            background: var(--bg-panel-solid);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            padding: 14px 22px;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-subtle);
-            box-shadow: var(--shadow-panel);
-            color: var(--text-primary);
-            font-size: 13px;
-            font-weight: 500;
-            pointer-events: auto;
-            animation: slideRight 0.35s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            min-width: 180px;
-        }
-        .toast.success {
-            border-left: 3px solid var(--accent-3);
-        }
-        .toast.error {
-            border-left: 3px solid var(--accent-7);
-        }
-        .toast.info {
-            border-left: 3px solid var(--accent-primary);
-        }
-        .toast .close-toast {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 17px;
-            padding: 0 4px;
-            margin-left: auto;
-        }
-
-        /* ============================================================
-           TRASH
-           ============================================================ */
-        .trash-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: var(--radius-sm);
-            margin-bottom: 8px;
-            border-left: 2px solid rgba(248, 113, 113, 0.2);
-        }
-        .trash-item .info {
-            display: flex;
-            flex-direction: column;
-        }
-        .trash-item .info .title {
-            font-weight: 500;
-            font-size: 14px;
-        }
-        .trash-item .info .genre {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        .trash-item .actions {
+        tbody td .actions-cell {
             display: flex;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
-        /* ============================================================
-           STATISTICS
-           ============================================================ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin: 16px 0;
+        .type-badge {
+            display: inline-block;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 3px 14px;
+            border-radius: 40px;
+            background: var(--bg-main);
+            border: 1px solid var(--accent-border);
+            color: var(--text-primary);
+            white-space: nowrap;
         }
-        .stats-grid .stat-card {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: var(--radius-sm);
-            padding: 16px;
+        .type-badge.int {
+            background: #ddecd8;
+            border-color: #98bf90;
+        }
+        .type-badge.nat {
+            background: #d8e0e8;
+            border-color: #98aeb8;
+        }
+
+        .empty-table {
             text-align: center;
-            border: 1px solid var(--border-subtle);
-        }
-        .stats-grid .stat-card .value {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .stats-grid .stat-card .label {
-            font-size: 11px;
+            padding: 56px 20px;
             color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.4px;
-            margin-top: 2px;
+            font-size: 15px;
         }
-        .stats-chart-wrap {
-            margin-top: 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            height: 180px;
-            position: relative;
-            border: 1px solid var(--border-subtle);
-        }
-        .stats-chart-wrap canvas {
-            width: 100% !important;
-            height: 100% !important;
+        .empty-table .icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+            opacity: 0.25;
+            color: var(--accent);
         }
 
         /* ============================================================
-           ANIMATIONS
+           FOOTER — лёгкий, прозрачный
            ============================================================ */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        .app-footer {
+            margin-top: auto;
+            padding: 16px 24px;
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border: 1px solid rgba(174, 201, 166, 0.15);
         }
-        @keyframes fadeSlide {
-            from {
-                opacity: 0;
-                transform: translateY(14px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .app-footer .copy {
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
         }
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.97);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+        .app-footer .copy .family {
+            font-weight: 400;
+            color: var(--text-secondary);
         }
-        @keyframes slideRight {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        .app-footer .copy .separator {
+            color: var(--accent-border);
+            font-weight: 300;
         }
-        @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.25;
-            }
+        .app-footer .note {
+            font-size: 12px;
+            color: var(--text-light);
         }
 
         /* ============================================================
            RESPONSIVE
            ============================================================ */
-        @media (max-width: 1200px) {
-            .panel-right {
-                width: 220px;
-                min-width: 180px;
-            }
-            .panel-left {
-                width: 180px;
-                min-width: 140px;
-            }
-        }
         @media (max-width: 1024px) {
-            .panel-right {
-                position: fixed;
-                right: -300px;
-                top: 0;
-                bottom: 0;
-                width: 280px;
-                z-index: 200;
-                transition: right var(--transition-smooth);
-                border-left: 1px solid var(--border-subtle);
-                box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
-            }
-            .panel-right.open {
-                right: 0;
-            }
-            .panel-right .drawer-toggle {
-                display: flex !important;
-            }
-            .panel-left {
-                width: 160px;
-                min-width: 120px;
-            }
-            .topbar .brand {
-                font-size: 17px;
-            }
-            .library-header h1 {
-                font-size: 22px;
-            }
-            .project-grid {
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            }
-            .modal {
-                padding: 24px 28px;
-                max-width: 400px;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            #quietRhythm {
-                padding: 40px 30px;
-            }
-            #quietRhythm .qr-text {
-                font-size: 16px;
-            }
-        }
-        @media (max-width: 768px) {
-            .topbar {
-                padding: 8px 16px;
-                flex-wrap: wrap;
-                gap: 6px;
-            }
-            .topbar-actions .btn {
-                font-size: 11px;
-                padding: 6px 12px;
-            }
-            .editor-topbar {
-                padding: 6px 12px;
-                gap: 6px;
-            }
-            .editor-topbar .left .project-title {
-                font-size: 14px;
-            }
-            .panel-left {
-                width: 130px;
-                min-width: 90px;
-            }
-            .panel-left .scene-item {
-                font-size: 11px;
-                padding: 4px 12px;
-            }
-            .panel-center textarea {
-                font-size: 13px;
-                padding: 12px 16px 12px 14px;
-            }
-            .panel-center .line-numbers {
-                font-size: 11px;
-                padding: 14px 0 14px 10px;
-                min-width: 30px;
-            }
-            .structure-grid {
-                grid-template-columns: 1fr;
-            }
-            #libraryView {
-                padding: 20px 16px;
-            }
-            .project-grid {
+            .form-grid {
                 grid-template-columns: 1fr 1fr;
             }
-            #quietRhythm .qr-text {
-                font-size: 15px;
-                line-height: 1.8;
-            }
-            .modal {
-                padding: 20px;
-                max-width: 94%;
-            }
         }
-        @media (max-width: 500px) {
-            .project-grid {
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px 14px 0;
+            }
+            .app-header {
+                padding: 16px 20px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .app-header .brand {
+                font-size: 22px;
+                flex-wrap: wrap;
+            }
+            .app-header .brand .family {
+                font-size: 12px;
+            }
+            .app-header .stats {
+                gap: 8px;
+                font-size: 13px;
+            }
+            .app-header .stats span {
+                padding: 4px 14px;
+            }
+
+            .welcome {
+                padding: 20px 22px;
+            }
+            .welcome h2 {
+                font-size: 20px;
+            }
+            .welcome .tips {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .form-card {
+                padding: 20px 18px;
+            }
+            .form-grid {
                 grid-template-columns: 1fr;
             }
-            .topbar-actions .btn span {
-                display: none;
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
             }
-            .editor-topbar .right .btn span {
-                display: none;
+            .form-actions .btn {
+                justify-content: center;
             }
-            .panel-left {
-                width: 110px;
-                min-width: 70px;
+
+            .table-wrap {
+                padding: 16px 16px 14px 16px;
             }
-            .panel-right {
-                width: 240px;
-                right: -260px;
+            .table-header h3 {
+                font-size: 17px;
+            }
+
+            table {
+                font-size: 13px;
+                min-width: 600px;
+            }
+            thead th,
+            tbody td {
+                padding: 10px 12px;
+            }
+            tbody td .scene-preview {
+                max-width: 120px;
+                font-size: 12px;
+            }
+
+            .app-footer {
+                flex-direction: column;
+                gap: 6px;
+                text-align: center;
+                padding: 14px 18px;
+            }
+            .app-footer .copy {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px 8px 0;
+            }
+            .app-header .stats {
+                font-size: 12px;
+                gap: 6px;
+            }
+            .app-header .stats span {
+                padding: 3px 10px;
+                font-size: 12px;
+            }
+            .welcome {
+                padding: 16px 16px;
+            }
+            .welcome h2 {
+                font-size: 18px;
+            }
+            .form-card {
+                padding: 16px 14px;
+            }
+            .table-wrap {
+                padding: 12px 12px 10px 12px;
+            }
+            table {
+                font-size: 12px;
+                min-width: 480px;
+            }
+            thead th,
+            tbody td {
+                padding: 7px 8px;
+            }
+            tbody td .scene-preview {
+                max-width: 80px;
+            }
+            .btn-sm {
+                font-size: 11px;
+                padding: 4px 10px;
             }
         }
 
@@ -1345,18 +735,6 @@
            ============================================================ */
         .hidden {
             display: none !important;
-        }
-        .flex {
-            display: flex;
-        }
-        .gap-8 {
-            gap: 8px;
-        }
-        .gap-12 {
-            gap: 12px;
-        }
-        .items-center {
-            align-items: center;
         }
         .text-muted {
             color: var(--text-secondary);
@@ -1367,1729 +745,511 @@
         .mb-8 {
             margin-bottom: 8px;
         }
+        .gap-8 {
+            gap: 8px;
+        }
+        .flex {
+            display: flex;
+        }
+        .items-center {
+            align-items: center;
+        }
         .w-full {
             width: 100%;
         }
-
-        .drawer-toggle {
-            display: none !important;
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 4px 10px;
-            border-radius: var(--radius-sm);
-        }
-        .drawer-toggle:hover {
-            background: var(--bg-hover);
-        }
-        .panel-right .drawer-toggle {
-            display: none !important;
-            position: absolute;
-            left: -44px;
-            top: 12px;
-            background: var(--bg-panel-solid);
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-            padding: 8px 12px;
-            border: 1px solid var(--border-subtle);
-            border-right: none;
-            color: var(--text-primary);
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .panel-right .drawer-toggle:hover {
-            background: var(--bg-card);
-        }
-        @media (max-width: 1024px) {
-            .panel-right .drawer-toggle {
-                display: flex !important;
-            }
-        }
-
-        .char-highlight {
-            background: rgba(192, 132, 252, 0.12);
-            border-radius: 2px;
-            padding: 0 2px;
-        }
     </style>
 </head>
+
 <body>
 
-    <!-- ===== APP ===== -->
-    <div id="app">
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header class="app-header">
+        <div class="brand">
+            STORYPHILIUM
+            <span class="separator">|</span>
+            <span class="family">CINEPHILIUM FAMILY</span>
+        </div>
+        <div class="stats" id="headerStats">
+            <span>Всего: <span class="num" id="totalCount">0</span></span>
+            <span>ИНТ.: <span class="num" id="intCount">0</span></span>
+            <span>НАТ.: <span class="num" id="natCount">0</span></span>
+        </div>
+    </header>
 
-        <!-- ===== TOP BAR ===== -->
-        <header class="topbar" id="topbar">
-            <div class="brand" id="brandLogo">STORYPHILIUM <span>| CINEPHILIUM FAMILY</span></div>
-            <div class="topbar-actions" id="topbarActions">
-                <!-- динамически заполняется -->
-            </div>
-        </header>
+    <!-- ============================================================
+    WELCOME — органичный блок без жёстких границ
+    ============================================================ -->
+    <section class="welcome">
+        <div class="welcome-content">
+            <h2>Добро пожаловать в ваш сценарный редактор</h2>
+            <p class="sub">Записывайте идеи, структурируйте сцены и создавайте историю</p>
+            <ul class="tips">
+                <li>Выберите тип локации — ИНТ. (интерьер) или НАТ. (натура)</li>
+                <li>Заполните поля и добавьте сцену в таблицу</li>
+                <li>Редактируйте и удаляйте сцены по мере работы</li>
+            </ul>
+            <hr class="welcome-divider" />
+            <div class="last-updated" id="lastUpdated">Последнее изменение: —</div>
+        </div>
+    </section>
 
-        <!-- ===== LIBRARY VIEW ===== -->
-        <section id="libraryView">
-            <div class="library-header">
-                <h1>Библиотека <small>Ваши проекты</small></h1>
-                <div class="library-actions">
-                    <button class="btn btn-primary" id="newProjectBtn">+ Новый сценарий</button>
-                    <button class="btn btn-ghost" id="trashBtn">Корзина</button>
-                    <button class="btn btn-ghost" id="statsBtn">Статистика</button>
-                    <button class="btn btn-ghost" id="importBtn">Восстановить</button>
+    <!-- ============================================================
+    FORM
+    ============================================================ -->
+    <section class="form-card" id="formCard">
+        <div class="form-title">
+            <span id="formTitle">Добавить новую сцену</span>
+            <span class="edit-badge" id="editBadge">Редактирование</span>
+        </div>
+
+        <form id="sceneForm" autocomplete="off">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="sceneType">Тип локации</label>
+                    <select id="sceneType">
+                        <option value="ИНТ.">ИНТ. — интерьер</option>
+                        <option value="НАТ.">НАТ. — натура</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sceneLocation">Локация</label>
+                    <input type="text" id="sceneLocation" placeholder="КВАРТИРА ДЯДИ ВАСИ" />
+                </div>
+
+                <div class="form-group">
+                    <label for="sceneTime">Время суток</label>
+                    <select id="sceneTime">
+                        <option value="ДЕНЬ">ДЕНЬ</option>
+                        <option value="НОЧЬ">НОЧЬ</option>
+                        <option value="УТРО">УТРО</option>
+                        <option value="ВЕЧЕР">ВЕЧЕР</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="sceneDescription">Краткое описание</label>
+                    <input type="text" id="sceneDescription" placeholder="Персонаж просыпается и идёт на кухню" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="sceneText">Текст сцены</label>
+                    <textarea id="sceneText" rows="4" placeholder="Иван открывает глаза. За окном шумят машины. Он встаёт с кровати..."></textarea>
                 </div>
             </div>
-            <div class="project-grid" id="projectGrid"></div>
-            <div class="empty-state" id="emptyState" style="display:none;">
-                <div class="icon">✍</div>
-                <h2>Первый сценарий ждёт</h2>
-                <p>Создайте новый проект и начните писать. Все данные сохраняются в вашем браузере.</p>
-                <button class="btn btn-primary" id="emptyNewBtn">+ Создать сценарий</button>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="formSubmitBtn">Добавить сцену</button>
+                <button type="button" class="btn btn-secondary btn-cancel" id="formCancelBtn">Отменить</button>
             </div>
-        </section>
+        </form>
+    </section>
 
-        <!-- ===== EDITOR VIEW ===== -->
-        <section id="editorView">
-            <div class="editor-topbar">
-                <div class="left">
-                    <button class="btn btn-ghost btn-sm" id="backToLibrary">← Назад</button>
-                    <span class="project-title" id="editorProjectTitle">Без названия</span>
-                    <span class="project-genre" id="editorProjectGenre">Драма</span>
-                </div>
-                <div class="right">
-                    <div class="mode-toggle">
-                        <button class="btn active" data-mode="edit" id="modeEdit">Редактор</button>
-                        <button class="btn" data-mode="structure" id="modeStructure">Структура</button>
-                    </div>
-                    <button class="btn btn-ghost btn-sm" id="quietReadBtn">Читать</button>
-                    <button class="btn btn-ghost btn-sm" id="exportBtn">Скачать ▾</button>
-                    <button class="btn btn-ghost btn-sm drawer-toggle" id="drawerToggle">☰</button>
-                </div>
-            </div>
-
-            <div class="editor-panels">
-                <!-- Left Panel -->
-                <aside class="panel-left" id="panelLeft">
-                    <div class="panel-header">
-                        <span>Сцены</span>
-                        <span class="count" id="sceneCount">0</span>
-                    </div>
-                    <div class="scene-list" id="sceneList"></div>
-                </aside>
-
-                <!-- Center Panel -->
-                <main class="panel-center" id="panelCenter">
-                    <div class="editor-wrapper" id="editorWrapper">
-                        <div class="line-numbers" id="lineNumbers"></div>
-                        <textarea id="editorTextarea" spellcheck="true" placeholder="Начните писать сцену…"></textarea>
-                    </div>
-                    <div class="editor-footer">
-                        <span class="pages" id="pageCounter">0 страниц</span>
-                        <span class="status">
-                            <span id="saveStatus">Сохранено</span>
-                            <span class="dot" id="statusDot"></span>
-                        </span>
-                    </div>
-                </main>
-
-                <!-- Right Panel -->
-                <aside class="panel-right" id="panelRight">
-                    <button class="drawer-toggle" id="drawerClose">✕</button>
-                    <div class="tabs">
-                        <button class="tab active" data-tab="characters">Персонажи</button>
-                        <button class="tab" data-tab="notes">Заметки</button>
-                    </div>
-                    <div class="tab-content active" id="tabCharacters"></div>
-                    <div class="tab-content" id="tabNotes"></div>
-                </aside>
-            </div>
-
-            <!-- Structure View -->
-            <div id="structureView">
-                <div class="structure-grid" id="structureGrid"></div>
-            </div>
-        </section>
-    </div>
-
-    <!-- ===== QUIET RHYTHM ===== -->
-    <div id="quietRhythm">
-        <button class="qr-close" id="qrClose">✕ Вернуться</button>
-        <div class="qr-text" id="qrText"></div>
-    </div>
-
-    <!-- ===== MODALS ===== -->
-    <!-- New Project -->
-    <div class="modal-overlay" id="newProjectModal">
-        <div class="modal">
-            <h2>Новый сценарий</h2>
-            <p class="sub">Создайте проект для вашей истории</p>
-            <label>Название</label>
-            <input type="text" id="projectTitleInput" placeholder="Мой сценарий" value="Новый сценарий">
-            <label>Жанр</label>
-            <select id="projectGenreInput">
-                <option value="Драма">Драма</option>
-                <option value="Комедия">Комедия</option>
-                <option value="Триллер">Триллер</option>
-                <option value="Фантастика">Фантастика</option>
-                <option value="Фэнтези">Фэнтези</option>
-                <option value="Детектив">Детектив</option>
-                <option value="Романтика">Романтика</option>
-                <option value="Приключения">Приключения</option>
-                <option value="Ужасы">Ужасы</option>
-                <option value="Документальный">Документальный</option>
-            </select>
+    <!-- ============================================================
+    TABLE
+    ============================================================ -->
+    <section class="table-wrap">
+        <div class="table-header">
+            <h3>Сцены</h3>
             <div class="actions">
-                <button class="btn btn-ghost" id="modalCancel">Отмена</button>
-                <button class="btn btn-primary" id="modalCreate">Создать</button>
+                <button class="btn btn-outline btn-sm" id="clearAllBtn">Очистить все</button>
             </div>
         </div>
-    </div>
 
-    <!-- Trash -->
-    <div class="modal-overlay" id="trashModal">
-        <div class="modal">
-            <h2>Корзина</h2>
-            <p class="sub">Удалённые проекты можно восстановить</p>
-            <div id="trashList"></div>
-            <div class="actions">
-                <button class="btn btn-ghost" id="trashClose">Закрыть</button>
-            </div>
+        <div class="table-scroll" id="tableContainer">
+            <!-- Таблица будет вставлена JS -->
         </div>
-    </div>
+    </section>
 
-    <!-- Statistics -->
-    <div class="modal-overlay" id="statsModal">
-        <div class="modal" style="max-width:600px;">
-            <h2>Статистика</h2>
-            <p class="sub">Ваша творческая активность</p>
-            <div class="stats-grid" id="statsGrid">
-                <div class="stat-card"><div class="value" id="statPages">0</div><div class="label">Всего страниц</div></div>
-                <div class="stat-card"><div class="value" id="statCharacters">0</div><div class="label">Персонажей</div></div>
-                <div class="stat-card"><div class="value" id="statProjects">0</div><div class="label">Проектов</div></div>
-                <div class="stat-card"><div class="value" id="statBestDay">—</div><div class="label">Самый продуктивный день</div></div>
-            </div>
-            <div class="stats-chart-wrap">
-                <canvas id="statsChart"></canvas>
-            </div>
-            <div class="actions" style="margin-top:16px;">
-                <button class="btn btn-ghost" id="statsClose">Закрыть</button>
-            </div>
-        </div>
-    </div>
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer class="app-footer">
+        <span class="copy">
+            STORYPHILIUM
+            <span class="separator">|</span>
+            <span class="family">CINEPHILIUM FAMILY</span>
+            &copy; 2026
+        </span>
+        <span class="note">Все данные сохраняются в вашем браузере</span>
+    </footer>
 
-    <!-- Confirm -->
-    <div class="modal-overlay" id="confirmModal">
-        <div class="modal" style="max-width:400px;">
-            <h2 id="confirmTitle">Подтверждение</h2>
-            <p id="confirmMessage" class="sub">Вы уверены?</p>
-            <div class="actions">
-                <button class="btn btn-ghost" id="confirmCancel">Отмена</button>
-                <button class="btn btn-danger" id="confirmOk">Подтвердить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== TOASTS ===== -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- ===== HIDDEN FILE INPUT ===== -->
-    <input type="file" id="fileInput" accept=".json" style="display:none;">
-
-    <!-- ============================================================ -->
-    <!-- ===== JAVASCRIPT (полностью сохранён) ===== -->
-    <!-- ============================================================ -->
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
     <script>
-        /* ================================================================
-               STORYPHILIUM — Полный код приложения (без изменений)
-               ================================================================ */
-
         (function() {
             'use strict';
 
-            // ===== РАЗНООБРАЗНАЯ ПАЛИТРА (24 цвета) =====
-            const PASTEL_COLORS = [
-                // Тёплые
-                '#FF6B6B', // ярко-красный
-                '#FF9F43', // мандариновый
-                '#FECA57', // золотистый
-                '#FF9FF3', // розовый
-                '#F368E0', // фуксия
-                '#FF6348', // коралловый
+            /* ============================================================
+               ДАННЫЕ
+               ============================================================ */
+            const STORAGE_KEY = 'storyphilium_scenes';
 
-                // Холодные
-                '#54A0FF', // ярко-синий
-                '#5F27CD', // фиолетовый
-                '#1DD1A1', // изумрудный
-                '#00D2D3', // бирюзовый
-                '#0ABDE3', // голубой
-                '#8395A7', // стальной
+            const DEMO_SCENES = [{
+                id: 'demo1',
+                number: 1,
+                type: 'ИНТ.',
+                location: 'КВАРТИРА',
+                time: 'ДЕНЬ',
+                description: 'Персонаж просыпается и идёт на кухню',
+                text: 'Иван открывает глаза. За окном шумят машины. Он встаёт с кровати и направляется на кухню, где уже кипит чайник.'
+            }, {
+                id: 'demo2',
+                number: 2,
+                type: 'НАТ.',
+                location: 'ПАРК',
+                time: 'ВЕЧЕР',
+                description: 'Встреча двух друзей на скамейке',
+                text: 'Солнце садится за деревья. Анна сидит на скамейке, держит книгу в руках. Подходит Сергей, улыбается и садится рядом.'
+            }, {
+                id: 'demo3',
+                number: 3,
+                type: 'ИНТ.',
+                location: 'КАФЕ',
+                time: 'УТРО',
+                description: 'Разговор за чашкой кофе',
+                text: 'В кафе тихо играет джаз. Ольга и Дмитрий сидят за столиком у окна. Ольга помешивает кофе и задумчиво смотрит вдаль.'
+            }];
 
-                // Пастельные
-                '#FFB8B8', // нежно-розовый
-                '#FFD93D', // солнечный
-                '#A8E6CF', // мятный
-                '#DCD3FF', // лавандовый
-                '#FFB3C6', // клубничный
-                '#B8F2E6', // аквамариновый
+            /* ============================================================
+               СОСТОЯНИЕ
+               ============================================================ */
+            let scenes = [];
+            let editingId = null;
 
-                // Яркие акценты
-                '#FD79A8', // малиновый
-                '#FDCB6E', // песочный
-                '#6C5CE7', // сиреневый
-                '#00B894', // тёмно-зелёный
-                '#E17055', // терракотовый
-                '#0984E3' // насыщенный синий
-            ];
+            /* ============================================================
+               ЭЛЕМЕНТЫ
+               ============================================================ */
+            const form = document.getElementById('sceneForm');
+            const typeEl = document.getElementById('sceneType');
+            const locationEl = document.getElementById('sceneLocation');
+            const timeEl = document.getElementById('sceneTime');
+            const descEl = document.getElementById('sceneDescription');
+            const textEl = document.getElementById('sceneText');
+            const submitBtn = document.getElementById('formSubmitBtn');
+            const cancelBtn = document.getElementById('formCancelBtn');
+            const formTitle = document.getElementById('formTitle');
+            const editBadge = document.getElementById('editBadge');
+            const tableContainer = document.getElementById('tableContainer');
+            const totalCount = document.getElementById('totalCount');
+            const intCount = document.getElementById('intCount');
+            const natCount = document.getElementById('natCount');
+            const lastUpdated = document.getElementById('lastUpdated');
+            const clearAllBtn = document.getElementById('clearAllBtn');
 
-            // ===== UTILITY FUNCTIONS =====
-            function uid() {
-                return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
-            }
-
-            function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
-
-            function debounce(fn, ms) {
-                let timer;
-                return function(...args) {
-                    clearTimeout(timer);
-                    timer = setTimeout(() => fn.apply(this, args), ms);
-                };
-            }
-
-            function throttle(fn, ms) {
-                let last = 0;
-                return function(...args) {
-                    const now = Date.now();
-                    if (now - last >= ms) { last = now;
-                        fn.apply(this, args); }
-                };
-            }
-
-            function getCharColor(name, existingMap) {
-                if (existingMap && existingMap[name]) return existingMap[name];
-                let hash = 0;
-                for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); }
-                const idx = Math.abs(hash) % PASTEL_COLORS.length;
-                return PASTEL_COLORS[idx];
-            }
-
-            function formatDate(iso) {
-                if (!iso) return '—';
-                const d = new Date(iso);
-                return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) +
-                    ' ' + d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-            }
-
-            function formatDateShort(iso) {
-                if (!iso) return '—';
-                const d = new Date(iso);
-                return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-            }
-
-            function countPages(text) {
-                if (!text) return 0;
-                return Math.max(1, Math.ceil(text.length / 1800));
-            }
-
-            function extractScenes(text) {
-                if (!text) return [];
-                const lines = text.split('\n');
-                const scenes = [];
-                let current = null;
-                let currentIdx = 0;
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    const match = line.match(/^(СЦЕНА[.\s]+)/i);
-                    if (match) {
-                        if (current) {
-                            current.endIdx = i - 1;
-                            scenes.push(current);
-                        }
-                        current = {
-                            title: line.trim(),
-                            startIdx: i,
-                            endIdx: i,
-                            content: ''
-                        };
-                        currentIdx = i;
-                    } else if (current) {
-                        current.content += (current.content ? '\n' : '') + lines[i];
-                        current.endIdx = i;
-                    }
-                }
-                if (current) {
-                    scenes.push(current);
-                }
-                if (scenes.length === 0 && text.trim()) {
-                    scenes.push({ title: 'СЦЕНА 1', startIdx: 0, endIdx: text.split('\n').length - 1, content: text });
-                }
-                return scenes;
-            }
-
-            function extractCharacters(text) {
-                if (!text) return {};
-                const lines = text.split('\n');
-                const charMap = {};
-                const nameRegex = /^([А-ЯA-Z][А-ЯA-Z\s\-']+):/;
-                for (const line of lines) {
-                    const trimmed = line.trim();
-                    const match = trimmed.match(nameRegex);
-                    if (match) {
-                        let name = match[1].trim();
-                        if (name.length > 1 && name.length < 40 && !name.startsWith('СЦЕНА') && !name.startsWith('СЦЕНА.')) {
-                            charMap[name] = (charMap[name] || 0) + 1;
-                        }
-                    }
-                }
-                return charMap;
-            }
-
-            function getLineNumberMap(text) {
-                if (!text) return [];
-                const lines = text.split('\n');
-                const result = [];
-                let lineNum = 1;
-                for (let i = 0; i < lines.length; i++) {
-                    result.push(lineNum);
-                    lineNum++;
-                }
-                return result;
-            }
-
-            // ===== STORAGE =====
-            const Storage = {
-                get(key) {
+            /* ============================================================
+               ХРАНЕНИЕ
+               ============================================================ */
+            function loadScenes() {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
                     try {
-                        const data = localStorage.getItem('storyphilium_' + key);
-                        return data ? JSON.parse(data) : null;
-                    } catch { return null; }
-                },
-                set(key, value) {
-                    localStorage.setItem('storyphilium_' + key, JSON.stringify(value));
-                },
-                getAll() {
-                    const projects = this.get('projects') || [];
-                    const deleted = this.get('deletedProjects') || [];
-                    const characters = this.get('characters') || {};
-                    const comments = this.get('comments') || {};
-                    return { projects, deleted, characters, comments };
-                },
-                saveAll(data) {
-                    this.set('projects', data.projects || []);
-                    this.set('deletedProjects', data.deleted || []);
-                    this.set('characters', data.characters || {});
-                    this.set('comments', data.comments || {});
-                },
-                getProject(id) {
-                    const all = this.getAll();
-                    return all.projects.find(p => p.id === id) || null;
-                },
-                saveProject(project) {
-                    const all = this.getAll();
-                    const idx = all.projects.findIndex(p => p.id === project.id);
-                    if (idx >= 0) {
-                        all.projects[idx] = project;
-                    } else {
-                        all.projects.push(project);
-                    }
-                    this.saveAll(all);
-                    return project;
-                },
-                deleteProject(id, permanent) {
-                    const all = this.getAll();
-                    const idx = all.projects.findIndex(p => p.id === id);
-                    if (idx < 0) return;
-                    const proj = all.projects.splice(idx, 1)[0];
-                    if (!permanent) {
-                        all.deleted.push({ ...proj, deletedAt: new Date().toISOString() });
-                    }
-                    delete all.characters[id];
-                    delete all.comments[id];
-                    this.saveAll(all);
-                    return proj;
-                },
-                restoreProject(id) {
-                    const all = this.getAll();
-                    const idx = all.deleted.findIndex(d => d.id === id);
-                    if (idx < 0) return null;
-                    const proj = all.deleted.splice(idx, 1)[0];
-                    all.projects.push(proj);
-                    this.saveAll(all);
-                    return proj;
-                },
-                purgeProject(id) {
-                    const all = this.getAll();
-                    const idx = all.deleted.findIndex(d => d.id === id);
-                    if (idx < 0) return;
-                    all.deleted.splice(idx, 1);
-                    this.saveAll(all);
-                },
-                getCharacters(projectId) {
-                    const all = this.getAll();
-                    return all.characters[projectId] || {};
-                },
-                setCharacters(projectId, chars) {
-                    const all = this.getAll();
-                    all.characters[projectId] = chars;
-                    this.saveAll(all);
-                },
-                getComments(projectId) {
-                    const all = this.getAll();
-                    return all.comments[projectId] || [];
-                },
-                setComments(projectId, comments) {
-                    const all = this.getAll();
-                    all.comments[projectId] = comments;
-                    this.saveAll(all);
-                },
-                addComment(projectId, comment) {
-                    const comments = this.getComments(projectId);
-                    comments.push(comment);
-                    this.setComments(projectId, comments);
-                    return comment;
-                },
-                removeComment(projectId, commentId) {
-                    let comments = this.getComments(projectId);
-                    comments = comments.filter(c => c.id !== commentId);
-                    this.setComments(projectId, comments);
-                },
-                getActivityDays() {
-                    const all = this.getAll();
-                    const days = {};
-                    for (const p of all.projects) {
-                        if (p.updatedAt) {
-                            const d = new Date(p.updatedAt).toISOString().slice(0, 10);
-                            days[d] = (days[d] || 0) + 1;
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed) && parsed.length) {
+                            scenes = parsed;
+                            return;
                         }
-                    }
-                    return days;
+                    } catch (_) { /* ignore */ }
                 }
-            };
-
-            // ===== DEMO DATA =====
-            function createDemoProject() {
-                const content =
-                    `СЦЕНА 1. КВАРТИРА ИВАНА - ДЕНЬ
-
-        ИВАН сидит за столом, смотрит в окно. На столе пустая чашка.
-
-        ИВАН:
-        Пора что-то менять.
-
-        В дверь звонят. Иван встаёт, идёт открывать.
-
-        АННА (за дверью):
-        Открой, я знаю, что ты дома.
-
-        Иван открывает. Анна стоит с чемоданом.
-
-        ИВАН:
-        Ты куда?
-
-        АННА:
-        Я ухожу. Не пытайся меня остановить.`;
-
-                return {
-                    id: uid(),
-                    title: 'Первый сценарий',
-                    genre: 'Драма',
-                    content: content,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                };
+                scenes = DEMO_SCENES.map(s => ({ ...s }));
+                saveScenes();
             }
 
-            function ensureDemoData() {
-                const all = Storage.getAll();
-                if (all.projects.length === 0 && all.deleted.length === 0) {
-                    const demo = createDemoProject();
-                    Storage.saveProject(demo);
-                    const chars = extractCharacters(demo.content);
-                    const charMap = {};
-                    for (const [name, count] of Object.entries(chars)) {
-                        charMap[name] = { name, color: getCharColor(name), dialogueCount: count };
-                    }
-                    Storage.setCharacters(demo.id, charMap);
-                    return true;
-                }
-                return false;
+            function saveScenes() {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(scenes));
+                updateStatsAndFooter();
+                renderTable();
             }
 
-            // ================================================================
-            // ===== APP CLASS =====
-            // ================================================================
-            class App {
-                constructor() {
-                    this.currentProjectId = null;
-                    this.currentMode = 'edit';
-                    this.quietMode = false;
-                    this.charHighlightName = null;
-                    this.chartInstance = null;
-                    this.saveTimer = null;
-                    this.isDirty = false;
-                    this.sceneData = [];
-                    this.sortableInstances = [];
+            /* ============================================================
+               ВСПОМОГАТЕЛЬНЫЕ
+               ============================================================ */
+            function generateId() {
+                return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+            }
 
-                    this.init();
-                }
+            function getNextNumber() {
+                if (scenes.length === 0) return 1;
+                const nums = scenes.map(s => s.number || 0);
+                return Math.max(...nums) + 1;
+            }
 
-                init() {
-                    ensureDemoData();
-                    this.renderLibrary();
-                    this.bindEvents();
-                    this.handleBeforeUnload();
-                }
+            function formatSceneTitle(scene) {
+                return 'СЦЕНА ' + scene.number + ' — ' + scene.type + ' ' + scene.location + ' - ' + scene.time;
+            }
 
-                // ---- BIND EVENTS ----
-                bindEvents() {
-                    document.getElementById('newProjectBtn').addEventListener('click', () => this.openNewProject());
-                    document.getElementById('emptyNewBtn').addEventListener('click', () => this.openNewProject());
-                    document.getElementById('modalCancel').addEventListener('click', () => this.closeModal('newProjectModal'));
-                    document.getElementById('modalCreate').addEventListener('click', () => this.createProject());
+            function getPreview(text, max = 55) {
+                if (!text) return '';
+                const clean = text.replace(/\s+/g, ' ').trim();
+                if (clean.length <= max) return clean;
+                return clean.slice(0, max) + '…';
+            }
 
-                    document.getElementById('projectTitleInput').addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter') this.createProject();
-                    });
+            function getTypeBadge(type) {
+                const cls = type === 'ИНТ.' ? 'int' : 'nat';
+                return '<span class="type-badge ' + cls + '">' + type + '</span>';
+            }
 
-                    document.getElementById('backToLibrary').addEventListener('click', () => this.goToLibrary());
-                    document.getElementById('brandLogo').addEventListener('click', () => this.goToLibrary());
+            function escapeHtml(str) {
+                if (!str) return '';
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
 
-                    document.getElementById('trashBtn').addEventListener('click', () => this.openTrash());
-                    document.getElementById('trashClose').addEventListener('click', () => this.closeModal('trashModal'));
+            /* ============================================================
+               СТАТИСТИКА
+               ============================================================ */
+            function updateStatsAndFooter() {
+                const total = scenes.length;
+                const int = scenes.filter(s => s.type === 'ИНТ.').length;
+                const nat = scenes.filter(s => s.type === 'НАТ.').length;
+                totalCount.textContent = total;
+                intCount.textContent = int;
+                natCount.textContent = nat;
 
-                    document.getElementById('statsBtn').addEventListener('click', () => this.openStats());
-                    document.getElementById('statsClose').addEventListener('click', () => this.closeModal('statsModal'));
-
-                    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput')
-                        .click());
-                    document.getElementById('fileInput').addEventListener('change', (e) => this.handleImport(e));
-
-                    document.getElementById('modeEdit').addEventListener('click', () => this.setEditorMode('edit'));
-                    document.getElementById('modeStructure').addEventListener('click', () => this.setEditorMode(
-                    'structure'));
-
-                    document.getElementById('quietReadBtn').addEventListener('click', () => this.toggleQuietMode());
-                    document.getElementById('qrClose').addEventListener('click', () => this.toggleQuietMode());
-                    document.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape' && this.quietMode) this.toggleQuietMode();
-                    });
-
-                    document.getElementById('exportBtn').addEventListener('click', (e) => this.showExportMenu(e));
-
-                    document.getElementById('drawerToggle').addEventListener('click', () => this.toggleDrawer());
-                    document.getElementById('drawerClose').addEventListener('click', () => this.toggleDrawer());
-
-                    document.querySelectorAll('.panel-right .tab').forEach(tab => {
-                        tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
-                    });
-
-                    const textarea = document.getElementById('editorTextarea');
-                    textarea.addEventListener('input', () => this.onEditorInput());
-                    textarea.addEventListener('scroll', () => this.syncLineNumbers());
-                    textarea.addEventListener('keydown', (e) => this.onEditorKeydown(e));
-
-                    document.getElementById('confirmCancel').addEventListener('click', () => this.closeModal(
-                    'confirmModal'));
-                    document.getElementById('confirmOk').addEventListener('click', () => this.executeConfirm());
-
-                    document.querySelectorAll('.modal-overlay').forEach(el => {
-                        el.addEventListener('click', (e) => {
-                            if (e.target === el) {
-                                el.classList.remove('active');
-                            }
+                if (scenes.length) {
+                    const dates = scenes.map(s => s.updatedAt || s.createdAt || null).filter(Boolean);
+                    if (dates.length) {
+                        const latest = new Date(Math.max(...dates.map(d => new Date(d).getTime())));
+                        lastUpdated.textContent = 'Последнее изменение: ' + latest.toLocaleString('ru-RU', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
                         });
-                    });
-                }
-
-                handleBeforeUnload() {
-                    window.addEventListener('beforeunload', () => {
-                        if (this.currentProjectId && this.isDirty) {
-                            this.saveCurrentProject();
-                        }
-                    });
-                    this.saveTimer = setInterval(() => {
-                        if (this.currentProjectId && this.isDirty) {
-                            this.saveCurrentProject();
-                        }
-                    }, 3000);
-                }
-
-                // ---- NAVIGATION ----
-                goToLibrary() {
-                    if (this.currentProjectId && this.isDirty) {
-                        this.saveCurrentProject();
-                    }
-                    this.currentProjectId = null;
-                    this.currentMode = 'edit';
-                    this.charHighlightName = null;
-                    document.getElementById('editorView').classList.remove('active');
-                    document.getElementById('editorView').style.display = 'none';
-                    document.getElementById('libraryView').classList.remove('hidden');
-                    this.renderLibrary();
-                    this.closeModal('newProjectModal');
-                    this.closeModal('trashModal');
-                    this.closeModal('statsModal');
-                    if (this.quietMode) this.toggleQuietMode();
-                    document.getElementById('panelRight').classList.remove('open');
-                }
-
-                openProject(id) {
-                    if (this.currentProjectId && this.isDirty) {
-                        this.saveCurrentProject();
-                    }
-                    this.currentProjectId = id;
-                    this.currentMode = 'edit';
-                    this.charHighlightName = null;
-                    document.getElementById('libraryView').classList.add('hidden');
-                    document.getElementById('editorView').style.display = 'flex';
-                    document.getElementById('editorView').classList.add('active');
-                    document.getElementById('structureView').classList.remove('active');
-                    document.getElementById('structureView').style.display = 'none';
-                    document.getElementById('panelCenter').style.display = 'flex';
-                    document.getElementById('panelLeft').style.display = 'flex';
-                    document.getElementById('panelRight').style.display = 'flex';
-
-                    document.getElementById('modeEdit').classList.add('active');
-                    document.getElementById('modeStructure').classList.remove('active');
-
-                    this.loadProjectIntoEditor(id);
-                    this.renderLibrary();
-                }
-
-                // ---- LIBRARY ----
-                renderLibrary() {
-                    const all = Storage.getAll();
-                    const projects = all.projects || [];
-                    const grid = document.getElementById('projectGrid');
-                    const empty = document.getElementById('emptyState');
-
-                    if (projects.length === 0) {
-                        grid.innerHTML = '';
-                        empty.style.display = 'flex';
                         return;
                     }
-                    empty.style.display = 'none';
+                }
+                lastUpdated.textContent = 'Последнее изменение: —';
+            }
 
-                    grid.innerHTML = projects.map(p => {
-                        const pages = countPages(p.content);
-                        return `
-                            <div class="project-card" data-id="${p.id}">
-                                <button class="delete-btn" data-id="${p.id}" title="Удалить">✕</button>
-                                <div class="title">${this.escapeHtml(p.title)}</div>
-                                <div class="genre">${this.escapeHtml(p.genre)}</div>
-                                <div class="meta">
-                                    <span>📄 ${pages} стр.</span>
-                                    <span>🕒 ${formatDate(p.updatedAt)}</span>
+            /* ============================================================
+               ТАБЛИЦА
+               ============================================================ */
+            function renderTable() {
+                if (scenes.length === 0) {
+                    tableContainer.innerHTML = `
+                        <div class="empty-table">
+                            <div class="icon">◇</div>
+                            <p>Пока нет ни одной сцены.</p>
+                            <p class="text-muted" style="font-size:13px;margin-top:4px;">Добавьте первую сцену с помощью формы выше.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Номер</th>
+                                <th scope="col">Тип</th>
+                                <th scope="col">Локация</th>
+                                <th scope="col">Время</th>
+                                <th scope="col">Описание</th>
+                                <th scope="col">Текст</th>
+                                <th scope="col">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                const sorted = [...scenes].sort((a, b) => (a.number || 0) - (b.number || 0));
+
+                for (const scene of sorted) {
+                    const preview = getPreview(scene.text, 55);
+                    html += `
+                        <tr data-id="${scene.id}">
+                            <td>${scene.number}</td>
+                            <td>${getTypeBadge(scene.type)}</td>
+                            <td><span class="scene-title">${escapeHtml(scene.location)}</span></td>
+                            <td>${escapeHtml(scene.time)}</td>
+                            <td>${escapeHtml(scene.description || '—')}</td>
+                            <td><div class="scene-preview">${escapeHtml(preview)}</div></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <button class="btn btn-secondary btn-sm edit-btn" data-id="${scene.id}" type="button">Изменить</button>
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="${scene.id}" type="button">Удалить</button>
                                 </div>
-                            </div>
-                        `;
-                    }).join('');
-
-                    grid.querySelectorAll('.project-card').forEach(card => {
-                        card.addEventListener('click', (e) => {
-                            if (e.target.closest('.delete-btn')) return;
-                            const id = card.dataset.id;
-                            this.openProject(id);
-                        });
-                    });
-
-                    grid.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const id = btn.dataset.id;
-                            this.confirmAction('Удалить проект?', 'Проект будет перемещён в корзину.', () => {
-                                Storage.deleteProject(id, false);
-                                this.renderLibrary();
-                                this.showToast('Проект удалён', 'info');
-                            });
-                        });
-                    });
+                            </td>
+                        </tr>
+                    `;
                 }
 
-                // ---- NEW PROJECT ----
-                openNewProject() {
-                    document.getElementById('projectTitleInput').value = 'Новый сценарий';
-                    document.getElementById('projectGenreInput').value = 'Драма';
-                    this.openModal('newProjectModal');
-                    setTimeout(() => document.getElementById('projectTitleInput').focus(), 100);
+                html += `</tbody></table>`;
+                tableContainer.innerHTML = html;
+
+                tableContainer.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        startEdit(id);
+                    });
+                });
+
+                tableContainer.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        deleteScene(id);
+                    });
+                });
+            }
+
+            /* ============================================================
+               ФОРМА
+               ============================================================ */
+            function resetForm() {
+                typeEl.value = 'ИНТ.';
+                locationEl.value = '';
+                timeEl.value = 'ДЕНЬ';
+                descEl.value = '';
+                textEl.value = '';
+                editingId = null;
+                submitBtn.textContent = 'Добавить сцену';
+                formTitle.textContent = 'Добавить новую сцену';
+                editBadge.classList.remove('active');
+                cancelBtn.classList.remove('active');
+            }
+
+            function fillForm(scene) {
+                typeEl.value = scene.type || 'ИНТ.';
+                locationEl.value = scene.location || '';
+                timeEl.value = scene.time || 'ДЕНЬ';
+                descEl.value = scene.description || '';
+                textEl.value = scene.text || '';
+            }
+
+            function startEdit(id) {
+                const scene = scenes.find(s => s.id === id);
+                if (!scene) return;
+                editingId = id;
+                fillForm(scene);
+                submitBtn.textContent = 'Обновить сцену';
+                formTitle.textContent = 'Редактировать сцену';
+                editBadge.classList.add('active');
+                cancelBtn.classList.add('active');
+                document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function cancelEdit() {
+                resetForm();
+            }
+
+            /* ============================================================
+               ОБРАБОТКА ФОРМЫ
+               ============================================================ */
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const type = typeEl.value.trim();
+                const location = locationEl.value.trim();
+                const time = timeEl.value.trim();
+                const description = descEl.value.trim();
+                const text = textEl.value.trim();
+
+                if (!location) {
+                    alert('Пожалуйста, укажите локацию.');
+                    locationEl.focus();
+                    return;
+                }
+                if (!text) {
+                    alert('Пожалуйста, введите текст сцены.');
+                    textEl.focus();
+                    return;
                 }
 
-                createProject() {
-                    const title = document.getElementById('projectTitleInput').value.trim() || 'Без названия';
-                    const genre = document.getElementById('projectGenreInput').value;
-                    const content =
-                        `СЦЕНА 1. НАЧАЛО\n\nВведите ваш текст здесь...\n\nПЕРСОНАЖ:\nРеплика персонажа.`;
-                    const project = {
-                        id: uid(),
-                        title,
-                        genre,
-                        content,
+                if (editingId) {
+                    const idx = scenes.findIndex(s => s.id === editingId);
+                    if (idx === -1) { resetForm(); return; }
+                    scenes[idx] = {
+                        ...scenes[idx],
+                        type: type,
+                        location: location,
+                        time: time,
+                        description: description,
+                        text: text,
+                        updatedAt: new Date().toISOString()
+                    };
+                    saveScenes();
+                    resetForm();
+                    renderTable();
+                    updateStatsAndFooter();
+                } else {
+                    const newScene = {
+                        id: generateId(),
+                        number: getNextNumber(),
+                        type: type,
+                        location: location,
+                        time: time,
+                        description: description,
+                        text: text,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString()
                     };
-                    Storage.saveProject(project);
-                    this.closeModal('newProjectModal');
-                    this.renderLibrary();
-                    this.showToast('Проект создан', 'success');
-                    this.openProject(project.id);
+                    scenes.push(newScene);
+                    saveScenes();
+                    resetForm();
+                    renderTable();
+                    updateStatsAndFooter();
+                    document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-
-                // ---- EDITOR LOAD ----
-                loadProjectIntoEditor(id) {
-                    const project = Storage.getProject(id);
-                    if (!project) {
-                        this.goToLibrary();
-                        return;
-                    }
-
-                    document.getElementById('editorProjectTitle').textContent = project.title;
-                    document.getElementById('editorProjectGenre').textContent = project.genre;
-
-                    const textarea = document.getElementById('editorTextarea');
-                    textarea.value = project.content || '';
-                    this.isDirty = false;
-                    this.updateSaveStatus('Сохранено', false);
-
-                    this.sceneData = extractScenes(textarea.value);
-                    this.renderSceneList();
-                    this.updateLineNumbers();
-                    this.updatePageCounter();
-                    this.updateCharacters();
-                    this.updateNotes();
-                    this.updateStructureView();
-
-                    this.charHighlightName = null;
-                    document.querySelectorAll('.character-item').forEach(el => el.classList.remove('highlighted'));
-                    textarea.style.background = '';
-
-                    setTimeout(() => {
-                        this.setupSortable();
-                    }, 100);
-
-                    document.getElementById('sceneCount').textContent = this.sceneData.length;
-                }
-
-                // ---- SAVE ----
-                saveCurrentProject() {
-                    if (!this.currentProjectId) return;
-                    const project = Storage.getProject(this.currentProjectId);
-                    if (!project) return;
-                    const textarea = document.getElementById('editorTextarea');
-                    project.content = textarea.value;
-                    project.updatedAt = new Date().toISOString();
-                    Storage.saveProject(project);
-                    this.isDirty = false;
-                    this.updateSaveStatus('Сохранено', false);
-
-                    this.extractAndSaveCharacters();
-
-                    this.sceneData = extractScenes(textarea.value);
-                    this.renderSceneList();
-                    this.updatePageCounter();
-                    this.updateStructureView();
-                    document.getElementById('sceneCount').textContent = this.sceneData.length;
-                }
-
-                extractAndSaveCharacters() {
-                    const text = document.getElementById('editorTextarea').value;
-                    const raw = extractCharacters(text);
-                    const existing = Storage.getCharacters(this.currentProjectId) || {};
-                    const merged = {};
-                    for (const [name, count] of Object.entries(raw)) {
-                        const color = existing[name] ? existing[name].color : getCharColor(name);
-                        merged[name] = { name, color, dialogueCount: count };
-                    }
-                    for (const [name, data] of Object.entries(existing)) {
-                        if (!merged[name]) {
-                            merged[name] = data;
-                        }
-                    }
-                    Storage.setCharacters(this.currentProjectId, merged);
-                    this.updateCharacters();
-                }
-
-                // ---- EDITOR INPUT ----
-                onEditorInput() {
-                    this.isDirty = true;
-                    this.updateSaveStatus('Сохранение…', true);
-                    this.updateLineNumbers();
-                    this.updatePageCounter();
-
-                    this.debouncedUpdateScenes();
-                    this.debouncedExtractCharacters();
-                    this.debouncedUpdateStructure();
-                }
-
-                debouncedUpdateScenes = debounce(() => {
-                    const text = document.getElementById('editorTextarea').value;
-                    this.sceneData = extractScenes(text);
-                    this.renderSceneList();
-                    document.getElementById('sceneCount').textContent = this.sceneData.length;
-                }, 300);
-
-                debouncedExtractCharacters = debounce(() => {
-                    this.extractAndSaveCharacters();
-                }, 400);
-
-                debouncedUpdateStructure = debounce(() => {
-                    this.updateStructureView();
-                }, 300);
-
-                // ---- LINE NUMBERS ----
-                updateLineNumbers() {
-                    const textarea = document.getElementById('editorTextarea');
-                    const lines = textarea.value.split('\n');
-                    const container = document.getElementById('lineNumbers');
-                    const scrollTop = textarea.scrollTop;
-                    const lineHeight = 21;
-                    const startLine = Math.floor(scrollTop / lineHeight);
-                    const visibleLines = Math.ceil(textarea.clientHeight / lineHeight) + 2;
-
-                    let html = '';
-                    for (let i = startLine; i < Math.min(startLine + visibleLines, lines.length); i++) {
-                        html += `<span>${i + 1}</span>`;
-                    }
-                    container.innerHTML = html;
-                    container.style.paddingTop = (scrollTop % lineHeight) + 'px';
-                }
-
-                syncLineNumbers() {
-                    this.updateLineNumbers();
-                }
-
-                // ---- PAGE COUNTER ----
-                updatePageCounter() {
-                    const text = document.getElementById('editorTextarea').value;
-                    const pages = countPages(text);
-                    document.getElementById('pageCounter').textContent = pages + ' страниц';
-                }
-
-                // ---- SAVE STATUS ----
-                updateSaveStatus(text, saving) {
-                    document.getElementById('saveStatus').textContent = text;
-                    const dot = document.getElementById('statusDot');
-                    if (saving) {
-                        dot.classList.add('saving');
-                    } else {
-                        dot.classList.remove('saving');
-                    }
-                }
-
-                // ---- SCENE LIST (left panel) ----
-                renderSceneList() {
-                    const container = document.getElementById('sceneList');
-                    if (!this.sceneData || this.sceneData.length === 0) {
-                        container.innerHTML =
-                            '<div style="padding:16px 18px;font-size:13px;color:var(--text-secondary);">Нет сцен</div>';
-                        return;
-                    }
-                    container.innerHTML = this.sceneData.map((scene, idx) => {
-                        const title = scene.title || 'СЦЕНА ' + (idx + 1);
-                        return `<div class="scene-item" data-index="${idx}">
-                                    <span class="num">${idx + 1}.</span>
-                                    <span>${this.escapeHtml(title)}</span>
-                                </div>`;
-                    }).join('');
-
-                    container.querySelectorAll('.scene-item').forEach(el => {
-                        el.addEventListener('click', () => {
-                            const idx = parseInt(el.dataset.index);
-                            this.scrollToScene(idx);
-                            container.querySelectorAll('.scene-item').forEach(e => e.classList.remove('active'));
-                            el.classList.add('active');
-                        });
-                    });
-
-                    this.setupSceneSortable();
-                }
-
-                setupSceneSortable() {
-                    const container = document.getElementById('sceneList');
-                    if (this.sortableInstances.sceneList) {
-                        this.sortableInstances.sceneList.destroy();
-                    }
-                    if (!container || container.children.length < 2) return;
-                    this.sortableInstances.sceneList = new Sortable(container, {
-                        animation: 200,
-                        handle: '.scene-item',
-                        direction: 'vertical',
-                        onEnd: (evt) => {
-                            const from = evt.oldIndex;
-                            const to = evt.newIndex;
-                            if (from === to) return;
-                            this.reorderScenes(from, to);
-                        }
-                    });
-                }
-
-                reorderScenes(from, to) {
-                    const textarea = document.getElementById('editorTextarea');
-                    const text = textarea.value;
-                    const scenes = extractScenes(text);
-                    if (from < 0 || to < 0 || from >= scenes.length || to >= scenes.length) return;
-                    const [moved] = scenes.splice(from, 1);
-                    scenes.splice(to, 0, moved);
-
-                    const sceneRegex = /(СЦЕНА[.\s]+[^\n]*)([\s\S]*?)(?=\n\s*СЦЕНА[.\s]+|$)/gi;
-                    const matches = [];
-                    let match;
-                    const tempText = text;
-                    while ((match = sceneRegex.exec(tempText)) !== null) {
-                        matches.push({
-                            full: match[0],
-                            title: match[1].trim(),
-                            body: match[2] || ''
-                        });
-                    }
-
-                    if (matches.length === 0) {
-                        this.showToast('Не удалось переупорядочить сцены', 'error');
-                        return;
-                    }
-
-                    const orderedMatches = [];
-                    for (const scene of scenes) {
-                        const found = matches.find(m => m.title === scene.title);
-                        if (found) {
-                            orderedMatches.push(found);
-                        }
-                    }
-
-                    let newText2 = orderedMatches.map(m => m.full).join('\n\n');
-                    const firstMatch = matches.length > 0 ? tempText.indexOf(matches[0].full) : -1;
-                    if (firstMatch > 0) {
-                        newText2 = tempText.slice(0, firstMatch) + newText2;
-                    }
-
-                    textarea.value = newText2;
-                    this.isDirty = true;
-                    this.onEditorInput();
-                    this.showToast('Порядок сцен изменён', 'info');
-                }
-
-                scrollToScene(index) {
-                    const textarea = document.getElementById('editorTextarea');
-                    const scenes = this.sceneData;
-                    if (!scenes || index < 0 || index >= scenes.length) return;
-                    const scene = scenes[index];
-                    const lines = textarea.value.split('\n');
-                    let lineNum = 0;
-                    for (let i = 0; i < lines.length; i++) {
-                        const trimmed = lines[i].trim();
-                        if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
-                            if (lineNum === index) {
-                                const lineHeight = 21;
-                                const top = i * lineHeight;
-                                textarea.scrollTop = Math.max(0, top - 40);
-                                textarea.focus();
-                                const orig = textarea.value;
-                                const start = orig.split('\n').slice(0, i).join('\n').length + (i > 0 ? 1 : 0);
-                                const end = start + lines[i].length;
-                                textarea.setSelectionRange(start, end);
-                                setTimeout(() => {
-                                    textarea.setSelectionRange(0, 0);
-                                }, 800);
-                                return;
-                            }
-                            lineNum++;
-                        }
-                    }
-                }
-
-                // ---- CHARACTERS ----
-                updateCharacters() {
-                    const container = document.getElementById('tabCharacters');
-                    const chars = Storage.getCharacters(this.currentProjectId) || {};
-                    const names = Object.keys(chars);
-                    if (names.length === 0) {
-                        container.innerHTML =
-                            '<div style="font-size:13px;color:var(--text-secondary);padding:12px 0;">Персонажи появятся здесь после того, как вы начнёте писать диалоги.</div>';
-                        return;
-                    }
-                    const sorted = names.sort((a, b) => (chars[b].dialogueCount || 0) - (chars[a].dialogueCount || 0));
-                    container.innerHTML = sorted.map(name => {
-                        const data = chars[name];
-                        const color = data.color || getCharColor(name);
-                        const count = data.dialogueCount || 0;
-                        const highlight = this.charHighlightName === name ? 'highlighted' : '';
-                        return `<div class="character-item ${highlight}" data-name="${this.escapeHtml(name)}">
-                                    <span class="name">
-                                        <span class="dot" style="background:${color};"></span>
-                                        ${this.escapeHtml(name)}
-                                    </span>
-                                    <span class="count">${count}</span>
-                                </div>`;
-                    }).join('');
-
-                    container.querySelectorAll('.character-item').forEach(el => {
-                        el.addEventListener('click', () => {
-                            const name = el.dataset.name;
-                            this.toggleCharacterHighlight(name);
-                        });
-                    });
-                }
-
-                toggleCharacterHighlight(name) {
-                    if (this.charHighlightName === name) {
-                        this.charHighlightName = null;
-                    } else {
-                        this.charHighlightName = name;
-                    }
-                    this.updateCharacters();
-                    this.highlightDialoguesInEditor();
-                }
-
-                highlightDialoguesInEditor() {
-                    const textarea = document.getElementById('editorTextarea');
-                    if (!this.charHighlightName) {
-                        textarea.style.background = '';
-                        return;
-                    }
-                    this.showToast('Подсветка диалогов: ' + this.charHighlightName, 'info');
-                }
-
-                // ---- NOTES ----
-                updateNotes() {
-                    const container = document.getElementById('tabNotes');
-                    const comments = Storage.getComments(this.currentProjectId) || [];
-                    if (comments.length === 0) {
-                        container.innerHTML = `
-                            <div class="add-note-hint">
-                                Выделите текст в редакторе и нажмите «Добавить заметку»
-                            </div>
-                            <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" id="addNoteBtn">+ Добавить заметку</button>
-                        `;
-                        const addBtn = container.querySelector('#addNoteBtn');
-                        if (addBtn) {
-                            addBtn.addEventListener('click', () => this.addNoteFromSelection());
-                        }
-                        return;
-                    }
-                    container.innerHTML = comments.map(c => `
-                            <div class="note-item" data-id="${c.id}">
-                                <button class="delete-note" data-id="${c.id}">✕</button>
-                                <div class="text">${this.escapeHtml(c.text)}</div>
-                                <div class="preview">${this.escapeHtml(c.preview || '')}</div>
-                            </div>
-                        `).join('') + `
-                            <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" id="addNoteBtn2">+ Добавить заметку</button>
-                        `;
-
-                    container.querySelectorAll('.note-item').forEach(el => {
-                        el.addEventListener('click', (e) => {
-                            if (e.target.closest('.delete-note')) return;
-                            const id = el.dataset.id;
-                            this.scrollToNote(id);
-                        });
-                        const del = el.querySelector('.delete-note');
-                        if (del) {
-                            del.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                                const id = del.dataset.id;
-                                Storage.removeComment(this.currentProjectId, id);
-                                this.updateNotes();
-                                this.showToast('Заметка удалена', 'info');
-                            });
-                        }
-                    });
-
-                    const addBtn2 = container.querySelector('#addNoteBtn2');
-                    if (addBtn2) {
-                        addBtn2.addEventListener('click', () => this.addNoteFromSelection());
-                    }
-                }
-
-                addNoteFromSelection() {
-                    const textarea = document.getElementById('editorTextarea');
-                    const start = textarea.selectionStart;
-                    const end = textarea.selectionEnd;
-                    if (start === end) {
-                        this.showToast('Выделите текст для заметки', 'error');
-                        return;
-                    }
-                    const selected = textarea.value.slice(start, end);
-                    const comment = {
-                        id: uid(),
-                        text: prompt('Текст заметки:', 'Изменить эту часть'),
-                        startPos: start,
-                        endPos: end,
-                        preview: selected.slice(0, 60) + (selected.length > 60 ? '...' : '')
-                    };
-                    if (comment.text && comment.text.trim()) {
-                        Storage.addComment(this.currentProjectId, comment);
-                        this.updateNotes();
-                        this.showToast('Заметка добавлена', 'success');
-                    }
-                }
-
-                scrollToNote(id) {
-                    const comments = Storage.getComments(this.currentProjectId) || [];
-                    const note = comments.find(c => c.id === id);
-                    if (!note) return;
-                    const textarea = document.getElementById('editorTextarea');
-                    const text = textarea.value;
-                    const lines = text.slice(0, note.startPos).split('\n');
-                    const lineNum = lines.length - 1;
-                    const lineHeight = 21;
-                    textarea.scrollTop = Math.max(0, lineNum * lineHeight - 40);
-                    textarea.focus();
-                    textarea.setSelectionRange(note.startPos, note.endPos);
-                    setTimeout(() => {
-                        textarea.setSelectionRange(0, 0);
-                    }, 1500);
-                }
-
-                // ---- STRUCTURE VIEW ----
-                updateStructureView() {
-                    const container = document.getElementById('structureGrid');
-                    const scenes = this.sceneData;
-                    if (!scenes || scenes.length === 0) {
-                        container.innerHTML =
-                            '<div style="color:var(--text-secondary);padding:40px;text-align:center;">Нет сцен для отображения</div>';
-                        return;
-                    }
-                    container.innerHTML = scenes.map((scene, idx) => {
-                        const preview = scene.content ? scene.content.trim().slice(0, 50) : '';
-                        const title = scene.title || 'СЦЕНА ' + (idx + 1);
-                        return `<div class="structure-card" data-index="${idx}">
-                                    <div class="header">
-                                        <span class="scene-title">${this.escapeHtml(title)}</span>
-                                        <button class="edit-btn" data-index="${idx}">Редактировать</button>
-                                    </div>
-                                    <div class="preview">${this.escapeHtml(preview)}${preview.length >= 50 ? '…' : ''}</div>
-                                </div>`;
-                    }).join('');
-
-                    container.querySelectorAll('.edit-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            const idx = parseInt(btn.dataset.index);
-                            this.setEditorMode('edit');
-                            this.scrollToScene(idx);
-                        });
-                    });
-
-                    if (this.sortableInstances.structure) {
-                        this.sortableInstances.structure.destroy();
-                    }
-                    if (container.children.length > 1) {
-                        this.sortableInstances.structure = new Sortable(container, {
-                            animation: 200,
-                            handle: '.structure-card',
-                            direction: 'vertical',
-                            onEnd: (evt) => {
-                                const from = evt.oldIndex;
-                                const to = evt.newIndex;
-                                if (from === to) return;
-                                this.reorderScenes(from, to);
-                            }
-                        });
-                    }
-                }
-
-                // ---- MODE SWITCH ----
-                setEditorMode(mode) {
-                    if (mode === this.currentMode) return;
-                    this.currentMode = mode;
-
-                    document.getElementById('modeEdit').classList.toggle('active', mode === 'edit');
-                    document.getElementById('modeStructure').classList.toggle('active', mode === 'structure');
-
-                    const panelCenter = document.getElementById('panelCenter');
-                    const structureView = document.getElementById('structureView');
-                    const panelLeft = document.getElementById('panelLeft');
-                    const panelRight = document.getElementById('panelRight');
-
-                    if (mode === 'edit') {
-                        panelCenter.style.display = 'flex';
-                        structureView.style.display = 'none';
-                        structureView.classList.remove('active');
-                        panelLeft.style.display = 'flex';
-                        panelRight.style.display = 'flex';
-                        this.renderSceneList();
-                    } else {
-                        panelCenter.style.display = 'none';
-                        structureView.style.display = 'block';
-                        structureView.classList.add('active');
-                        panelLeft.style.display = 'none';
-                        panelRight.style.display = 'none';
-                        this.updateStructureView();
-                    }
-                }
-
-                // ---- QUIET MODE ----
-                toggleQuietMode() {
-                    this.quietMode = !this.quietMode;
-                    const overlay = document.getElementById('quietRhythm');
-                    if (this.quietMode) {
-                        const text = document.getElementById('editorTextarea').value || 'Напишите ваш сценарий...';
-                        document.getElementById('qrText').textContent = text;
-                        overlay.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        overlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                }
-
-                // ---- EXPORT ----
-                showExportMenu(e) {
-                    const btn = e.currentTarget;
-                    const rect = btn.getBoundingClientRect();
-                    const items = [
-                        { label: 'TXT', action: () => this.exportTXT() },
-                        { label: 'DOCX', action: () => this.exportDOCX() },
-                        { label: 'PDF', action: () => this.exportPDF() },
-                        { label: 'JSON (резервная копия)', action: () => this.exportJSON() },
-                    ];
-                    const existing = document.getElementById('exportDropdown');
-                    if (existing) existing.remove();
-
-                    const dropdown = document.createElement('div');
-                    dropdown.id = 'exportDropdown';
-                    dropdown.style.cssText = `
-                                position: fixed;
-                                top: ${rect.bottom + 8}px;
-                                right: ${window.innerWidth - rect.right}px;
-                                background: var(--bg-panel-solid);
-                                border-radius: var(--radius-md);
-                                border: 1px solid var(--border-subtle);
-                                padding: 6px;
-                                box-shadow: var(--shadow-panel);
-                                z-index: 500;
-                                min-width: 180px;
-                                animation: slideUp 0.2s ease;
-                            `;
-                    items.forEach(item => {
-                        const el = document.createElement('div');
-                        el.textContent = item.label;
-                        el.style.cssText = `
-                                    padding: 10px 18px;
-                                    cursor: pointer;
-                                    border-radius: var(--radius-sm);
-                                    font-size: 13px;
-                                    transition: all var(--transition-fast);
-                                    color: var(--text-primary);
-                                `;
-                        el.addEventListener('mouseenter', () => {
-                            el.style.background = 'var(--bg-hover)';
-                        });
-                        el.addEventListener('mouseleave', () => {
-                            el.style.background = 'transparent';
-                        });
-                        el.addEventListener('click', () => {
-                            item.action();
-                            dropdown.remove();
-                        });
-                        dropdown.appendChild(el);
-                    });
-                    document.body.appendChild(dropdown);
-
-                    setTimeout(() => {
-                        document.addEventListener('click', function closeDrop(e) {
-                            if (!dropdown.contains(e.target) && e.target !== btn) {
-                                dropdown.remove();
-                                document.removeEventListener('click', closeDrop);
-                            }
-                        });
-                    }, 10);
-                }
-
-                exportTXT() {
-                    const project = Storage.getProject(this.currentProjectId);
-                    if (!project) return;
-                    const blob = new Blob([project.content], { type: 'text/plain;charset=utf-8' });
-                    this.downloadBlob(blob, project.title + '.txt');
-                    this.showToast('TXT скачан', 'success');
-                }
-
-                async exportDOCX() {
-                    try {
-                        const project = Storage.getProject(this.currentProjectId);
-                        if (!project) return;
-                        const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
-                        const lines = project.content.split('\n');
-                        const children = [];
-                        for (const line of lines) {
-                            const trimmed = line.trim();
-                            if (trimmed.match(/^(СЦЕНА[.\s]+)/i)) {
-                                children.push(new Paragraph({
-                                    text: trimmed,
-                                    heading: HeadingLevel.HEADING_2,
-                                    spacing: { before: 200, after: 100 }
-                                }));
-                            } else if (trimmed.match(/^[А-ЯA-Z][А-ЯA-Z\s\-']+:/)) {
-                                children.push(new Paragraph({
-                                    children: [
-                                        new TextRun({ text: trimmed, bold: true, size: 22 })
-                                    ],
-                                    spacing: { before: 80, after: 40 }
-                                }));
-                            } else if (trimmed === '') {
-                                children.push(new Paragraph({ spacing: { before: 80 } }));
-                            } else {
-                                children.push(new Paragraph({
-                                    text: trimmed,
-                                    spacing: { before: 20, after: 20 }
-                                }));
-                            }
-                        }
-                        const doc = new Document({
-                            sections: [{
-                                properties: {},
-                                children: children
-                            }]
-                        });
-                        const blob = await Packer.toBlob(doc);
-                        this.downloadBlob(blob, project.title + '.docx');
-                        this.showToast('DOCX скачан', 'success');
-                    } catch (err) {
-                        console.error(err);
-                        this.showToast('Ошибка при создании DOCX', 'error');
-                    }
-                }
-
-                async exportPDF() {
-                    try {
-                        const project = Storage.getProject(this.currentProjectId);
-                        if (!project) return;
-                        const el = document.createElement('div');
-                        el.style.cssText = `
-                                    font-family: 'PT Mono', 'Courier New', monospace;
-                                    font-size: 12px;
-                                    line-height: 1.6;
-                                    padding: 40px;
-                                    max-width: 800px;
-                                    margin: 0 auto;
-                                    background: white;
-                                    color: #222;
-                                    white-space: pre-wrap;
-                                `;
-                        el.textContent = project.content;
-                        document.body.appendChild(el);
-                        const opt = {
-                            margin: [0.7, 0.7, 0.7, 0.7],
-                            filename: project.title + '.pdf',
-                            image: { type: 'jpeg', quality: 0.98 },
-                            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-                            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                        };
-                        await html2pdf().set(opt).from(el).save();
-                        document.body.removeChild(el);
-                        this.showToast('PDF скачан', 'success');
-                    } catch (err) {
-                        console.error(err);
-                        this.showToast('Ошибка при создании PDF', 'error');
-                    }
-                }
-
-                exportJSON() {
-                    const all = Storage.getAll();
-                    const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
-                    this.downloadBlob(blob, 'storyphilium_backup.json');
-                    this.showToast('Резервная копия скачана', 'success');
-                }
-
-                downloadBlob(blob, filename) {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }
-
-                // ---- IMPORT ----
-                handleImport(e) {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                        try {
-                            const data = JSON.parse(ev.target.result);
-                            if (data.projects && Array.isArray(data.projects)) {
-                                this.confirmAction('Восстановить проекты?',
-                                    'Все текущие проекты будут заменены данными из файла.', () => {
-                                        Storage.saveAll(data);
-                                        this.renderLibrary();
-                                        this.showToast('Проекты восстановлены', 'success');
-                                    });
-                            } else {
-                                this.showToast('Неверный формат файла', 'error');
-                            }
-                        } catch (err) {
-                            this.showToast('Ошибка чтения файла', 'error');
-                        }
-                    };
-                    reader.readAsText(file);
-                    e.target.value = '';
-                }
-
-                // ---- TRASH ----
-                openTrash() {
-                    const all = Storage.getAll();
-                    const deleted = all.deleted || [];
-                    const list = document.getElementById('trashList');
-                    if (deleted.length === 0) {
-                        list.innerHTML = '<div style="color:var(--text-secondary);padding:12px 0;">Корзина пуста</div>';
-                    } else {
-                        list.innerHTML = deleted.map(d => `
-                                <div class="trash-item" data-id="${d.id}">
-                                    <div class="info">
-                                        <span class="title">${this.escapeHtml(d.title)}</span>
-                                        <span class="genre">${this.escapeHtml(d.genre)} • удалён ${formatDate(d.deletedAt)}</span>
-                                    </div>
-                                    <div class="actions">
-                                        <button class="btn btn-primary btn-sm restore-btn" data-id="${d.id}">Восстановить</button>
-                                        <button class="btn btn-danger btn-sm purge-btn" data-id="${d.id}">Удалить навсегда</button>
-                                    </div>
-                                </div>
-                            `).join('');
-                        list.querySelectorAll('.restore-btn').forEach(btn => {
-                            btn.addEventListener('click', () => {
-                                const id = btn.dataset.id;
-                                Storage.restoreProject(id);
-                                this.openTrash();
-                                this.renderLibrary();
-                                this.showToast('Проект восстановлен', 'success');
-                            });
-                        });
-                        list.querySelectorAll('.purge-btn').forEach(btn => {
-                            btn.addEventListener('click', () => {
-                                const id = btn.dataset.id;
-                                this.confirmAction('Удалить навсегда?',
-                                    'Это действие нельзя отменить.', () => {
-                                        Storage.purgeProject(id);
-                                        this.openTrash();
-                                        this.renderLibrary();
-                                        this.showToast('Проект удалён безвозвратно',
-                                        'info');
-                                    });
-                            });
-                        });
-                    }
-                    this.openModal('trashModal');
-                }
-
-                // ---- STATISTICS ----
-                openStats() {
-                    const all = Storage.getAll();
-                    const projects = all.projects || [];
-                    let totalPages = 0;
-                    let totalChars = 0;
-                    for (const p of projects) {
-                        totalPages += countPages(p.content);
-                        const chars = Storage.getCharacters(p.id) || {};
-                        totalChars += Object.keys(chars).length;
-                    }
-                    document.getElementById('statPages').textContent = totalPages;
-                    document.getElementById('statCharacters').textContent = totalChars;
-                    document.getElementById('statProjects').textContent = projects.length;
-
-                    const days = Storage.getActivityDays();
-                    let bestDay = '—';
-                    let bestCount = 0;
-                    for (const [d, count] of Object.entries(days)) {
-                        if (count > bestCount) { bestCount = count;
-                            bestDay = d; }
-                    }
-                    if (bestDay !== '—') {
-                        const d = new Date(bestDay + 'T00:00:00');
-                        bestDay = d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }) +
-                            ` (${bestCount} проект${bestCount > 1 ? 'а' : ''})`;
-                    }
-                    document.getElementById('statBestDay').textContent = bestDay;
-
-                    this.renderStatsChart(days);
-                    this.openModal('statsModal');
-                    setTimeout(() => this.renderStatsChart(days), 100);
-                }
-
-                renderStatsChart(days) {
-                    const canvas = document.getElementById('statsChart');
-                    if (this.chartInstance) {
-                        this.chartInstance.destroy();
-                        this.chartInstance = null;
-                    }
-                    const ctx = canvas.getContext('2d');
-                    const labels = [];
-                    const data = [];
-                    for (let i = 6; i >= 0; i--) {
-                        const d = new Date();
-                        d.setDate(d.getDate() - i);
-                        const key = d.toISOString().slice(0, 10);
-                        labels.push(d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }));
-                        data.push(days[key] || 0);
-                    }
-                    this.chartInstance = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Сохранений',
-                                data: data,
-                                backgroundColor: 'rgba(192, 132, 252, 0.5)',
-                                borderColor: '#c084fc',
-                                borderWidth: 2,
-                                borderRadius: 4
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        label: (ctx) => ctx.parsed.y + ' сохранений'
-                                    }
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { stepSize: 1, color: '#a8a6a3' },
-                                    grid: { color: 'rgba(255,255,255,0.04)' }
-                                },
-                                x: {
-                                    ticks: { color: '#a8a6a3' },
-                                    grid: { display: false }
-                                }
-                            }
-                        }
-                    });
-                }
-
-                // ---- CONFIRM ----
-                confirmAction(title, message, onOk) {
-                    document.getElementById('confirmTitle').textContent = title;
-                    document.getElementById('confirmMessage').textContent = message;
-                    this._confirmCallback = onOk;
-                    this.openModal('confirmModal');
-                }
-
-                executeConfirm() {
-                    if (this._confirmCallback) {
-                        this._confirmCallback();
-                        this._confirmCallback = null;
-                    }
-                    this.closeModal('confirmModal');
-                }
-
-                // ---- MODAL HELPERS ----
-                openModal(id) {
-                    document.getElementById(id).classList.add('active');
-                }
-
-                closeModal(id) {
-                    document.getElementById(id).classList.remove('active');
-                }
-
-                // ---- DRAWER ----
-                toggleDrawer() {
-                    document.getElementById('panelRight').classList.toggle('open');
-                }
-
-                // ---- TABS ----
-                switchTab(tab) {
-                    document.querySelectorAll('.panel-right .tab').forEach(t => {
-                        t.classList.toggle('active', t.dataset.tab === tab);
-                    });
-                    document.querySelectorAll('.panel-right .tab-content').forEach(el => {
-                        el.classList.toggle('active', el.id === 'tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-                    });
-                    if (tab === 'characters') this.updateCharacters();
-                    if (tab === 'notes') this.updateNotes();
-                }
-
-                // ---- KEYBOARD ----
-                onEditorKeydown(e) {
-                    if (e.ctrlKey && e.key === 's') {
-                        e.preventDefault();
-                        this.saveCurrentProject();
-                        this.showToast('Сохранено!', 'success');
-                    }
-                    if (e.key === 'Tab') {
-                        e.preventDefault();
-                        const textarea = document.getElementById('editorTextarea');
-                        const start = textarea.selectionStart;
-                        const end = textarea.selectionEnd;
-                        const value = textarea.value;
-                        textarea.value = value.slice(0, start) + '    ' + value.slice(end);
-                        textarea.selectionStart = textarea.selectionEnd = start + 4;
-                        this.onEditorInput();
-                    }
-                }
-
-                // ---- TOAST ----
-                showToast(message, type) {
-                    const container = document.getElementById('toastContainer');
-                    const toast = document.createElement('div');
-                    toast.className = 'toast ' + (type || 'info');
-                    toast.innerHTML = `
-                                <span>${message}</span>
-                                <button class="close-toast">✕</button>
-                            `;
-                    container.appendChild(toast);
-                    const closeBtn = toast.querySelector('.close-toast');
-                    closeBtn.addEventListener('click', () => toast.remove());
-                    setTimeout(() => {
-                        toast.style.opacity = '0';
-                        toast.style.transform = 'translateX(20px)';
-                        setTimeout(() => toast.remove(), 300);
-                    }, 3000);
-                }
-
-                // ---- UTILITY ----
-                escapeHtml(str) {
-                    if (!str) return '';
-                    const div = document.createElement('div');
-                    div.textContent = str;
-                    return div.innerHTML;
-                }
-
-                // ---- SORTABLE SETUP ----
-                setupSortable() {
-                    // настраивается в renderSceneList и updateStructureView
+            });
+
+            cancelBtn.addEventListener('click', cancelEdit);
+
+            /* ============================================================
+               УДАЛЕНИЕ
+               ============================================================ */
+            function deleteScene(id) {
+                const scene = scenes.find(s => s.id === id);
+                if (!scene) return;
+                const title = 'СЦЕНА ' + scene.number + ' — ' + scene.type + ' ' + scene.location;
+                if (!confirm('Удалить сцену "' + title + '"?')) return;
+
+                scenes = scenes.filter(s => s.id !== id);
+                scenes.sort((a, b) => (a.number || 0) - (b.number || 0));
+                scenes.forEach((s, idx) => { s.number = idx + 1; });
+
+                if (editingId === id) resetForm();
+                saveScenes();
+                renderTable();
+                updateStatsAndFooter();
+            }
+
+            /* ============================================================
+               ОЧИСТКА
+               ============================================================ */
+            clearAllBtn.addEventListener('click', function() {
+                if (scenes.length === 0) return;
+                if (!confirm('Удалить все сцены без возможности восстановления?')) return;
+                scenes = [];
+                resetForm();
+                saveScenes();
+                renderTable();
+                updateStatsAndFooter();
+            });
+
+            /* ============================================================
+               ИНИЦИАЛИЗАЦИЯ
+               ============================================================ */
+            function init() {
+                loadScenes();
+                renderTable();
+                updateStatsAndFooter();
+                resetForm();
+                if (scenes.length === 0) {
+                    locationEl.focus();
                 }
             }
 
-            // ================================================================
-            // ===== INIT =====
-            // ================================================================
-            document.addEventListener('DOMContentLoaded', () => {
-                window.app = new App();
-            });
+            init();
 
         })();
     </script>
 
-    <!--
-    ================================================================
-    ИНСТРУКЦИИ ПО РАЗВЁРТЫВАНИЮ
-    ================================================================
-
-    КАК ЗАПУСТИТЬ ЛОКАЛЬНО:
-    1. Сохраните этот файл как index.html
-    2. Откройте его в браузере (Chrome, Firefox, Edge)
-    3. Готово! Все данные сохраняются в localStorage.
-
-    КАК ЗАЛИТЬ НА GITHUB PAGES:
-    1. Создайте репозиторий на GitHub
-    2. Загрузите этот файл в репозиторий
-    3. Перейдите в Settings -> Pages
-    4. Выберите ветку main и папку / (root)
-    5. Нажмите Save — через 2 минуты сайт будет доступен
-
-    КАК ЗАЛИТЬ НА VERCEL:
-    1. Загрузите файл на GitHub
-    2. Зайдите на vercel.com, нажмите "Add New -> Project"
-    3. Импортируйте ваш репозиторий
-    4. Настройки оставьте по умолчанию
-    5. Нажмите Deploy
-
-    ================================================================
-    -->
 </body>
 </html>
