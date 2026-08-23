@@ -494,6 +494,7 @@
             flex-direction: column;
             min-width: 0;
             background: var(--bg-surface);
+            position: relative;
         }
 
         .editor-wrapper textarea {
@@ -521,6 +522,46 @@
             opacity: 0.35;
             font-family: var(--font);
             font-size: 14px;
+            font-weight: 400;
+        }
+
+        /* ===== EXIT FOCUS BUTTON (появляется только в фокус-режиме) ===== */
+        .exit-focus-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 10px 20px;
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .exit-focus-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 32px rgba(0, 0, 0, 0.5);
+        }
+        .exit-focus-btn.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+        .exit-focus-btn .shortcut {
+            font-size: 11px;
+            opacity: 0.7;
             font-weight: 400;
         }
 
@@ -783,7 +824,8 @@
             .app-footer,
             .editor-toolbar,
             .find-replace-bar,
-            .sidebar {
+            .sidebar,
+            .exit-focus-btn {
                 display: none !important;
             }
             .main-area {
@@ -850,6 +892,12 @@
             }
             :root {
                 --sidebar-width: 230px;
+            }
+            .exit-focus-btn {
+                top: 16px;
+                right: 16px;
+                padding: 8px 16px;
+                font-size: 13px;
             }
         }
 
@@ -938,6 +986,12 @@
             .sidebar.closed {
                 width: 0;
             }
+            .exit-focus-btn {
+                top: 12px;
+                right: 12px;
+                padding: 6px 14px;
+                font-size: 12px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1005,10 +1059,25 @@
             .sidebar.closed {
                 width: 0;
             }
+            .exit-focus-btn {
+                top: 8px;
+                right: 8px;
+                padding: 5px 12px;
+                font-size: 11px;
+            }
+            .exit-focus-btn .shortcut {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- КНОПКА ВЫХОДА ИЗ ФОКУС-РЕЖИМА -->
+    <button class="exit-focus-btn" id="exitFocusBtn">
+        ✕ Выйти из фокуса
+        <span class="shortcut">Ctrl+F</span>
+    </button>
 
     <!-- HEADER -->
     <header class="app-header">
@@ -1174,6 +1243,7 @@
             const clearBtn = document.getElementById('clearBtn');
             const themeSelect = document.getElementById('themeSelect');
             const focusToggle = document.getElementById('focusToggle');
+            const exitFocusBtn = document.getElementById('exitFocusBtn');
             const findToggle = document.getElementById('findToggle');
             const findReplaceBar = document.getElementById('findReplaceBar');
             const findInput = document.getElementById('findInput');
@@ -1324,11 +1394,14 @@
                 isFocus = focus;
                 document.body.classList.toggle('focus-mode', focus);
                 focusToggle.textContent = focus ? '◉' : '◎';
+                exitFocusBtn.classList.toggle('visible', focus);
                 localStorage.setItem(FOCUS_KEY, focus ? 'true' : 'false');
                 if (focus) closeSidebar();
+                if (focus) textarea.focus();
             }
             applyFocus(isFocus);
             focusToggle.addEventListener('click', () => applyFocus(!isFocus));
+            exitFocusBtn.addEventListener('click', () => applyFocus(false));
 
             // ===== SIDEBAR =====
             function toggleSidebar() {
@@ -2283,6 +2356,7 @@
             console.log('☕ Темы: Космос, Эспрессо, Neural White, Изумруд, Neural Blue');
             console.log('🎨 Улучшенный HTML-экспорт с красивой вёрсткой и исправленными диалогами!');
             console.log('⌨️  Ctrl+1..7 — вставка элементов');
+            console.log('🔲 Кнопка выхода из фокус-режима появляется в правом верхнем углу');
 
         })();
     </script>
