@@ -1670,7 +1670,20 @@
                 updateSidebar();
             }
 
-            // ===== HTML EXPORT =====
+            // ============================================================
+            //  ИСПРАВЛЕННАЯ функция generateHTML
+            // ============================================================
+
+            // ---- Вспомогательная функция для экранирования HTML ----
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, '&amp;')
+                          .replace(/</g, '&lt;')
+                          .replace(/>/g, '&gt;')
+                          .replace(/"/g, '&quot;')
+                          .replace(/'/g, '&#039;');
+            }
+
             function generateHTML(content, projectName) {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('ru-RU', {
@@ -1679,202 +1692,229 @@
                     year: 'numeric'
                 });
 
-                // Парсим строки
+                // Экранируем имя проекта и дату
+                const safeProjectName = escapeHtml(projectName);
+                const safeDate = escapeHtml(dateStr);
+
                 const lines = content.split('\n');
-                let htmlLines = [];
-                let isInDialog = false;
+                const htmlLines = [];
 
-                for (let line of lines) {
-                    const trimmed = line.trim();
-                    if (!trimmed) {
-                        htmlLines.push('<div class="empty-line"></div>');
-                        isInDialog = false;
-                        continue;
-                    }
-
-                    // Заголовок сцены (НАР., ИНТ., ЭКСТ.)
-                    const sceneMatch = trimmed.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*(.*)/i);
-                    if (sceneMatch) {
-                        const prefix = sceneMatch[1].toUpperCase();
-                        const rest = sceneMatch[2] || '';
-                        htmlLines.push(`<div class="scene-heading">${prefix} ${rest}</div>`);
-                        isInDialog = false;
-                        continue;
-                    }
-
-                    // Строка ЗАГЛАВНЫМИ буквами (персонаж)
-                    if (trimmed === trimmed.toUpperCase() &&
-                        trimmed.length > 1 &&
-                        !trimmed.startsWith('(') &&
-                        !trimmed.startsWith('[') &&
-                        !trimmed.match(/^\d+\./)) {
-                        htmlLines.push(`<div class="character">${trimmed}</div>`);
-                        isInDialog = true;
-                        continue;
-                    }
-
-                    // Ремарка в скобках
-                    const parentheticalMatch = trimmed.match(/^\((.*)\)$/);
-                    if (parentheticalMatch) {
-                        htmlLines.push(`<div class="parenthetical">(${parentheticalMatch[1]})</div>`);
-                        continue;
-                    }
-
-                    // Диалог (после персонажа)
-                    if (isInDialog) {
-                        htmlLines.push(`<div class="dialogue">${trimmed}</div>`);
-                        continue;
-                    }
-
-                    // Описание / действие
-                    htmlLines.push(`<div class="action">${trimmed}</div>`);
+                // ---- Вспомогательные функции для определения типа строки ----
+                function isSceneHeading(line) {
+                    return /^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*/i.test(line);
                 }
 
+                function isParenthetical(line) {
+                    return /^\([^)]*\)$/.test(line.trim());
+                }
+
+                function isCharacterName(line) {
+                    const trimmed = line.trim();
+                    if (trimmed.length === 0) return false;
+                    if (trimmed !== trimmed.toUpperCase()) return false;
+                    if (/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)/i.test(trimmed)) return false;
+                    if (/^\([^)]*\)$/.test(trimmed)) return false;
+                    if (/^\d/.test(trimmed)) return false;
+                    if (/^[\(\[\{]/.test(trimmed)) return false;
+                    if (!/^[А-ЯA-Z\s\-']+$/.test(trimmed)) return false;
+                    return true;
+                }
+
+                // ---- Основной цикл с исправленной логикой состояний ----
+                // Состояния: 'none' или 'character'
+                let state = 'none';
+
+                for (let i = 0; i < lines.length; i++) {
+                    const rawLine = lines[i];
+                    const trimmed = rawLine.trim();
+
+                    // 1. Пустая строка – сбрасываем состояние и добавляем пустой блок
+                    if (trimmed.length === 0) {
+                        htmlLines.push('<div class="empty-line"></div>');
+                        state = 'none';
+                        continue;
+                    }
+
+                    // Экранируем содержимое строки (без разметки)
+                    const safeTrimmed = escapeHtml(trimmed);
+
+                    // 2. Заголовок сцены
+                    if (isSceneHeading(trimmed)) {
+                        const match = trimmed.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*(.*)/i);
+                        const prefix = match ? match[1].toUpperCase() : '';
+                        const rest = match ? match[2] || '' : trimmed;
+                        const safeRest = escapeHtml(rest);
+                        htmlLines.push(`<div class="scene-heading">${prefix} ${safeRest}</div>`);
+                        state = 'none';
+                        continue;
+                    }
+
+                    // 3. Ремарка в скобках – выводим как есть, состояние не меняем
+                    if (isParenthetical(trimmed)) {
+                        htmlLines.push(`<div class="parenthetical">${safeTrimmed}</div>`);
+                        continue;
+                    }
+
+                    // 4. Имя персонажа – устанавливаем состояние 'character'
+                    if (isCharacterName(trimmed)) {
+                        htmlLines.push(`<div class="character">${safeTrimmed}</div>`);
+                        state = 'character';
+                        continue;
+                    }
+
+                    // 5. Если состояние 'character', то это диалог (продолжение)
+                    if (state === 'character') {
+                        htmlLines.push(`<div class="dialogue">${safeTrimmed}</div>`);
+                        // Состояние остаётся 'character' для следующих строк диалога
+                        continue;
+                    }
+
+                    // 6. В противном случае – действие/описание
+                    htmlLines.push(`<div class="action">${safeTrimmed}</div>`);
+                    state = 'none';
+                }
+
+                // ---- Собираем финальный HTML ----
                 return `<!DOCTYPE html>
         <html lang="ru">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>${projectName} — Сценарий</title>
+            <title>${safeProjectName} — Сценарий</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
             <style>
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
                 body {
-                    font-family: 'Courier New', 'Courier Prime', monospace;
-                    background: #f5f0eb;
-                    color: #1a1a1a;
+                    font-family: 'Lora', 'Times New Roman', serif;
+                    background: #f8f6f2;
+                    color: #1e1e1e;
                     padding: 40px 20px;
                     display: flex;
                     justify-content: center;
+                    line-height: 1.6;
                 }
                 .script-container {
                     max-width: 1000px;
                     width: 100%;
                     background: #ffffff;
                     padding: 60px 80px;
-                    box-shadow: 0 4px 40px rgba(0,0,0,0.08);
-                    border-radius: 8px;
+                    box-shadow: 0 8px 48px rgba(0,0,0,0.06);
+                    border-radius: 12px;
+                    position: relative;
                 }
                 .title-block {
                     text-align: center;
                     margin-bottom: 50px;
                     padding-bottom: 30px;
-                    border-bottom: 2px solid #e0d8d0;
+                    border-bottom: 2px solid #e8e0d6;
+                    position: relative;
                 }
                 .title-block h1 {
-                    font-size: 28px;
+                    font-family: 'Playfair Display', serif;
+                    font-size: 36px;
                     font-weight: 700;
                     letter-spacing: 2px;
                     color: #1a1a1a;
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                 }
                 .title-block .subtitle {
-                    font-size: 14px;
-                    color: #666;
-                    letter-spacing: 1px;
+                    font-family: 'Playfair Display', serif;
+                    font-size: 16px;
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 4px;
+                    color: #8a7a6a;
+                    margin-top: 4px;
                 }
                 .title-block .date {
-                    font-size: 13px;
-                    color: #999;
-                    margin-top: 6px;
+                    font-size: 14px;
+                    color: #b0a090;
+                    margin-top: 10px;
+                    letter-spacing: 1px;
+                }
+                .title-block .decor-line {
+                    width: 80px;
+                    height: 2px;
+                    background: #c0b0a0;
+                    margin: 16px auto 0;
                 }
 
                 .scene-heading {
+                    font-family: 'Playfair Display', serif;
                     font-weight: 700;
-                    font-size: 14px;
+                    font-size: 16px;
                     text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    margin: 28px 0 12px 0;
-                    padding: 6px 0;
-                    border-bottom: 1px solid #eee;
-                    color: #1a1a1a;
+                    letter-spacing: 1.5px;
+                    margin: 32px 0 12px 0;
+                    padding: 6px 0 4px 0;
+                    border-bottom: 1px solid #ece6de;
+                    color: #2c2c2c;
                 }
                 .action {
-                    font-size: 13px;
+                    font-size: 15px;
                     line-height: 1.7;
-                    margin: 6px 0 6px 0;
+                    margin: 8px 0 8px 0;
                     color: #2a2a2a;
                     padding-left: 0;
                 }
                 .character {
-                    font-size: 14px;
+                    font-family: 'Playfair Display', serif;
+                    font-size: 16px;
                     font-weight: 700;
                     text-transform: uppercase;
-                    margin: 16px 0 4px 0;
-                    letter-spacing: 1px;
+                    letter-spacing: 2px;
+                    margin: 20px 0 4px 0;
                     color: #1a1a1a;
                     padding-left: 40%;
                 }
                 .parenthetical {
-                    font-size: 13px;
                     font-style: italic;
-                    color: #555;
+                    color: #6a5a4a;
+                    font-size: 14px;
                     margin: 2px 0 4px 0;
                     padding-left: 30%;
                 }
                 .dialogue {
-                    font-size: 13px;
-                    line-height: 1.7;
+                    font-size: 15px;
+                    line-height: 1.8;
                     margin: 2px 0 2px 0;
                     padding-left: 30%;
                     max-width: 70%;
                     color: #1a1a1a;
                 }
                 .empty-line {
-                    height: 12px;
+                    height: 14px;
                 }
 
-                .page-break {
-                    page-break-after: always;
-                    border-bottom: 1px dashed #ddd;
-                    margin: 30px 0;
-                }
+                @page { margin: 2.5cm 2cm; }
+                .page-break { page-break-after: always; border-bottom: 1px dashed #ddd; margin: 30px 0; }
 
                 @media print {
-                    body {
-                        background: white;
-                        padding: 0;
-                    }
-                    .script-container {
-                        box-shadow: none;
-                        border-radius: 0;
-                        padding: 40px 60px;
-                    }
-                    .page-break {
-                        border-bottom: none;
-                        page-break-after: always;
-                    }
+                    body { background: white; padding: 0; }
+                    .script-container { box-shadow: none; border-radius: 0; padding: 0; max-width: 100%; }
+                    .title-block { border-bottom-color: #ccc; }
+                    .page-break { border-bottom: none; page-break-after: always; }
+                    .scene-heading { border-bottom-color: #ccc; }
                 }
 
                 @media (max-width: 600px) {
-                    .script-container {
-                        padding: 30px 20px;
-                    }
-                    .character {
-                        padding-left: 20%;
-                    }
-                    .parenthetical {
-                        padding-left: 15%;
-                    }
-                    .dialogue {
-                        padding-left: 15%;
-                        max-width: 85%;
-                    }
-                    .title-block h1 {
-                        font-size: 22px;
-                    }
+                    .script-container { padding: 30px 20px; }
+                    .character { padding-left: 20%; }
+                    .parenthetical { padding-left: 15%; }
+                    .dialogue { padding-left: 15%; max-width: 85%; }
+                    .title-block h1 { font-size: 28px; }
                 }
             </style>
         </head>
         <body>
             <div class="script-container">
                 <div class="title-block">
-                    <h1>${projectName}</h1>
+                    <h1>${safeProjectName}</h1>
                     <div class="subtitle">СЦЕНАРИЙ</div>
-                    <div class="date">${dateStr}</div>
+                    <div class="date">${safeDate}</div>
+                    <div class="decor-line"></div>
                 </div>
                 ${htmlLines.join('\n')}
             </div>
@@ -1882,6 +1922,7 @@
         </html>`;
             }
 
+            // ===== EXPORT HTML =====
             function exportHTML() {
                 const content = textarea.value;
                 if (!content.trim()) {
@@ -2240,7 +2281,7 @@
 
             console.log('📝 Storyphilium — сценарный редактор');
             console.log('☕ Темы: Космос, Эспрессо, Neural White, Изумруд, Neural Blue');
-            console.log('🎨 Добавлен красивый HTML-экспорт!');
+            console.log('🎨 Улучшенный HTML-экспорт с красивой вёрсткой и исправленными диалогами!');
             console.log('⌨️  Ctrl+1..7 — вставка элементов');
 
         })();
