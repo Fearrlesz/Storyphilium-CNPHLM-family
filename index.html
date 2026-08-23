@@ -20,7 +20,6 @@
         }
 
         :root {
-            /* Базовые переменные (заполняются темами) */
             --bg-main: #0B0A14;
             --bg-surface: #15132B;
             --bg-card: #1E1B38;
@@ -44,7 +43,7 @@
             --sidebar-width: 280px;
         }
 
-        /* ===== ТЕМА: ESPRESSO (кофейно-карамельная) ===== */
+        /* ===== ТЕМЫ ===== */
         [data-theme="espresso"] {
             --bg-main: #4A2C20;
             --bg-surface: #5C3A2B;
@@ -63,7 +62,6 @@
             --border-light: 1px solid rgba(138, 90, 58, 0.5);
         }
 
-        /* ===== ТЕМА: NEURAL WHITE (минималистичная светлая) ===== */
         [data-theme="neural-white"] {
             --bg-main: #F6F8FC;
             --bg-surface: #FFFFFF;
@@ -82,7 +80,6 @@
             --border-light: 1px solid rgba(176, 200, 240, 0.35);
         }
 
-        /* ===== ТЕМА: EMERALD (изумрудный лес) ===== */
         [data-theme="emerald"] {
             --bg-main: #1A2A24;
             --bg-surface: #243A32;
@@ -101,7 +98,6 @@
             --border-light: 1px solid rgba(58, 122, 69, 0.4);
         }
 
-        /* ===== ТЕМА: NEURAL BLUE (синий минимализм) ===== */
         [data-theme="neural-blue"] {
             --bg-main: #E8EDF8;
             --bg-surface: #F4F7FC;
@@ -120,7 +116,6 @@
             --border-light: 1px solid rgba(160, 188, 232, 0.35);
         }
 
-        /* ===== ТЕМА: COSMIC (классическая космическая) — оставляем как опцию ===== */
         [data-theme="cosmic"] {
             --bg-main: #17152E;
             --bg-surface: #1F1D3A;
@@ -156,7 +151,6 @@
             -webkit-text-size-adjust: 100%;
         }
 
-        /* Специфичные фоны для тем */
         [data-theme="cosmic"] body {
             background-image:
                 radial-gradient(circle at 10% 20%, rgba(108, 74, 182, 0.08) 0%, transparent 50%),
@@ -177,7 +171,6 @@
                 radial-gradient(circle at 90% 80%, rgba(94, 204, 103, 0.03) 0%, transparent 50%);
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -238,7 +231,6 @@
             align-items: center;
         }
 
-        /* ===== PROJECTS DROPDOWN ===== */
         .project-selector {
             display: flex;
             align-items: center;
@@ -266,7 +258,6 @@
             gap: 4px;
         }
 
-        /* ===== THEME SELECTOR ===== */
         .theme-selector {
             display: flex;
             align-items: center;
@@ -290,7 +281,6 @@
             border-color: var(--accent);
         }
 
-        /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -482,7 +472,7 @@
             }
         }
 
-        /* ===== MAIN LAYOUT: EDITOR + SIDEBAR ===== */
+        /* ===== MAIN LAYOUT ===== */
         .main-area {
             flex: 1;
             min-height: 0;
@@ -1028,7 +1018,6 @@
             <span class="family">CINEPHILIUM FAMILY</span>
         </div>
         <div class="header-actions">
-            <!-- Project Selector -->
             <div class="project-selector">
                 <select id="projectSelect"></select>
                 <div class="project-actions">
@@ -1037,7 +1026,6 @@
                 </div>
             </div>
 
-            <!-- Theme Selector -->
             <div class="theme-selector">
                 <select id="themeSelect">
                     <option value="cosmic">🌌 Космос</option>
@@ -1058,6 +1046,7 @@
                     <option value="fountain" selected>Fountain</option>
                     <option value="json">JSON</option>
                     <option value="pdf">PDF</option>
+                    <option value="html">🎨 HTML</option>
                 </select>
                 <button class="btn btn-primary btn-sm" id="exportBtn">📄 Экспорт</button>
             </div>
@@ -1098,7 +1087,7 @@
         </div>
     </div>
 
-    <!-- MAIN AREA (EDITOR + SIDEBAR) -->
+    <!-- MAIN AREA -->
     <div class="main-area">
         <div class="editor-wrapper">
             <textarea id="scriptInput" placeholder="Начните писать сценарий…&#10;Используйте Ctrl+S для сохранения, Ctrl+E для экспорта" spellcheck="true"></textarea>
@@ -1217,13 +1206,9 @@
             let elapsedSeconds = 0;
             let isFocus = localStorage.getItem(FOCUS_KEY) === 'true';
             let isSidebarOpen = localStorage.getItem(SIDEBAR_KEY) !== 'closed';
-
-            // История для текущего проекта
             let history = [];
             let historyIndex = -1;
             let isUndoRedo = false;
-
-            // Текущая тема
             let currentTheme = localStorage.getItem(THEME_KEY) || 'cosmic';
 
             // ===== PROJECTS MANAGEMENT =====
@@ -1278,6 +1263,7 @@
                     alert('Проект с таким названием уже существует!');
                     return;
                 }
+                saveCurrentProject();
                 projects[cleanName] = '';
                 saveProjects(projects);
                 loadProject(cleanName);
@@ -1290,6 +1276,7 @@
                     return;
                 }
                 if (!confirm(`Удалить проект "${name}"? Это действие необратимо.`)) return;
+                saveCurrentProject();
                 const projects = getProjects();
                 delete projects[name];
                 saveProjects(projects);
@@ -1327,8 +1314,6 @@
                 themeSelect.value = theme;
                 localStorage.setItem(THEME_KEY, theme);
             }
-
-            // Инициализация темы
             applyTheme(currentTheme);
             themeSelect.addEventListener('change', function() {
                 applyTheme(this.value);
@@ -1340,10 +1325,7 @@
                 document.body.classList.toggle('focus-mode', focus);
                 focusToggle.textContent = focus ? '◉' : '◎';
                 localStorage.setItem(FOCUS_KEY, focus ? 'true' : 'false');
-                // В фокусе скрываем сайдбар
-                if (focus) {
-                    closeSidebar();
-                }
+                if (focus) closeSidebar();
             }
             applyFocus(isFocus);
             focusToggle.addEventListener('click', () => applyFocus(!isFocus));
@@ -1373,7 +1355,6 @@
             toggleSidebarBtn.addEventListener('click', toggleSidebar);
             closeSidebarBtn.addEventListener('click', closeSidebar);
 
-            // Восстанавливаем состояние сайдбара
             if (!isSidebarOpen) {
                 sidebar.classList.add('closed');
             } else {
@@ -1392,7 +1373,7 @@
                 });
             });
 
-            // ===== SIDEBAR CONTENT: scenes & characters =====
+            // ===== SIDEBAR CONTENT =====
             function parseScenes(text) {
                 const lines = text.split('\n');
                 const scenes = [];
@@ -1403,22 +1384,17 @@
                     if (match) {
                         sceneNum++;
                         const heading = match[2] || '';
-                        // Ищем следующую непустую строку как описание
                         let desc = '';
                         for (let j = i + 1; j < lines.length; j++) {
                             const next = lines[j].trim();
-                            if (next && !next.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)/i) && !next.match(/^[А-ЯA-Z\s\-']+$/)) {
+                            if (next && !next.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)/i) && !next.match(
+                                    /^[А-ЯA-Z\s\-']+$/)) {
                                 desc = next.substring(0, 60);
                                 break;
                             }
                             if (next && next.match(/^[А-ЯA-Z\s\-']+$/)) break;
                         }
-                        scenes.push({
-                            num: sceneNum,
-                            heading: heading,
-                            desc: desc,
-                            lineIndex: i
-                        });
+                        scenes.push({ num: sceneNum, heading: heading, desc: desc, lineIndex: i });
                     }
                 }
                 return scenes;
@@ -1433,7 +1409,7 @@
                         !trimmed.startsWith('НАР.') && !trimmed.startsWith('ИНТ.') && !trimmed.startsWith('ЭКСТ.') &&
                         !trimmed.startsWith('NAR.') && !trimmed.startsWith('INT.') && !trimmed.startsWith('EXT.') &&
                         !trimmed.startsWith('(') && !trimmed.startsWith('[') &&
-                        !trimmed.match(/^\d+\./) && 
+                        !trimmed.match(/^\d+\./) &&
                         trimmed.match(/^[А-ЯA-Z\s\-']+$/)) {
                         chars.add(trimmed);
                     }
@@ -1447,7 +1423,6 @@
                 clearTimeout(updateSidebarTimer);
                 updateSidebarTimer = setTimeout(() => {
                     const text = textarea.value;
-                    // Сцены
                     const scenes = parseScenes(text);
                     sceneList.innerHTML = '';
                     if (scenes.length === 0) {
@@ -1462,7 +1437,6 @@
                                 ${sc.desc ? `<span class="item-desc">${sc.desc}</span>` : ''}
                             `;
                             div.addEventListener('click', () => {
-                                // Переход к строке сцены
                                 const lines = text.split('\n');
                                 let pos = 0;
                                 for (let i = 0; i < sc.lineIndex && i < lines.length; i++) {
@@ -1470,17 +1444,15 @@
                                 }
                                 textarea.focus();
                                 textarea.setSelectionRange(pos, pos);
-                                // Прокрутка с учётом высоты строки
                                 const computedLH = getComputedStyle(textarea).lineHeight;
                                 let lineHeight = parseFloat(computedLH);
-                                if (isNaN(lineHeight)) lineHeight = 30; // fallback
+                                if (isNaN(lineHeight)) lineHeight = 30;
                                 textarea.scrollTop = sc.lineIndex * lineHeight - 100;
                             });
                             sceneList.appendChild(div);
                         }
                     }
 
-                    // Персонажи
                     const chars = parseCharacters(text);
                     characterList.innerHTML = '';
                     if (chars.length === 0) {
@@ -1491,12 +1463,10 @@
                             div.className = 'sidebar-item';
                             div.innerHTML = `<span class="item-name">${ch}</span>`;
                             div.addEventListener('click', () => {
-                                // Найти первое вхождение имени в тексте
                                 const index = text.indexOf(ch);
                                 if (index !== -1) {
                                     textarea.focus();
                                     textarea.setSelectionRange(index, index + ch.length);
-                                    // Прокрутка
                                     const lines = text.substring(0, index).split('\n');
                                     const computedLH = getComputedStyle(textarea).lineHeight;
                                     let lineHeight = parseFloat(computedLH);
@@ -1569,10 +1539,8 @@
                 const words = text.trim() ? text.trim().split(/\s+/).length : 0;
                 const lines = text ? text.split('\n').length : 0;
                 const pages = Math.max(1, Math.ceil(chars / 1000));
-
                 const sceneMatches = text.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)/gim);
                 const scenes = sceneMatches ? sceneMatches.length : 0;
-
                 const linesArr = text.split('\n');
                 let charNames = new Set();
                 for (let line of linesArr) {
@@ -1586,7 +1554,6 @@
                         charNames.add(trimmed);
                     }
                 }
-
                 charCount.textContent = chars;
                 wordCount.textContent = words;
                 lineCount.textContent = lines;
@@ -1617,7 +1584,6 @@
 
             // ===== SAVE =====
             function saveScript(showFeedback = true) {
-                const val = textarea.value;
                 saveCurrentProject();
                 if (showFeedback) {
                     statusDot.className = 'status-dot saved';
@@ -1704,6 +1670,241 @@
                 updateSidebar();
             }
 
+            // ===== HTML EXPORT =====
+            function generateHTML(content, projectName) {
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                // Парсим строки
+                const lines = content.split('\n');
+                let htmlLines = [];
+                let isInDialog = false;
+
+                for (let line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed) {
+                        htmlLines.push('<div class="empty-line"></div>');
+                        isInDialog = false;
+                        continue;
+                    }
+
+                    // Заголовок сцены (НАР., ИНТ., ЭКСТ.)
+                    const sceneMatch = trimmed.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*(.*)/i);
+                    if (sceneMatch) {
+                        const prefix = sceneMatch[1].toUpperCase();
+                        const rest = sceneMatch[2] || '';
+                        htmlLines.push(`<div class="scene-heading">${prefix} ${rest}</div>`);
+                        isInDialog = false;
+                        continue;
+                    }
+
+                    // Строка ЗАГЛАВНЫМИ буквами (персонаж)
+                    if (trimmed === trimmed.toUpperCase() &&
+                        trimmed.length > 1 &&
+                        !trimmed.startsWith('(') &&
+                        !trimmed.startsWith('[') &&
+                        !trimmed.match(/^\d+\./)) {
+                        htmlLines.push(`<div class="character">${trimmed}</div>`);
+                        isInDialog = true;
+                        continue;
+                    }
+
+                    // Ремарка в скобках
+                    const parentheticalMatch = trimmed.match(/^\((.*)\)$/);
+                    if (parentheticalMatch) {
+                        htmlLines.push(`<div class="parenthetical">(${parentheticalMatch[1]})</div>`);
+                        continue;
+                    }
+
+                    // Диалог (после персонажа)
+                    if (isInDialog) {
+                        htmlLines.push(`<div class="dialogue">${trimmed}</div>`);
+                        continue;
+                    }
+
+                    // Описание / действие
+                    htmlLines.push(`<div class="action">${trimmed}</div>`);
+                }
+
+                return `<!DOCTYPE html>
+        <html lang="ru">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>${projectName} — Сценарий</title>
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                body {
+                    font-family: 'Courier New', 'Courier Prime', monospace;
+                    background: #f5f0eb;
+                    color: #1a1a1a;
+                    padding: 40px 20px;
+                    display: flex;
+                    justify-content: center;
+                }
+                .script-container {
+                    max-width: 1000px;
+                    width: 100%;
+                    background: #ffffff;
+                    padding: 60px 80px;
+                    box-shadow: 0 4px 40px rgba(0,0,0,0.08);
+                    border-radius: 8px;
+                }
+                .title-block {
+                    text-align: center;
+                    margin-bottom: 50px;
+                    padding-bottom: 30px;
+                    border-bottom: 2px solid #e0d8d0;
+                }
+                .title-block h1 {
+                    font-size: 28px;
+                    font-weight: 700;
+                    letter-spacing: 2px;
+                    color: #1a1a1a;
+                    margin-bottom: 8px;
+                }
+                .title-block .subtitle {
+                    font-size: 14px;
+                    color: #666;
+                    letter-spacing: 1px;
+                }
+                .title-block .date {
+                    font-size: 13px;
+                    color: #999;
+                    margin-top: 6px;
+                }
+
+                .scene-heading {
+                    font-weight: 700;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin: 28px 0 12px 0;
+                    padding: 6px 0;
+                    border-bottom: 1px solid #eee;
+                    color: #1a1a1a;
+                }
+                .action {
+                    font-size: 13px;
+                    line-height: 1.7;
+                    margin: 6px 0 6px 0;
+                    color: #2a2a2a;
+                    padding-left: 0;
+                }
+                .character {
+                    font-size: 14px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    margin: 16px 0 4px 0;
+                    letter-spacing: 1px;
+                    color: #1a1a1a;
+                    padding-left: 40%;
+                }
+                .parenthetical {
+                    font-size: 13px;
+                    font-style: italic;
+                    color: #555;
+                    margin: 2px 0 4px 0;
+                    padding-left: 30%;
+                }
+                .dialogue {
+                    font-size: 13px;
+                    line-height: 1.7;
+                    margin: 2px 0 2px 0;
+                    padding-left: 30%;
+                    max-width: 70%;
+                    color: #1a1a1a;
+                }
+                .empty-line {
+                    height: 12px;
+                }
+
+                .page-break {
+                    page-break-after: always;
+                    border-bottom: 1px dashed #ddd;
+                    margin: 30px 0;
+                }
+
+                @media print {
+                    body {
+                        background: white;
+                        padding: 0;
+                    }
+                    .script-container {
+                        box-shadow: none;
+                        border-radius: 0;
+                        padding: 40px 60px;
+                    }
+                    .page-break {
+                        border-bottom: none;
+                        page-break-after: always;
+                    }
+                }
+
+                @media (max-width: 600px) {
+                    .script-container {
+                        padding: 30px 20px;
+                    }
+                    .character {
+                        padding-left: 20%;
+                    }
+                    .parenthetical {
+                        padding-left: 15%;
+                    }
+                    .dialogue {
+                        padding-left: 15%;
+                        max-width: 85%;
+                    }
+                    .title-block h1 {
+                        font-size: 22px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="script-container">
+                <div class="title-block">
+                    <h1>${projectName}</h1>
+                    <div class="subtitle">СЦЕНАРИЙ</div>
+                    <div class="date">${dateStr}</div>
+                </div>
+                ${htmlLines.join('\n')}
+            </div>
+        </body>
+        </html>`;
+            }
+
+            function exportHTML() {
+                const content = textarea.value;
+                if (!content.trim()) {
+                    alert('Сценарий пуст.');
+                    return;
+                }
+                const projectName = getCurrentProject();
+                const now = new Date();
+                const dateStr =
+                    `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+                const html = generateHTML(content, projectName);
+                const blob = new Blob(['\uFEFF' + html], { type: 'text/html;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `${projectName}_${dateStr}.html`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+                statusText.textContent = '✅ HTML экспортирован!';
+                setTimeout(() => { statusText.textContent = 'Сохранено'; }, 2000);
+            }
+
             // ===== EXPORT =====
             function getExportContent() {
                 return textarea.value;
@@ -1714,7 +1915,8 @@
             }
 
             function downloadFile(content, filename, mimeType) {
-                const isText = mimeType.includes('text/plain') || mimeType.includes('application/json');
+                const isText = mimeType.includes('text/plain') || mimeType.includes('application/json') || mimeType.includes(
+                    'text/html');
                 const finalContent = isText ? addBOM(content) : content;
                 const blob = new Blob([finalContent], { type: mimeType });
                 const link = document.createElement('a');
@@ -1794,6 +1996,9 @@
                         break;
                     case 'pdf':
                         exportPDF();
+                        break;
+                    case 'html':
+                        exportHTML();
                         break;
                     default:
                         alert('Неизвестный формат');
@@ -2033,9 +2238,9 @@
                 saveCurrentProject();
             });
 
-            console.log('📝 Storyphilium — сценарный редактор с космической душой');
+            console.log('📝 Storyphilium — сценарный редактор');
             console.log('☕ Темы: Космос, Эспрессо, Neural White, Изумруд, Neural Blue');
-            console.log('📋 Панель сцен и персонажей — кнопка 📋 в тулбаре');
+            console.log('🎨 Добавлен красивый HTML-экспорт!');
             console.log('⌨️  Ctrl+1..7 — вставка элементов');
 
         })();
