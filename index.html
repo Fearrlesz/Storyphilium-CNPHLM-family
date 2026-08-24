@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Storyphilium — Сценарный редактор</title>
+    <title>Storyphilium Pro — Сценарный редактор</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -43,7 +43,6 @@
             --sidebar-width: 280px;
         }
 
-        /* ===== ТЕМЫ ===== */
         [data-theme="espresso"] {
             --bg-main: #4A2C20;
             --bg-surface: #5C3A2B;
@@ -148,27 +147,6 @@
             flex-direction: column;
             padding: 14px 18px 0;
             transition: background 0.4s, color 0.4s;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        [data-theme="cosmic"] body {
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(108, 74, 182, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(108, 74, 182, 0.04) 0%, transparent 50%);
-        }
-        [data-theme="espresso"] body {
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(184, 115, 51, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(184, 115, 51, 0.03) 0%, transparent 50%);
-        }
-        [data-theme="neural-white"] body,
-        [data-theme="neural-blue"] body {
-            background-image: none;
-        }
-        [data-theme="emerald"] body {
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(94, 204, 103, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 90% 80%, rgba(94, 204, 103, 0.03) 0%, transparent 50%);
         }
 
         ::-webkit-scrollbar {
@@ -512,7 +490,6 @@
             transition: background 0.3s, padding 0.4s, font-size 0.4s;
             letter-spacing: 0.15px;
             tab-size: 4;
-            -webkit-text-size-adjust: 100%;
         }
         .editor-wrapper textarea:focus {
             background: var(--bg-input-focus);
@@ -525,7 +502,6 @@
             font-weight: 400;
         }
 
-        /* ===== EXIT FOCUS BUTTON (появляется только в фокус-режиме) ===== */
         .exit-focus-btn {
             position: fixed;
             top: 20px;
@@ -1073,13 +1049,11 @@
 </head>
 <body>
 
-    <!-- КНОПКА ВЫХОДА ИЗ ФОКУС-РЕЖИМА -->
     <button class="exit-focus-btn" id="exitFocusBtn">
         ✕ Выйти из фокуса
         <span class="shortcut">Ctrl+F</span>
     </button>
 
-    <!-- HEADER -->
     <header class="app-header">
         <div class="brand">
             <span class="story">STORYPHILIUM</span>
@@ -1123,7 +1097,6 @@
         </div>
     </header>
 
-    <!-- TOOLBAR -->
     <div class="editor-toolbar" id="editorToolbar">
         <div class="toolbar-group">
             <span class="group-label">Вставка</span>
@@ -1156,7 +1129,6 @@
         </div>
     </div>
 
-    <!-- MAIN AREA -->
     <div class="main-area">
         <div class="editor-wrapper">
             <textarea id="scriptInput" placeholder="Начните писать сценарий…&#10;Используйте Ctrl+S для сохранения, Ctrl+E для экспорта" spellcheck="true"></textarea>
@@ -1181,7 +1153,6 @@
         </div>
     </div>
 
-    <!-- FIND/REPLACE BAR -->
     <div class="find-replace-bar" id="findReplaceBar">
         <span class="fr-label">Найти</span>
         <input type="text" id="findInput" placeholder="текст…" />
@@ -1195,10 +1166,8 @@
         <button class="btn btn-sm btn-outline" id="closeFindBtn">✕</button>
     </div>
 
-    <!-- PRINT PLACEHOLDER -->
     <div class="print-content"></div>
 
-    <!-- FOOTER -->
     <footer class="app-footer">
         <span class="copy">
             STORYPHILIUM <span class="separator">|</span> <span class="family">CINEPHILIUM FAMILY</span> &copy; 2026
@@ -1743,20 +1712,7 @@
                 updateSidebar();
             }
 
-            // ============================================================
-            //  ИСПРАВЛЕННАЯ функция generateHTML
-            // ============================================================
-
-            // ---- Вспомогательная функция для экранирования HTML ----
-            function escapeHtml(str) {
-                if (!str) return '';
-                return str.replace(/&/g, '&amp;')
-                          .replace(/</g, '&lt;')
-                          .replace(/>/g, '&gt;')
-                          .replace(/"/g, '&quot;')
-                          .replace(/'/g, '&#039;');
-            }
-
+            // ===== EXPORT HTML =====
             function generateHTML(content, projectName) {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('ru-RU', {
@@ -1764,15 +1720,24 @@
                     month: 'long',
                     year: 'numeric'
                 });
-
-                // Экранируем имя проекта и дату
-                const safeProjectName = escapeHtml(projectName);
-                const safeDate = escapeHtml(dateStr);
+                const safeProjectName = projectName.replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+                const safeDate = dateStr.replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
 
                 const lines = content.split('\n');
                 const htmlLines = [];
 
-                // ---- Вспомогательные функции для определения типа строки ----
                 function isSceneHeading(line) {
                     return /^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*/i.test(line);
                 }
@@ -1793,61 +1758,62 @@
                     return true;
                 }
 
-                // ---- Основной цикл с исправленной логикой состояний ----
-                // Состояния: 'none' или 'character'
                 let state = 'none';
 
                 for (let i = 0; i < lines.length; i++) {
                     const rawLine = lines[i];
                     const trimmed = rawLine.trim();
 
-                    // 1. Пустая строка – сбрасываем состояние и добавляем пустой блок
                     if (trimmed.length === 0) {
                         htmlLines.push('<div class="empty-line"></div>');
                         state = 'none';
                         continue;
                     }
 
-                    // Экранируем содержимое строки (без разметки)
-                    const safeTrimmed = escapeHtml(trimmed);
+                    const safeTrimmed = trimmed.replace(/[&<>"]/g, function(m) {
+                        if (m === '&') return '&amp;';
+                        if (m === '<') return '&lt;';
+                        if (m === '>') return '&gt;';
+                        if (m === '"') return '&quot;';
+                        return m;
+                    });
 
-                    // 2. Заголовок сцены
                     if (isSceneHeading(trimmed)) {
                         const match = trimmed.match(/^(НАР\.|ИНТ\.|ЭКСТ\.|NAR\.|INT\.|EXT\.)\s*(.*)/i);
                         const prefix = match ? match[1].toUpperCase() : '';
                         const rest = match ? match[2] || '' : trimmed;
-                        const safeRest = escapeHtml(rest);
+                        const safeRest = rest.replace(/[&<>"]/g, function(m) {
+                            if (m === '&') return '&amp;';
+                            if (m === '<') return '&lt;';
+                            if (m === '>') return '&gt;';
+                            if (m === '"') return '&quot;';
+                            return m;
+                        });
                         htmlLines.push(`<div class="scene-heading">${prefix} ${safeRest}</div>`);
                         state = 'none';
                         continue;
                     }
 
-                    // 3. Ремарка в скобках – выводим как есть, состояние не меняем
                     if (isParenthetical(trimmed)) {
                         htmlLines.push(`<div class="parenthetical">${safeTrimmed}</div>`);
                         continue;
                     }
 
-                    // 4. Имя персонажа – устанавливаем состояние 'character'
                     if (isCharacterName(trimmed)) {
                         htmlLines.push(`<div class="character">${safeTrimmed}</div>`);
                         state = 'character';
                         continue;
                     }
 
-                    // 5. Если состояние 'character', то это диалог (продолжение)
                     if (state === 'character') {
                         htmlLines.push(`<div class="dialogue">${safeTrimmed}</div>`);
-                        // Состояние остаётся 'character' для следующих строк диалога
                         continue;
                     }
 
-                    // 6. В противном случае – действие/описание
                     htmlLines.push(`<div class="action">${safeTrimmed}</div>`);
                     state = 'none';
                 }
 
-                // ---- Собираем финальный HTML ----
                 return `<!DOCTYPE html>
         <html lang="ru">
         <head>
@@ -1995,7 +1961,6 @@
         </html>`;
             }
 
-            // ===== EXPORT HTML =====
             function exportHTML() {
                 const content = textarea.value;
                 if (!content.trim()) {
@@ -2352,7 +2317,7 @@
                 saveCurrentProject();
             });
 
-            console.log('📝 Storyphilium — сценарный редактор');
+            console.log('📝 Storyphilium Pro — сценарный редактор');
             console.log('☕ Темы: Космос, Эспрессо, Neural White, Изумруд, Neural Blue');
             console.log('🎨 Улучшенный HTML-экспорт с красивой вёрсткой и исправленными диалогами!');
             console.log('⌨️  Ctrl+1..7 — вставка элементов');
