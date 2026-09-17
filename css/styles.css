@@ -82,14 +82,26 @@ body {
     color: var(--text-primary);
     overflow: hidden;
     transition: background 0.3s, color 0.3s;
+    -webkit-font-smoothing: antialiased;
 }
+
+/* Скрываем скроллбары для навигационных панелей, но оставляем возможность прокрутки */
+.topbar::-webkit-scrollbar, .main-nav::-webkit-scrollbar, .statusbar::-webkit-scrollbar { display: none; }
+.topbar, .main-nav, .statusbar { scrollbar-width: none; -ms-overflow-style: none; }
+
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--accent-border); border-radius: 20px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-button { font-family: var(--font); cursor: pointer; }
-input, select, textarea { font-family: var(--font); }
+button { font-family: var(--font); cursor: pointer; user-select: none; }
+input, select, textarea { font-family: var(--font); -webkit-appearance: none; appearance: none; }
+
+/* Фокус для доступности */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
 
 /* ============ APP SHELL ============ */
 #app {
@@ -98,6 +110,7 @@ input, select, textarea { font-family: var(--font); }
     flex-direction: column;
     padding: 10px 14px 0;
     gap: 8px;
+    min-width: 0;
 }
 
 .topbar {
@@ -111,7 +124,10 @@ input, select, textarea { font-family: var(--font); }
     padding: 0 16px;
     gap: 14px;
     flex-shrink: 0;
+    overflow-x: auto; /* Предотвращает поломку при нехватке места */
+    flex-wrap: nowrap;
 }
+.topbar > * { min-width: 0; flex-shrink: 0; } /* Защита от переполнения */
 .topbar .brand {
     display: flex; align-items: baseline; gap: 6px;
     font-weight: 700; white-space: nowrap;
@@ -119,7 +135,7 @@ input, select, textarea { font-family: var(--font); }
 .topbar .brand .story { font-size: 16px; letter-spacing: -0.3px; }
 .topbar .brand .sep { color: var(--accent-border); font-weight: 300; }
 .topbar .brand .family { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
-.topbar .spacer { flex: 1; }
+.topbar .spacer { flex: 1; min-width: 20px; }
 
 .project-selector { display: flex; align-items: center; gap: 6px; }
 .project-selector select {
@@ -142,6 +158,7 @@ input, select, textarea { font-family: var(--font); }
     gap: 2px;
     flex-shrink: 0;
     overflow-x: auto;
+    flex-wrap: nowrap;
 }
 .main-nav button {
     flex: 0 0 auto;
@@ -164,6 +181,7 @@ input, select, textarea { font-family: var(--font); }
 .view-host {
     flex: 1;
     min-height: 0;
+    min-width: 0;
     background: var(--bg-surface);
     border: var(--border-light);
     border-radius: var(--radius);
@@ -187,9 +205,10 @@ input, select, textarea { font-family: var(--font); }
     gap: 16px;
     flex-shrink: 0;
     flex-wrap: nowrap;
-    overflow: hidden;
+    overflow-x: auto;
 }
-.statusbar .spacer { flex: 1; }
+.statusbar > * { flex-shrink: 0; }
+.statusbar .spacer { flex: 1; min-width: 20px; }
 .statusbar .stat { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
 .statusbar .stat .num { font-weight: 700; color: var(--accent); }
 .statusbar .dot {
@@ -213,6 +232,7 @@ input, select, textarea { font-family: var(--font); }
     border: 1px solid transparent; border-radius: var(--radius-sm);
     transition: all var(--transition); white-space: nowrap; letter-spacing: 0.2px;
     background: var(--bg-card); color: var(--text-primary);
+    user-select: none;
 }
 .btn:hover { transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
@@ -287,14 +307,16 @@ input, select, textarea { font-family: var(--font); }
     flex-shrink: 0;
     flex-wrap: wrap;
 }
+.view-header > * { min-width: 0; }
 .view-header h2 { font-size: 17px; font-weight: 700; }
 .view-header .sub { font-size: 12px; color: var(--text-secondary); }
-.view-header .spacer { flex: 1; }
+.view-header .spacer { flex: 1; min-width: 20px; }
 .view-body {
     flex: 1;
     overflow: auto;
     padding: 16px 20px;
     min-height: 0;
+    min-width: 0;
 }
 .view-body.no-pad { padding: 0; }
 
@@ -320,7 +342,8 @@ input, select, textarea { font-family: var(--font); }
     flex-shrink: 0;
     background: var(--bg-surface);
 }
-.editor-toolbar .group { display: flex; gap: 3px; align-items: center; }
+.editor-toolbar > * { min-width: 0; }
+.editor-toolbar .group { display: flex; gap: 3px; align-items: center; flex-wrap: wrap; }
 .editor-toolbar .group-label {
     font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
     color: var(--text-light); font-weight: 600; margin-right: 4px;
@@ -329,10 +352,11 @@ input, select, textarea { font-family: var(--font); }
     background: transparent; border: none; padding: 4px 9px;
     border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500;
     color: var(--text-secondary); transition: all var(--transition);
+    user-select: none;
 }
 .editor-toolbar .tbtn:hover { background: var(--accent-light); color: var(--text-primary); }
 .editor-toolbar .tbtn.active { background: var(--accent); color: #fff; }
-.editor-toolbar .spacer { flex: 1; }
+.editor-toolbar .spacer { flex: 1; min-width: 10px; }
 
 .script-area {
     flex: 1; width: 100%; padding: 1.4cm 2cm;
@@ -341,6 +365,7 @@ input, select, textarea { font-family: var(--font); }
     border: none; outline: none; resize: none;
     letter-spacing: 0.15px; tab-size: 4;
     transition: background 0.3s, padding 0.3s, font-size 0.3s;
+    -webkit-appearance: none;
 }
 .script-area:focus { background: var(--bg-input-focus); }
 .script-area::placeholder { color: var(--text-light); opacity: 0.4; font-family: var(--font); font-size: 14px; }
@@ -353,13 +378,15 @@ input, select, textarea { font-family: var(--font); }
     display: flex; flex-direction: column;
     flex-shrink: 0; overflow: hidden;
     transition: width 0.25s ease, opacity 0.25s ease;
+    min-width: 0;
 }
 .editor-side.closed { width: 0; opacity: 0; pointer-events: none; border-left: none; }
-.editor-side .side-tabs { display: flex; border-bottom: var(--border-light); }
+.editor-side .side-tabs { display: flex; border-bottom: var(--border-light); flex-shrink: 0; }
 .editor-side .side-tabs button {
     flex: 1; padding: 9px 0; background: none; border: none;
     font-size: 12px; font-weight: 600; color: var(--text-secondary);
     border-bottom: 2px solid transparent; transition: all var(--transition);
+    user-select: none;
 }
 .editor-side .side-tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
 .editor-side .side-tabs button:hover { color: var(--text-primary); background: var(--bg-main); }
@@ -677,6 +704,7 @@ input, select, textarea { font-family: var(--font); }
     display: flex; align-items: center; gap: 10px;
     cursor: pointer; font-size: 13px;
     color: var(--text-secondary);
+    user-select: none;
 }
 .palette .p-cmd:hover, .palette .p-cmd.selected {
     background: var(--accent-light); color: var(--text-primary);
@@ -704,6 +732,7 @@ body.focus-mode .script-area { padding: 2cm 3cm; font-size: 15pt; }
     transition: all 0.3s ease; opacity: 0; pointer-events: none;
     display: flex; align-items: center; gap: 8px;
     transform: translateY(-10px);
+    user-select: none;
 }
 .exit-focus-btn.visible { opacity: 1; pointer-events: all; transform: translateY(0); }
 .exit-focus-btn:hover { background: var(--accent-hover); transform: translateY(-2px) scale(1.02); }
@@ -735,7 +764,6 @@ body.focus-mode .script-area { padding: 2cm 3cm; font-size: 15pt; }
 @media (max-width: 900px) {
     .topbar { padding: 0 10px; gap: 8px; }
     .topbar .brand .family { display: none; }
-    :root { --sidebar-width: 240px; }
     .script-area { padding: 1cm 1.2cm; font-size: 12pt; }
     .reader-page { padding: 40px 30px; }
 }
@@ -747,7 +775,8 @@ body.focus-mode .script-area { padding: 2cm 3cm; font-size: 15pt; }
     .modal { min-width: unset; width: 92vw; }
     .struct-grid { grid-template-columns: 1fr; }
     :root { --sidebar-width: 0px; }
-    .editor-side { position: absolute; right: 0; top: 0; bottom: 0; z-index: 50; box-shadow: -8px 0 24px rgba(0,0,0,0.4); }
+    .editor-side { position: absolute; right: 0; top: 0; bottom: 0; z-index: 50; box-shadow: -8px 0 24px rgba(0,0,0,0.4); width: 280px; }
+    .editor-side.closed { width: 0; box-shadow: none; }
     .script-area { padding: 0.8cm; font-size: 11pt; }
     .reader-page { padding: 24px 16px; font-size: 11pt; }
 }
