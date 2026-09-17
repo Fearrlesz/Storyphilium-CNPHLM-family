@@ -14,19 +14,19 @@ import * as Dashboard from './views/dashboard.js';
 import * as Versions from './views/versions.js';
 
 const VIEWS = [
-    ['editor','Редактор', Editor],
-    ['structure','Структура', Structure],
-    ['characters','Персонажи', Characters],
-    ['notes','Заметки', Notes],
-    ['reader','Читатель', Reader],
-    ['dashboard','Дэшборд', Dashboard],
-    ['versions','Ревизии', Versions]
+    ['editor', '📝', 'Редактор', Editor],
+    ['structure', '🧩', 'Структура', Structure],
+    ['characters', '👥', 'Персонажи', Characters],
+    ['notes', '🗒', 'Заметки', Notes],
+    ['reader', '📖', 'Читатель', Reader],
+    ['dashboard', '📊', 'Дэшборд', Dashboard],
+    ['versions', '🕘', 'Ревизии', Versions]
 ];
 
 const THEMES = [
-    ['cosmic', 'Космос'], ['espresso', 'Эспрессо'],
-    ['neural-white', 'Neural White'], ['emerald', 'Изумруд'],
-    ['neural-blue', 'Neural Blue']
+    ['cosmic', '🌌 Космос'], ['espresso', '☕ Эспрессо'],
+    ['neural-white', '⬜ Neural White'], ['emerald', '🌿 Изумруд'],
+    ['neural-blue', '🔵 Neural Blue']
 ];
 
 let currentView = null;
@@ -83,7 +83,7 @@ function buildTopbar() {
     for (const f of EXPORT_FORMATS) expSel.appendChild(el('option', { value: f.id, text: f.label }));
     expSel.addEventListener('change', () => { runExport(expSel.value); expSel.selectedIndex = 0; });
     top.appendChild(expSel);
-    top.appendChild(el('button', { class: 'btn btn-primary btn-sm', text: 'Экспорт', onclick: () => runExport(expSel.value) }));
+    top.appendChild(el('button', { class: 'btn btn-primary btn-sm', text: '📄 Экспорт', onclick: () => runExport(expSel.value) }));
 }
 
 function refreshProjectSelect(sel) {
@@ -111,19 +111,19 @@ function buildStatusbar() {
     const bar = document.getElementById('statusbar');
     bar.innerHTML = '';
     bar.appendChild(el('span', { class: 'stat' }, [
-        el('span', { html: '<span class="num" id="stat-chars">0</span>' })
+        el('span', { html: '📝 <span class="num" id="stat-chars">0</span>' })
     ]));
     bar.appendChild(el('span', { class: 'stat' }, [
-        el('span', { html: '<span class="num" id="stat-words">0</span>' })
+        el('span', { html: '📖 <span class="num" id="stat-words">0</span>' })
     ]));
     bar.appendChild(el('span', { class: 'stat' }, [
-        el('span', { html: '<span class="num" id="stat-scenes">0</span>' })
+        el('span', { html: '🎬 <span class="num" id="stat-scenes">0</span>' })
     ]));
     bar.appendChild(el('span', { class: 'stat' }, [
-        el('span', { html: '<span class="num" id="stat-characters">0</span>' })
+        el('span', { html: '👤 <span class="num" id="stat-characters">0</span>' })
     ]));
     bar.appendChild(el('span', { class: 'stat' }, [
-        el('span', { html: '<span class="num" id="stat-pages">0</span>' })
+        el('span', { html: '📄 <span class="num" id="stat-pages">0</span>' })
     ]));
 
     bar.appendChild(el('span', { class: 'spacer' }));
